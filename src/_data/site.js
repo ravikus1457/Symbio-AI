@@ -39,8 +39,8 @@ export default {
       phone: "510-585-7136",
     },
     {
-      name: "Ravi",
-      role: "Build partner",
+      name: "Ravi Kumar",
+      role: "Founder & lead builder",
       email: "ravikus1457@gmail.com",
     },
   ],

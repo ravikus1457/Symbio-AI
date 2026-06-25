@@ -1,18 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 232 64" role="img" aria-label="Symbio AI">
-  <g fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round">
-    <rect x="7" y="19" width="32" height="26" rx="13" />
-    <rect x="25" y="19" width="32" height="26" rx="13" />
-  </g>
-  <circle cx="32" cy="32" r="6" fill="currentColor" />
-  <text
-    x="78"
-    y="41"
-    font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Helvetica, Arial, sans-serif"
-    font-size="30"
-    font-weight="700"
-    letter-spacing="-0.5"
-    fill="currentColor"
-  >
-    Symbio AI
-  </text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="512" height="512" fill="none">
+  <path d="M66,16 C40,27 40,43 54,50 C40,57 40,73 66,84" stroke="#0E1116" stroke-width="6" stroke-linecap="round"></path>
+  <path d="M34,16 C60,27 60,43 46,50 C60,57 60,73 34,84" stroke="#0E1116" stroke-width="6" stroke-linecap="round"></path>
+  <path d="M54,50 C40,57 40,73 66,84" stroke="#0E1116" stroke-width="6" stroke-linecap="round"></path>
 </svg>

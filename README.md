@@ -56,7 +56,7 @@ src/
     js/main.js          # theme toggle, mobile menu, reveals, living hero, scan form
     js/symbio-widget.js # standalone embeddable chat widget (NOT bundled with the site)
     js/symbio-widget.min.js  # minified widget (run `npm run minify:widget` to regenerate)
-    img/                # logo-symbio.svg, logo-symbio-lockup.svg, logo-symbio-mono.svg
+    img/                # logo-symbio.svg (favicon), -color / -mono / -reversed marks (brand kit)
 README.md
 ```
 

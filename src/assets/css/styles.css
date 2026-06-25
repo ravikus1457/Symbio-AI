@@ -18,8 +18,9 @@
      15. Proof / reviews
      16. Forms (free scan)
      17. Footer
-     18. Reveal-on-scroll
-     19. Reduced motion
+     18. Offer extensions (apps lane, pricing anchors, audience, concepts)
+     19. Reveal-on-scroll
+     20. Reduced motion
    ========================================================================= */
 
 /* -------------------------------------------------------------------------
@@ -1626,7 +1627,124 @@ ol {
 }
 
 /* -------------------------------------------------------------------------
-   18. Reveal-on-scroll (only hides when JS is active)
+   18. Offer extensions
+   ------------------------------------------------------------------------- */
+
+/* Auto-fitting card grid (the "what we can build" / concept menus). */
+.grid--auto {
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+}
+
+/* Premium, tinted card for the custom-apps lane. */
+.card--feature {
+  background-image: var(--grad-soft);
+  border-color: var(--c-accent);
+  box-shadow: var(--shadow-md);
+}
+
+/* Two-column feature list (custom-apps examples). */
+.card__list--two {
+  margin-top: 0;
+}
+
+@media (min-width: 560px) {
+  .card__list--two {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 1.5rem;
+  }
+}
+
+/* A badge sitting at the top of a card (concept tags). */
+.card > .badge {
+  align-self: flex-start;
+  margin-bottom: 0.9rem;
+}
+
+.badge--concept {
+  color: var(--c-text-muted);
+  background: var(--c-surface-3);
+}
+
+/* "Who we help" strip. */
+.audience {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+}
+
+.audience__label {
+  font-size: var(--fs-200);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--c-text-faint);
+}
+
+.chip {
+  padding: 0.4rem 0.9rem;
+  font-size: var(--fs-300);
+  font-weight: 600;
+  color: var(--c-text);
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-pill);
+}
+
+/* Pricing "starting points" anchors. */
+.price-anchors {
+  display: grid;
+  gap: clamp(1rem, 2.5vw, 1.5rem);
+}
+
+@media (min-width: 720px) {
+  .price-anchors {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.price-anchor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 1.4rem 1.5rem;
+  text-align: center;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.price-anchor--feature {
+  border-color: var(--c-accent);
+  box-shadow: var(--shadow-md);
+}
+
+.price-anchor__label {
+  font-size: var(--fs-300);
+  font-weight: 600;
+  color: var(--c-text-muted);
+}
+
+.price-anchor__amount {
+  font-size: var(--fs-700);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: var(--grad-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.price-anchor__note {
+  font-size: var(--fs-200);
+  color: var(--c-text-faint);
+}
+
+/* -------------------------------------------------------------------------
+   19. Reveal-on-scroll (only hides when JS is active)
    ------------------------------------------------------------------------- */
 .js [data-reveal] {
   opacity: 0;
@@ -1654,7 +1772,7 @@ ol {
 }
 
 /* -------------------------------------------------------------------------
-   19. Reduced motion
+   20. Reduced motion
    ------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   *,

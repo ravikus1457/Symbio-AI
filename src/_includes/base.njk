@@ -54,5 +54,26 @@
     </main>
 
     {% include "footer.njk" %}
+
+    {# The embeddable assistant, loaded the way a customer would (one tag) and
+       configured for Symbio itself. It stays a standalone file (not bundled into
+       main.js); main.js bridges its leads to the scan endpoint and keeps its
+       theme in sync with the site toggle. #}
+    <script>
+      window.SymbioConfig = {
+        businessName: {{ site.name | dump | safe }},
+        accent: "#1f6bff",
+        services: ["Websites & landing pages", "Booking & lead systems", "AI agents & automation"],
+        hours: "Mon–Fri, 9am–6pm PT",
+        location: "Online — we build remote",
+        phone: {{ site.founders[0].phone | dump | safe }},
+        price: "with a free scan first",
+        position: "right",
+        theme: "auto",
+        greeting:
+          "Hi! 👋 I'm Symbio's assistant. Want a free scan of your site, or a question about what we build?",
+      };
+    </script>
+    <script src="assets/js/symbio-widget.js" defer></script>
   </body>
 </html>

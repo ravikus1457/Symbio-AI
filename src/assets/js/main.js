@@ -51,11 +51,22 @@
       toggle.setAttribute("aria-pressed", String(isDark));
       toggle.setAttribute("aria-label", isDark ? "Switch to light theme" : "Switch to dark theme");
     }
+    // Keep the embedded chat widget in step with the site theme (if loaded yet).
+    if (window.SymbioWidget && typeof window.SymbioWidget.configure === "function") {
+      window.SymbioWidget.configure({ theme });
+    }
   }
 
   function initTheme() {
     const toggle = document.querySelector("[data-theme-toggle]");
     applyTheme(storedTheme() || systemTheme(), toggle);
+
+    // The widget loads after this script, so sync it once it's available.
+    window.addEventListener("load", () => {
+      if (window.SymbioWidget && typeof window.SymbioWidget.configure === "function") {
+        window.SymbioWidget.configure({ theme: root.getAttribute("data-theme") || "auto" });
+      }
+    });
 
     // Follow the OS preference live, but only while the user hasn't chosen.
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (event) => {
@@ -331,6 +342,22 @@
       : "https://instances-sie-book-appointments.trycloudflare.com/api/free-scan";
   }
 
+  // POST a scan payload; resolves true only on HTTP 200 with {"ok": true}.
+  async function submitScan(payload) {
+    const res = await fetch(scanEndpoint(), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) return false;
+    try {
+      const data = await res.json();
+      return Boolean(data && data.ok === true);
+    } catch (e) {
+      return false;
+    }
+  }
+
   function initScanForm() {
     const form = document.querySelector("[data-scan-form]");
     if (!form) return;
@@ -399,23 +426,7 @@
       if (submitBtn) submitBtn.disabled = true;
 
       try {
-        const res = await fetch(scanEndpoint(), {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-
-        let ok = false;
-        if (res.ok) {
-          try {
-            const data = await res.json();
-            ok = Boolean(data && data.ok === true);
-          } catch (e) {
-            ok = false;
-          }
-        }
-
-        if (ok) {
+        if (await submitScan(payload)) {
           setStatus(
             "success",
             "Thanks! Your scan request is in — we’ll reply within one business day."
@@ -433,6 +444,37 @@
     });
   }
 
+  /* ---- 8. Widget lead bridge ------------------------------------------ */
+  // The embedded chat widget fires "symbio:lead" when it captures someone.
+  // Deliver those to the same inbox as the scan form (best-effort — the widget
+  // has already confirmed to the visitor and fired its own event/callback).
+  function mapWidgetLead(lead) {
+    const contact = (lead.contact || "").trim();
+    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact);
+    return {
+      name: lead.name || "",
+      business: lead.business || "",
+      email: isEmail ? contact : "",
+      phone: isEmail ? "" : contact,
+      link: "",
+      need: "Chat assistant enquiry",
+      budget: "",
+      goal: "",
+      problem: lead.detail || "",
+      sourceUrl: lead.page || window.location.href,
+    };
+  }
+
+  function initWidgetLeadBridge() {
+    window.addEventListener("symbio:lead", (event) => {
+      const lead = event.detail;
+      if (!lead) return;
+      submitScan(mapWidgetLead(lead)).catch(() => {
+        /* best-effort; nothing else to do on the marketing pages */
+      });
+    });
+  }
+
   /* ---- Init ------------------------------------------------------------ */
   function init() {
     initTheme();
@@ -441,6 +483,7 @@
     initRotator();
     initInbox();
     initScanForm();
+    initWidgetLeadBridge();
     // Tell the pre-paint safety net that we ran, so it won't unhide reveals.
     window.__symbioReady = true;
   }

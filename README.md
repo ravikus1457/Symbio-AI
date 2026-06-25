@@ -123,8 +123,13 @@ statically. No Node.js runtime is needed in production.
 
 `src/assets/js/symbio-widget.js` is a **standalone, dependency-free** assistant that drops onto
 **any** website with a single `<script>` tag. It renders inside a **Shadow DOM**, so the host
-page’s CSS can’t break it and its styles can’t leak out. It is intentionally **not** part of
-the site’s build — it’s shipped as its own file (and `symbio-widget.min.js`).
+page’s CSS can’t break it and its styles can’t leak out. It’s shipped as its own file (and
+`symbio-widget.min.js`) and is **not bundled** into the site build.
+
+The marketing site dogfoods it: `base.njk` loads the widget on every page exactly the way a
+customer would (one `<script>` tag + `window.SymbioConfig`), branded for Symbio. There,
+`main.js` bridges captured leads to the same scan endpoint as the form and keeps the widget’s
+theme in step with the site’s light/dark toggle.
 
 ### Install
 
@@ -142,6 +147,7 @@ wins):
     phone: "510-555-0100",
     price: "From $35",
     position: "right", // "right" | "left"
+    theme: "auto", // "auto" (follow the OS) | "light" | "dark"
     leadEndpoint: "", // optional, see contracts below
     aiEndpoint: "", // optional, see contracts below
     onLead: function (lead) {
@@ -172,13 +178,16 @@ Quick setup via attributes:
   **lead-capture flow** (name → contact → detail) that works with **zero backend**.
 - Every captured lead fires a `window` **`symbio:lead`** event (`event.detail` is the lead) and
   calls `config.onLead(lead)`.
+- **Theme:** `auto` follows the visitor’s OS; pass `light`/`dark` (or call `configure({ theme })`)
+  to pin it — that’s how the site keeps the widget in sync with its toggle. A theme change never
+  resets the conversation; a branding change (name/accent/services/…) re-greets.
 - Public API:
 
   ```js
   window.SymbioWidget.open();
   window.SymbioWidget.close();
   window.SymbioWidget.toggle();
-  window.SymbioWidget.configure({ businessName, accent, services /* … */ }); // live re-brand
+  window.SymbioWidget.configure({ businessName, accent, services, theme /* … */ }); // live update
   ```
 
 > The minified build is produced with `npm run minify:widget`. The full-page demo at

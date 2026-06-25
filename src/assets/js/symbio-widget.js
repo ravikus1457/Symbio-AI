@@ -65,6 +65,7 @@
       return null;
     };
     const user = window.SymbioConfig || {};
+    const theme = (attr("theme") || user.theme || "auto").toLowerCase();
     return {
       businessName: attr("business-name") || user.businessName || "Our Business",
       accent: attr("accent") || user.accent || "#1f6bff",
@@ -76,6 +77,8 @@
       price: attr("price") || user.price || "",
       position:
         (attr("position") || user.position || "right").toLowerCase() === "left" ? "left" : "right",
+      // "auto" follows the visitor's OS; "light" / "dark" force the widget theme.
+      theme: theme === "light" || theme === "dark" ? theme : "auto",
       greeting: attr("greeting") || user.greeting || "",
       leadEndpoint: attr("lead-endpoint") || user.leadEndpoint || "",
       aiEndpoint: attr("ai-endpoint") || user.aiEndpoint || "",
@@ -145,8 +148,17 @@
         line-height: 1.5;
         color: var(--text);
       }
+      /* Dark tokens: forced via data-theme="dark", or the OS preference when "auto". */
+      .root[data-theme="dark"] {
+        --bg: #131a27;
+        --bg-2: #1b2433;
+        --text: #eef2fb;
+        --muted: #a3afc6;
+        --border: rgba(255,255,255,0.12);
+        --shadow: 0 24px 60px -18px rgba(0,0,0,0.7);
+      }
       @media (prefers-color-scheme: dark) {
-        .root {
+        .root[data-theme="auto"] {
           --bg: #131a27;
           --bg-2: #1b2433;
           --text: #eef2fb;
@@ -292,7 +304,7 @@
   function template() {
     const initial = (cfg.businessName || "S").trim().charAt(0).toUpperCase();
     return `
-      <div class="root">
+      <div class="root" data-theme="${cfg.theme}">
         <button class="launcher" type="button" part="launcher" aria-label="Open chat with ${escapeHtml(
           cfg.businessName
         )}">
@@ -624,8 +636,21 @@
   }
 
   /* ---- Reconfigure at runtime (used by the demo's presets) ------------ */
+  // Branding fields whose change warrants a fresh greeting; theme is cosmetic.
+  const BRANDING_KEYS = [
+    "businessName",
+    "accent",
+    "services",
+    "hours",
+    "location",
+    "phone",
+    "price",
+    "greeting",
+  ];
+
   function configure(partial) {
     if (!partial) return;
+    const brandingChanged = BRANDING_KEYS.some((key) => key in partial);
     Object.keys(partial).forEach((key) => {
       if (key === "services") {
         if (Array.isArray(partial.services)) cfg.services = partial.services.slice();
@@ -635,14 +660,17 @@
     });
     if (!mounted) return;
     el.root.style.setProperty("--sa", cfg.accent);
+    el.root.setAttribute("data-theme", cfg.theme);
     if (el.name) el.name.textContent = cfg.businessName;
-    // Reset the conversation so the new brand greets fresh.
-    history.length = 0;
-    lead = { step: null, name: "", contact: "", detail: "" };
-    el.messages.innerHTML = "";
-    if (isOpen) {
-      addMessage("bot", defaultGreeting());
-      setChips(defaultChips());
+    // Only reset the conversation when the brand changed — not for a theme switch.
+    if (brandingChanged) {
+      history.length = 0;
+      lead = { step: null, name: "", contact: "", detail: "" };
+      el.messages.innerHTML = "";
+      if (isOpen) {
+        addMessage("bot", defaultGreeting());
+        setChips(defaultChips());
+      }
     }
   }
 

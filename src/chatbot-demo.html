@@ -475,6 +475,7 @@
             return null;
           };
           const user = window.SymbioConfig || {};
+          const theme = (attr("theme") || user.theme || "auto").toLowerCase();
           return {
             businessName: attr("business-name") || user.businessName || "Our Business",
             accent: attr("accent") || user.accent || "#1f6bff",
@@ -486,6 +487,7 @@
             price: attr("price") || user.price || "",
             position:
               (attr("position") || user.position || "right").toLowerCase() === "left" ? "left" : "right",
+            theme: theme === "light" || theme === "dark" ? theme : "auto",
             greeting: attr("greeting") || user.greeting || "",
             leadEndpoint: attr("lead-endpoint") || user.leadEndpoint || "",
             aiEndpoint: attr("ai-endpoint") || user.aiEndpoint || "",
@@ -533,7 +535,9 @@
               position:fixed; bottom:20px; ${cfg.position}:20px; z-index:2147483000;
               font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
               font-size:15px; line-height:1.5; color:var(--text); }
-            @media (prefers-color-scheme: dark) { .root { --bg:#131a27; --bg-2:#1b2433; --text:#eef2fb;
+            .root[data-theme="dark"] { --bg:#131a27; --bg-2:#1b2433; --text:#eef2fb;
+              --muted:#a3afc6; --border:rgba(255,255,255,0.12); --shadow:0 24px 60px -18px rgba(0,0,0,0.7); }
+            @media (prefers-color-scheme: dark) { .root[data-theme="auto"] { --bg:#131a27; --bg-2:#1b2433; --text:#eef2fb;
               --muted:#a3afc6; --border:rgba(255,255,255,0.12); --shadow:0 24px 60px -18px rgba(0,0,0,0.7); } }
             .launcher { appearance:none; border:0; cursor:pointer; width:60px; height:60px; border-radius:50%;
               background:var(--sa); background:linear-gradient(135deg,var(--sa),color-mix(in srgb,var(--sa),#000 16%));
@@ -590,7 +594,7 @@
         function template() {
           const initial = (cfg.businessName || "S").trim().charAt(0).toUpperCase();
           return `
-            <div class="root">
+            <div class="root" data-theme="${cfg.theme}">
               <button class="launcher" type="button" aria-label="Open chat with ${escapeHtml(cfg.businessName)}">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7a8.5 8.5 0 0 1-.9-3.8 8.38 8.38 0 0 1 8.5-8.5 8.38 8.38 0 0 1 8.5 8.5Z"/>
@@ -796,19 +800,24 @@
         }
         function togglePanel() { if (isOpen) closePanel(); else openPanel(); }
 
+        const BRANDING_KEYS = ["businessName", "accent", "services", "hours", "location", "phone", "price", "greeting"];
         function configure(partial) {
           if (!partial) return;
+          const brandingChanged = BRANDING_KEYS.some((key) => key in partial);
           Object.keys(partial).forEach((key) => {
             if (key === "services") { if (Array.isArray(partial.services)) cfg.services = partial.services.slice(); }
             else if (partial[key] !== undefined) cfg[key] = partial[key];
           });
           if (!mounted) return;
           el.root.style.setProperty("--sa", cfg.accent);
+          el.root.setAttribute("data-theme", cfg.theme);
           if (el.name) el.name.textContent = cfg.businessName;
-          history.length = 0;
-          lead = { step: null, name: "", contact: "", detail: "" };
-          el.messages.innerHTML = "";
-          if (isOpen) { addMessage("bot", defaultGreeting()); setChips(defaultChips()); }
+          if (brandingChanged) {
+            history.length = 0;
+            lead = { step: null, name: "", contact: "", detail: "" };
+            el.messages.innerHTML = "";
+            if (isOpen) { addMessage("bot", defaultGreeting()); setChips(defaultChips()); }
+          }
         }
 
         function mount() {

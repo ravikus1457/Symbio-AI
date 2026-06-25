@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+
+    <title>{% if title %}{{ title }} · {{ site.name }}{% else %}{{ site.name }} — {{ site.tagline }}{% endif %}</title>
+    <meta name="description" content="{{ description or site.description }}" />
+
+    <link rel="icon" href="assets/img/logo-symbio.svg" type="image/svg+xml" />
+
+    {# Open Graph / social #}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="{{ site.name }}" />
+    <meta property="og:title" content="{% if title %}{{ title }} · {{ site.name }}{% else %}{{ site.name }}{% endif %}" />
+    <meta property="og:description" content="{{ description or site.description }}" />
+    <meta name="twitter:card" content="summary" />
+
+    {# Runs before first paint. Sets the theme (localStorage wins, else the OS
+       preference governs via CSS) and flags `.js` so reveal-on-scroll content
+       starts hidden without a flash. A safety net unhides it if main.js never
+       loads, so the page is never left with invisible content. #}
+    <script>
+      (function () {
+        var d = document.documentElement;
+        d.classList.add("js");
+        try {
+          var t = localStorage.getItem("symbio-theme");
+          if (t === "light" || t === "dark") {
+            d.setAttribute("data-theme", t);
+          }
+        } catch (e) {
+          /* localStorage may be unavailable; fall back to CSS media query. */
+        }
+        window.addEventListener("load", function () {
+          window.setTimeout(function () {
+            if (!window.__symbioReady) d.classList.remove("js");
+          }, 1500);
+        });
+      })();
+    </script>
+
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <script src="assets/js/main.js" defer></script>
+  </head>
+  <body class="page page--{{ pageKey or 'default' }}">
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    {% include "nav.njk" %}
+
+    <main id="main" class="site-main">
+      {{ content | safe }}
+    </main>
+
+    {% include "footer.njk" %}
+
+    {# The embeddable assistant, loaded the way a customer would (one tag) and
+       configured for Symbio itself. It stays a standalone file (not bundled into
+       main.js); main.js bridges its leads to the scan endpoint and keeps its
+       theme in sync with the site toggle. #}
+    <script>
+      window.SymbioConfig = {
+        businessName: {{ site.name | dump | safe }},
+        accent: "#1f6bff",
+        services: ["Websites & landing pages", "Booking & lead systems", "AI agents & automation"],
+        hours: "Mon–Fri, 9am–6pm PT",
+        location: "Online — we build remote",
+        phone: {{ site.founders[0].phone | dump | safe }},
+        price: "with a free scan first",
+        position: "right",
+        theme: "auto",
+        greeting:
+          "Hi! 👋 I'm Symbio's assistant. Want a free scan of your site, or a question about what we build?",
+      };
+    </script>
+    <script src="assets/js/symbio-widget.js" defer></script>
+  </body>
+</html>

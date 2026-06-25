@@ -1,0 +1,119 @@
+---
+layout: base.njk
+pageKey: reviews
+title: Reviews
+permalink: reviews.html
+description: Proof, not fluff. No fabricated testimonials — a live demo you can try, a public GitHub record, and a free scan. Real, attributed case studies are coming.
+---
+
+{# ===== Page head ====================================================== #}
+<section class="section section--tight">
+  <div class="container container--narrow center">
+    <span class="eyebrow eyebrow--center">Reviews</span>
+    <h1 class="section__title">Proof, not fluff.</h1>
+    <p class="section__lead">
+      We won’t paste fake five-star quotes. Instead, here’s proof you can verify yourself —
+      and honest notes on what early users actually tell us.
+    </p>
+  </div>
+</section>
+
+{# ===== Verifiable proof ============================================== #}
+<section class="section section--tight">
+  <div class="container">
+    <div class="grid grid--3">
+      <article class="proof" data-reveal>
+        <span class="proof__label">Try it live</span>
+        <h2 class="proof__title">The live demo</h2>
+        <p class="proof__text">
+          Don’t take our word for it — talk to the AI assistant yourself and watch it capture a
+          lead in real time.
+        </p>
+        <div class="btn-row mt-6">
+          <a class="btn btn--primary btn--sm" href="{{ site.links.demo }}">Open the demo</a>
+        </div>
+      </article>
+
+      <article class="proof" data-reveal data-reveal-delay="1">
+        <span class="proof__label">Check the code</span>
+        <h2 class="proof__title">The GitHub record</h2>
+        <p class="proof__text">
+          Our technical portfolio is public. Read how we build — it’s the most honest review
+          there is.
+        </p>
+        <div class="btn-row mt-6">
+          <a class="btn btn--secondary btn--sm" href="{{ site.links.portfolio }}" target="_blank" rel="noopener">
+            View on GitHub
+          </a>
+        </div>
+      </article>
+
+      <article class="proof" data-reveal data-reveal-delay="2">
+        <span class="proof__label">Test us free</span>
+        <h2 class="proof__title">The free scan</h2>
+        <p class="proof__text">
+          The lowest-risk way to judge us: send your link and see the quality of what we send
+          back. No cost, no commitment.
+        </p>
+        <div class="btn-row mt-6">
+          <a class="btn btn--secondary btn--sm" href="{{ site.cta.url }}">Get a free scan</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+{# ===== What people notice (clearly paraphrased) ====================== #}
+<section class="section section--tint">
+  <div class="container">
+    <div class="section__head" data-reveal>
+      <span class="eyebrow">What people notice</span>
+      <h2 class="section__title">Paraphrased themes — not attributed quotes</h2>
+      <p class="section__lead">
+        These are common reactions from early demos and pilots, written in our words. They are
+        <strong>not</strong> direct quotes and aren’t attributed to anyone — because they aren’t
+        verified testimonials yet.
+      </p>
+    </div>
+
+    <div class="grid grid--3">
+      <div class="note-card" data-reveal>
+        <span class="note-card__tag">Paraphrased</span>
+        <p>The replies feel instant — leads get an answer before they lose interest.</p>
+      </div>
+      <div class="note-card" data-reveal data-reveal-delay="1">
+        <span class="note-card__tag">Paraphrased</span>
+        <p>Booking finally feels simple, on the phone as much as on a laptop.</p>
+      </div>
+      <div class="note-card" data-reveal data-reveal-delay="2">
+        <span class="note-card__tag">Paraphrased</span>
+        <p>The site just looks legit, which makes people trust the business more.</p>
+      </div>
+    </div>
+
+    <div class="note-card mt-7" data-reveal>
+      <span class="note-card__tag">Coming soon</span>
+      <p>
+        Real, attributed case studies are coming as our first pilots wrap. When they’re real,
+        they’ll be here — with names and numbers. Until then, the demo, the code, and the free
+        scan are the proof.
+      </p>
+    </div>
+  </div>
+</section>
+
+{# ===== Closing CTA =================================================== #}
+<section class="section">
+  <div class="container">
+    <div class="cta-band" data-reveal>
+      <h2 class="cta-band__title">Judge us by what we send back</h2>
+      <p class="cta-band__text">
+        The free scan is the real review. Send your link and see for yourself.
+      </p>
+      <div class="btn-row btn-row--center">
+        <a class="btn btn--light btn--lg" href="{{ site.cta.url }}">Get my free scan</a>
+        <a class="btn btn--secondary btn--lg" href="{{ site.links.demo }}">Try the live demo</a>
+      </div>
+    </div>
+  </div>
+</section>

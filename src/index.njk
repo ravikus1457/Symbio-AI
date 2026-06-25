@@ -1,0 +1,230 @@
+---
+layout: base.njk
+pageKey: home
+description: Symbio AI builds websites, booking & lead systems, and AI agents that catch and convert leads in real time. Start with a free scan — no commitment.
+---
+
+{# ===== Living hero ===================================================== #}
+<section class="hero">
+  <div class="hero__aurora" aria-hidden="true"></div>
+  <div class="container">
+    <div class="hero__grid">
+      <div class="hero__content">
+        <span class="hero__pill">
+          <span class="hero__pill-dot" aria-hidden="true"></span>
+          Live lead capture, working while you sleep
+        </span>
+
+        <h1 class="hero__title">
+          Turn visitors into
+          <span
+            class="hero__rotator"
+            data-rotator
+            data-words="booked leads,booked calls,new clients,real revenue"
+          >
+            <span class="hero__rotator-word">booked leads</span></span
+          >.
+        </h1>
+
+        <p class="hero__lead">
+          We design the site, wire up the booking and lead capture, and add AI agents that
+          reply in seconds — so the leads you already pay for actually turn into revenue.
+        </p>
+
+        <div class="hero__cta btn-row">
+          <a class="btn btn--primary btn--lg" href="{{ site.cta.url }}">Get my free scan</a>
+          <a class="btn btn--ghost btn--lg" href="{{ site.links.demo }}">See the live demo</a>
+        </div>
+
+        <p class="hero__note">
+          No commitment. We scan your site and reply with what’s leaking — and what we’d fix
+          first.
+        </p>
+      </div>
+
+      {# Live "lead inbox". main.js animates it; these items are the static
+         fallback for no-JS and reduced-motion. #}
+      <aside class="lead-inbox" aria-label="Example live lead inbox">
+        <div class="lead-inbox__bar">
+          <span class="lead-inbox__title">
+            <span class="lead-inbox__live" aria-hidden="true"></span>
+            Lead inbox
+          </span>
+          <span class="lead-inbox__count">
+            <strong data-inbox-count>27</strong> today
+          </span>
+        </div>
+
+        <ul class="lead-inbox__list" data-inbox>
+          <li class="lead">
+            <span class="lead__avatar" aria-hidden="true">JM</span>
+            <span class="lead__body">
+              <span class="lead__name">Jordan M.</span>
+              <span class="lead__msg">Do you take new patients this week?</span>
+            </span>
+            <span class="badge badge--booked">Booked</span>
+          </li>
+          <li class="lead">
+            <span class="lead__avatar" aria-hidden="true">SR</span>
+            <span class="lead__body">
+              <span class="lead__name">Sarah R.</span>
+              <span class="lead__msg">Can I get a quote for a kitchen remodel?</span>
+            </span>
+            <span class="badge badge--replied">Replied</span>
+          </li>
+          <li class="lead">
+            <span class="lead__avatar" aria-hidden="true">AT</span>
+            <span class="lead__body">
+              <span class="lead__name">Alex T.</span>
+              <span class="lead__msg">Are you open this Saturday?</span>
+            </span>
+            <span class="badge badge--booked">Booked</span>
+          </li>
+        </ul>
+      </aside>
+    </div>
+  </div>
+</section>
+
+{# ===== How it works (Scan → Map → Build → Polish) ===================== #}
+<section class="section section--tint">
+  <div class="container">
+    <div class="section__head section__head--center" data-reveal>
+      <span class="eyebrow eyebrow--center">How it works</span>
+      <h2 class="section__title">From “it’s losing leads” to “it’s closing them”</h2>
+      <p class="section__lead">
+        A simple, honest process. We start by looking — for free — before anyone talks money.
+      </p>
+    </div>
+
+    <ol class="grid grid--4">
+      <li class="step" data-reveal>
+        <span class="step__num">1</span>
+        <h3 class="step__title">Scan</h3>
+        <p class="step__text">
+          We review your site and funnel and tell you exactly where leads leak.
+        </p>
+      </li>
+      <li class="step" data-reveal data-reveal-delay="1">
+        <span class="step__num">2</span>
+        <h3 class="step__title">Map</h3>
+        <p class="step__text">We map the smallest set of fixes that move revenue the most.</p>
+      </li>
+      <li class="step" data-reveal data-reveal-delay="2">
+        <span class="step__num">3</span>
+        <h3 class="step__title">Build</h3>
+        <p class="step__text">
+          We build the site, booking, and AI agents — fast, and to spec.
+        </p>
+      </li>
+      <li class="step" data-reveal data-reveal-delay="3">
+        <span class="step__num">4</span>
+        <h3 class="step__title">Polish</h3>
+        <p class="step__text">We tune copy, speed, and follow-ups until it converts.</p>
+      </li>
+    </ol>
+
+    <div class="btn-row btn-row--center mt-6" data-reveal>
+      <a class="btn btn--secondary" href="about.html">See our vision &amp; process</a>
+    </div>
+  </div>
+</section>
+
+{# ===== What we build (services teaser) ================================ #}
+<section class="section">
+  <div class="container">
+    <div class="section__head" data-reveal>
+      <span class="eyebrow">What we build</span>
+      <h2 class="section__title">Everything that turns a click into a customer</h2>
+    </div>
+
+    <div class="grid grid--3">
+      <article class="card card--link" data-reveal>
+        <span class="card__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect x="3" y="4" width="18" height="14" rx="2" />
+            <path d="M3 8h18M7 12h6" stroke-linecap="round" />
+          </svg>
+        </span>
+        <h3 class="card__title">Websites &amp; landing pages</h3>
+        <p class="card__text">
+          Fast, modern sites built to convert — clear message, strong CTAs, mobile-first.
+        </p>
+        <a class="card__link" href="services.html">Explore websites</a>
+      </article>
+
+      <article class="card card--link" data-reveal data-reveal-delay="1">
+        <span class="card__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect x="3" y="5" width="18" height="16" rx="2" />
+            <path d="M3 9h18M8 3v4M16 3v4M9 14l2 2 4-4" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </span>
+        <h3 class="card__title">Booking &amp; lead systems</h3>
+        <p class="card__text">
+          Capture every enquiry and turn it into a booking, automatically, around the clock.
+        </p>
+        <a class="card__link" href="services.html">Explore booking</a>
+      </article>
+
+      <article class="card card--link" data-reveal data-reveal-delay="2">
+        <span class="card__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect x="4" y="7" width="16" height="12" rx="3" />
+            <path d="M12 7V4M9 13h.01M15 13h.01" stroke-linecap="round" />
+          </svg>
+        </span>
+        <h3 class="card__title">AI agents &amp; automation</h3>
+        <p class="card__text">
+          Assistants that answer instantly, qualify leads, and book — then hand off to you.
+        </p>
+        <a class="card__link" href="services.html">Explore AI agents</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+{# ===== Explore teasers (link to every page) ========================== #}
+<section class="section section--tint">
+  <div class="container">
+    <div class="grid grid--4">
+      <a class="card card--link" href="pricing.html" data-reveal>
+        <h3 class="card__title">Honest pricing</h3>
+        <p class="card__text">Three clear tiers. A free scan first, a real number second.</p>
+        <span class="card__link">See pricing</span>
+      </a>
+      <a class="card card--link" href="portfolio.html" data-reveal data-reveal-delay="1">
+        <h3 class="card__title">What we’ve shipped</h3>
+        <p class="card__text">Dashboards, a white-label assistant, and live client pilots.</p>
+        <span class="card__link">See the work</span>
+      </a>
+      <a class="card card--link" href="reviews.html" data-reveal data-reveal-delay="2">
+        <h3 class="card__title">Proof, not fluff</h3>
+        <p class="card__text">No fake testimonials — a live demo, a GitHub record, a free scan.</p>
+        <span class="card__link">See the proof</span>
+      </a>
+      <a class="card card--link" href="about.html" data-reveal data-reveal-delay="3">
+        <h3 class="card__title">Who builds it</h3>
+        <p class="card__text">Two founders, reachable directly. If you can explain it, we can build it.</p>
+        <span class="card__link">Meet the team</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+{# ===== Closing CTA ==================================================== #}
+<section class="section">
+  <div class="container">
+    <div class="cta-band" data-reveal>
+      <h2 class="cta-band__title">See what your site is leaking — free</h2>
+      <p class="cta-band__text">
+        Send us your link. We’ll reply with the leaks we spot and the first fix we’d make. No
+        commitment, no pressure.
+      </p>
+      <div class="btn-row btn-row--center">
+        <a class="btn btn--light btn--lg" href="{{ site.cta.url }}">Get my free scan</a>
+        <a class="btn btn--secondary btn--lg" href="{{ site.links.demo }}">Try the live demo</a>
+      </div>
+    </div>
+  </div>
+</section>

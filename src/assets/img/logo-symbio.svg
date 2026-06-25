@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Symbio AI">
+  <defs>
+    <linearGradient id="symbioGrad" x1="6" y1="14" x2="58" y2="50" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1f6bff" />
+      <stop offset="1" stop-color="#28c8ff" />
+    </linearGradient>
+  </defs>
+  <g fill="none" stroke="url(#symbioGrad)" stroke-width="6" stroke-linecap="round">
+    <rect x="7" y="19" width="32" height="26" rx="13" />
+    <rect x="25" y="19" width="32" height="26" rx="13" />
+  </g>
+  <circle cx="32" cy="32" r="6" fill="url(#symbioGrad)" />
+</svg>

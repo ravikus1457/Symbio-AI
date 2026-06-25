@@ -475,6 +475,30 @@
     });
   }
 
+  /* ---- 9. Card motion: 3D tilt + cursor spotlight --------------------- */
+  function initCardMotion() {
+    if (prefersReducedMotion()) return;
+    // Pointer tilt only makes sense with a precise, hovering pointer.
+    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+
+    const MAX_TILT = 6; // degrees
+    document.querySelectorAll(".grid .card").forEach((card) => {
+      card.addEventListener("pointermove", (event) => {
+        const rect = card.getBoundingClientRect();
+        const px = (event.clientX - rect.left) / rect.width; // 0..1
+        const py = (event.clientY - rect.top) / rect.height; // 0..1
+        card.style.setProperty("--mx", (px * 100).toFixed(1) + "%");
+        card.style.setProperty("--my", (py * 100).toFixed(1) + "%");
+        card.style.setProperty("--ry", ((px - 0.5) * 2 * MAX_TILT).toFixed(2) + "deg");
+        card.style.setProperty("--rx", (-(py - 0.5) * 2 * MAX_TILT).toFixed(2) + "deg");
+      });
+      card.addEventListener("pointerleave", () => {
+        card.style.setProperty("--rx", "0deg");
+        card.style.setProperty("--ry", "0deg");
+      });
+    });
+  }
+
   /* ---- Init ------------------------------------------------------------ */
   function init() {
     initTheme();
@@ -484,6 +508,7 @@
     initInbox();
     initScanForm();
     initWidgetLeadBridge();
+    initCardMotion();
     // Tell the pre-paint safety net that we ran, so it won't unhide reveals.
     window.__symbioReady = true;
   }

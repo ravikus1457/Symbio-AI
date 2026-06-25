@@ -4,7 +4,7 @@
     "color-function-notation": "legacy",
     "property-no-vendor-prefix": [
       true,
-      { "ignoreProperties": ["background-clip", "text-size-adjust"] }
+      { "ignoreProperties": ["background-clip", "text-size-adjust", "mask", "mask-composite"] }
     ],
     "alpha-value-notation": "number",
     "media-feature-range-notation": "prefix",

@@ -1139,6 +1139,7 @@ ol {
   color: var(--c-accent);
   background: var(--c-accent-soft);
   transition: transform var(--dur) var(--ease);
+  animation: float-soft 5s ease-in-out infinite;
 }
 
 .card__icon svg {
@@ -1661,6 +1662,7 @@ ol {
 
 /* Premium, tinted card for the custom-apps lane. */
 .card--feature {
+  position: relative;
   background-image: var(--grad-soft);
   border-color: var(--c-accent);
   box-shadow: var(--shadow-md);
@@ -1793,11 +1795,11 @@ ol {
 .aurora::after {
   content: "";
   position: absolute;
-  width: min(62vw, 620px);
+  width: min(72vw, 760px);
   aspect-ratio: 1;
   border-radius: 50%;
-  filter: blur(90px);
-  opacity: 0.26;
+  filter: blur(80px);
+  opacity: 0.5;
 }
 
 .aurora::before {
@@ -1816,10 +1818,10 @@ ol {
 
 [data-theme="dark"] .aurora::before,
 [data-theme="dark"] .aurora::after {
-  opacity: 0.2;
+  opacity: 0.4;
 }
 
-/* Lift surfaces on hover so the page feels responsive, like the home cards. */
+/* Lift non-tilting surfaces on hover. */
 .price,
 .proof,
 .step,
@@ -1831,7 +1833,6 @@ ol {
     border-color var(--dur) var(--ease);
 }
 
-.grid .card:hover,
 .price:hover,
 .proof:hover,
 .step:hover,
@@ -1842,8 +1843,109 @@ ol {
   border-color: var(--c-border-strong);
 }
 
-.grid .card:hover .card__icon {
-  transform: translateY(-2px) scale(1.06);
+/* Smoothly animatable angle for the rotating glow borders. */
+@property --spin-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes gradient-flow {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes spin-angle {
+  to {
+    --spin-angle: 360deg;
+  }
+}
+
+@keyframes float-soft {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+/* Gradient text flows continuously for a living shimmer. */
+.gradient-text,
+.hero__rotator-word,
+.price-anchor__amount {
+  background-size: 220% 220%;
+  animation: gradient-flow 8s ease-in-out infinite;
+}
+
+/* Card icons gently float; staggered so a grid shimmers with life. */
+.grid .card:nth-child(3n + 2) .card__icon {
+  animation-delay: -1.6s;
+}
+
+.grid .card:nth-child(3n + 3) .card__icon {
+  animation-delay: -3.2s;
+}
+
+/* Grid cards: a cursor-following spotlight (tilt is added after the reveal
+   rules so it can override .is-visible). main.js feeds --mx/--my/--rx/--ry. */
+.grid .card {
+  --mx: 50%;
+  --my: 50%;
+  --rx: 0deg;
+  --ry: 0deg;
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+.grid .card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    240px circle at var(--mx) var(--my),
+    rgba(122, 77, 255, 0.22),
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity 0.3s var(--ease);
+  pointer-events: none;
+}
+
+.grid .card:hover::after {
+  opacity: 1;
+}
+
+/* Living, rotating gradient-glow border on the premium custom-apps card. */
+.card--feature::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(
+    from var(--spin-angle),
+    transparent 45%,
+    #2f6bff 72%,
+    #7a4dff 86%,
+    transparent
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: spin-angle 6s linear infinite;
+  pointer-events: none;
 }
 
 /* Cascade the auto-fit card menus in as they scroll into view. */
@@ -1885,6 +1987,15 @@ ol {
 
 [data-reveal-delay="3"] {
   transition-delay: 0.24s;
+}
+
+/* Hover tilt for grid cards — defined after the reveal rules so it overrides
+   .is-visible's transform: none. main.js feeds --rx/--ry on pointer move. */
+.grid .card:hover {
+  transform: perspective(900px) rotateX(var(--rx)) rotateY(var(--ry)) translateY(-6px);
+  transition: transform 0.1s ease;
+  box-shadow: var(--shadow-lg);
+  border-color: var(--c-border-strong);
 }
 
 /* -------------------------------------------------------------------------

@@ -1115,6 +1115,7 @@ ol {
   border-radius: var(--radius);
   color: var(--c-accent);
   background: var(--c-accent-soft);
+  transition: transform var(--dur) var(--ease);
 }
 
 .card__icon svg {
@@ -1741,6 +1742,98 @@ ol {
 .price-anchor__note {
   font-size: var(--fs-200);
   color: var(--c-text-faint);
+}
+
+/* --- Motion & aliveness (echoes the home page) --- */
+
+/* Generic aurora backdrop, reusing the hero's drift keyframes, for any
+   section marked .has-aurora. Sits behind the container content. */
+.has-aurora {
+  position: relative;
+  isolation: isolate;
+}
+
+.has-aurora > .container {
+  position: relative;
+  z-index: 1;
+}
+
+.aurora {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.aurora::before,
+.aurora::after {
+  content: "";
+  position: absolute;
+  width: min(62vw, 620px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.26;
+}
+
+.aurora::before {
+  top: -32%;
+  left: -6%;
+  background: radial-gradient(circle at center, #1f6bff, transparent 62%);
+  animation: aurora-drift-a 21s ease-in-out infinite alternate;
+}
+
+.aurora::after {
+  right: -6%;
+  bottom: -36%;
+  background: radial-gradient(circle at center, #28c8ff, transparent 62%);
+  animation: aurora-drift-b 25s ease-in-out infinite alternate;
+}
+
+[data-theme="dark"] .aurora::before,
+[data-theme="dark"] .aurora::after {
+  opacity: 0.2;
+}
+
+/* Lift surfaces on hover so the page feels responsive, like the home cards. */
+.price,
+.proof,
+.step,
+.founder,
+.price-anchor {
+  transition:
+    transform var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease),
+    border-color var(--dur) var(--ease);
+}
+
+.grid .card:hover,
+.price:hover,
+.proof:hover,
+.step:hover,
+.founder:hover,
+.price-anchor:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--c-border-strong);
+}
+
+.grid .card:hover .card__icon {
+  transform: translateY(-2px) scale(1.06);
+}
+
+/* Cascade the auto-fit card menus in as they scroll into view. */
+.grid--auto > [data-reveal]:nth-child(4n + 2) {
+  transition-delay: 0.07s;
+}
+
+.grid--auto > [data-reveal]:nth-child(4n + 3) {
+  transition-delay: 0.14s;
+}
+
+.grid--auto > [data-reveal]:nth-child(4n + 4) {
+  transition-delay: 0.21s;
 }
 
 /* -------------------------------------------------------------------------

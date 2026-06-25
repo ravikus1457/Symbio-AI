@@ -15,6 +15,7 @@
     <meta property="og:site_name" content="{{ site.name }}" />
     <meta property="og:title" content="{% if title %}{{ title }} · {{ site.name }}{% else %}{{ site.name }}{% endif %}" />
     <meta property="og:description" content="{{ description or site.description }}" />
+    <meta property="og:image" content="assets/img/logo-symbio-color.svg" />
     <meta name="twitter:card" content="summary" />
 
     {# Runs before first paint. Sets the theme (localStorage wins, else the OS
@@ -62,7 +63,7 @@
     <script>
       window.SymbioConfig = {
         businessName: {{ site.name | dump | safe }},
-        accent: "#1f6bff",
+        accent: "#2f6bff",
         services: ["Websites & landing pages", "Booking & lead systems", "AI agents & automation"],
         hours: "Mon–Fri, 9am–6pm PT",
         location: "Online — we build remote",

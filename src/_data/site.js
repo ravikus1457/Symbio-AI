@@ -7,8 +7,15 @@ export default {
   name: "Symbio AI",
   shortName: "Symbio",
   tagline: "We catch and convert leads in real time.",
+  // Broader positioning — used as the hero subhead and where we describe the
+  // full offer (websites + apps + systems), not just lead capture.
+  positioning:
+    "We build websites, apps, and smart business systems that turn attention into leads, bookings, and saved hours.",
   description:
-    "Symbio AI builds websites, booking & lead systems, and AI agents that catch and convert leads in real time. Start with a free scan.",
+    "Symbio AI builds websites, custom apps, AI agents, and booking & lead systems for local businesses, nonprofits, schools, and creators. Start with a free scan.",
+
+  // Who we build for — shown as a small "who we help" strip.
+  whoWeHelp: ["Local businesses", "Nonprofits", "Schools", "Creators", "Small teams"],
 
   // Primary navigation (the marketing pages). The free scan is a CTA, below.
   nav: [

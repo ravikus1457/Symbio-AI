@@ -1,7 +1,7 @@
 ---
 layout: base.njk
 pageKey: home
-description: Symbio AI builds websites, booking & lead systems, and AI agents that catch and convert leads in real time. Start with a free scan — no commitment.
+description: Symbio AI builds websites, custom apps, AI agents, and booking & lead systems for local businesses, nonprofits, schools, and creators. Start with a free scan — no commitment.
 ---
 
 {# ===== Living hero ===================================================== #}
@@ -27,8 +27,8 @@ description: Symbio AI builds websites, booking & lead systems, and AI agents th
         </h1>
 
         <p class="hero__lead">
-          We design the site, wire up the booking and lead capture, and add AI agents that
-          reply in seconds — so the leads you already pay for actually turn into revenue.
+          {{ site.positioning }} Built around how you actually work, with human-approved
+          automation — so you stay in control.
         </p>
 
         <div class="hero__cta btn-row">
@@ -86,6 +86,35 @@ description: Symbio AI builds websites, booking & lead systems, and AI agents th
   </div>
 </section>
 
+{# ===== Who we help (slim strip) ====================================== #}
+<section class="section section--tight">
+  <div class="container">
+    <p class="audience" data-reveal>
+      <span class="audience__label">Built for</span>
+      {% for who in site.whoWeHelp %}
+        <span class="chip">{{ who }}</span>
+      {% endfor %}
+    </p>
+  </div>
+</section>
+
+{# ===== Websites are only the beginning =============================== #}
+<section class="section">
+  <div class="container container--narrow center">
+    <span class="eyebrow eyebrow--center" data-reveal>More than a website</span>
+    <h2 class="section__title" data-reveal>Websites are only the beginning</h2>
+    <p class="section__lead" data-reveal>
+      Some businesses need more than a site. We build custom apps, dashboards, booking systems,
+      client portals, and smart workflows that help you <em>run</em> the business — not just
+      advertise it.
+    </p>
+    <div class="btn-row btn-row--center mt-6" data-reveal>
+      <a class="btn btn--primary" href="services.html">See what we can build</a>
+      <a class="btn btn--ghost" href="{{ site.cta.url }}">Start with a free scan</a>
+    </div>
+  </div>
+</section>
+
 {# ===== How it works (Scan → Map → Build → Polish) ===================== #}
 <section class="section section--tint">
   <div class="container">
@@ -135,7 +164,7 @@ description: Symbio AI builds websites, booking & lead systems, and AI agents th
   <div class="container">
     <div class="section__head" data-reveal>
       <span class="eyebrow">What we build</span>
-      <h2 class="section__title">Everything that turns a click into a customer</h2>
+      <h2 class="section__title">Websites, apps, and the systems that run on them</h2>
     </div>
 
     <div class="grid grid--3">
@@ -146,9 +175,10 @@ description: Symbio AI builds websites, booking & lead systems, and AI agents th
             <path d="M3 8h18M7 12h6" stroke-linecap="round" />
           </svg>
         </span>
-        <h3 class="card__title">Websites &amp; landing pages</h3>
+        <h3 class="card__title">Websites &amp; redesigns</h3>
         <p class="card__text">
-          Fast, modern sites built to convert — clear message, strong CTAs, mobile-first.
+          Fast, modern sites that earn trust and turn clicks into customers — mobile-first and
+          built to convert.
         </p>
         <a class="card__link" href="services.html">Explore websites</a>
       </article>
@@ -156,15 +186,16 @@ description: Symbio AI builds websites, booking & lead systems, and AI agents th
       <article class="card card--link" data-reveal data-reveal-delay="1">
         <span class="card__icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-            <rect x="3" y="5" width="18" height="16" rx="2" />
-            <path d="M3 9h18M8 3v4M16 3v4M9 14l2 2 4-4" stroke-linecap="round" stroke-linejoin="round" />
+            <rect x="3" y="4" width="18" height="16" rx="2" />
+            <path d="M3 9h18M8 14h3v3H8zM14 14h3v3h-3z" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
         </span>
-        <h3 class="card__title">Booking &amp; lead systems</h3>
+        <h3 class="card__title">Custom apps &amp; dashboards</h3>
         <p class="card__text">
-          Capture every enquiry and turn it into a booking, automatically, around the clock.
+          Client portals, booking apps, internal dashboards, and staff tools — smart software
+          built around your workflow.
         </p>
-        <a class="card__link" href="services.html">Explore booking</a>
+        <a class="card__link" href="services.html">Explore custom apps</a>
       </article>
 
       <article class="card card--link" data-reveal data-reveal-delay="2">
@@ -176,10 +207,15 @@ description: Symbio AI builds websites, booking & lead systems, and AI agents th
         </span>
         <h3 class="card__title">AI agents &amp; automation</h3>
         <p class="card__text">
-          Assistants that answer instantly, qualify leads, and book — then hand off to you.
+          Smart tools that reply in seconds, qualify leads, and book — human-approved, so you
+          stay in control.
         </p>
         <a class="card__link" href="services.html">Explore AI agents</a>
       </article>
+    </div>
+
+    <div class="btn-row btn-row--center mt-6" data-reveal>
+      <a class="btn btn--secondary" href="services.html">See everything we can build</a>
     </div>
   </div>
 </section>
@@ -190,7 +226,7 @@ description: Symbio AI builds websites, booking & lead systems, and AI agents th
     <div class="grid grid--4">
       <a class="card card--link" href="pricing.html" data-reveal>
         <h3 class="card__title">Honest pricing</h3>
-        <p class="card__text">Three clear tiers. A free scan first, a real number second.</p>
+        <p class="card__text">Clear starting points by service — a free scan first, a real number second.</p>
         <span class="card__link">See pricing</span>
       </a>
       <a class="card card--link" href="portfolio.html" data-reveal data-reveal-delay="1">

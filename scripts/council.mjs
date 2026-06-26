@@ -36,6 +36,10 @@
  * (with a key set) to print the live list your account can use.
  */
 
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
+
 const OR_BASE = "https://openrouter.ai/api/v1";
 
 const DEFAULT_BRAINS = [
@@ -60,6 +64,38 @@ const yellow = (s) => c("33", s);
 function die(msg, code = 1) {
   process.stderr.write(red("✖ " + msg) + "\n");
   process.exit(code);
+}
+
+// ── .env loader (no dependency) ─────────────────────────────────────────────
+// Loads KEY=value lines from a .env file in the repo root / current dir so you
+// can paste your OpenRouter key once instead of exporting it every time.
+// Real environment variables always win over the file.
+function loadDotEnv() {
+  const here = dirname(fileURLToPath(import.meta.url));
+  const candidates = [
+    join(process.cwd(), ".env"),
+    join(here, "..", ".env"), // repo root when run as scripts/council.mjs
+  ];
+  for (const file of candidates) {
+    let text;
+    try {
+      text = readFileSync(file, "utf8");
+    } catch {
+      continue;
+    }
+    for (const raw of text.split("\n")) {
+      const line = raw.trim();
+      if (!line || line.startsWith("#")) continue;
+      const eq = line.indexOf("=");
+      if (eq < 0) continue;
+      const k = line.slice(0, eq).trim();
+      let v = line.slice(eq + 1).trim();
+      if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) {
+        v = v.slice(1, -1);
+      }
+      if (k && !(k in process.env)) process.env[k] = v;
+    }
+  }
 }
 
 // ── Arg parsing ────────────────────────────────────────────────────────────
@@ -228,10 +264,12 @@ async function main() {
     return;
   }
 
+  loadDotEnv();
   const key = process.env.OPENROUTER_API_KEY;
   if (!key) {
     die(
       "OPENROUTER_API_KEY is not set.\n" +
+        "  Easiest: copy .env.example to .env and paste your key there, or\n" +
         "  export OPENROUTER_API_KEY=sk-or-v1-...   (get one at https://openrouter.ai/keys)"
     );
   }

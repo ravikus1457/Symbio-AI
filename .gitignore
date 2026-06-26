@@ -1,6 +1,11 @@
 # Dependencies
 node_modules/
 
+# Secrets — your OpenRouter key (Brain Council). NEVER commit the real .env.
+.env
+.env.local
+.env.*.local
+
 # Build output
 dist/
 

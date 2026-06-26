@@ -75,6 +75,14 @@ directly from your browser, and the CLI from your machine.
 
 Node 18+ (uses built-in `fetch`, **no dependencies**).
 
+**Set your key once** — easiest is a `.env` file (gitignored, never committed):
+
+```bash
+cp .env.example .env        # then paste your key into .env
+```
+
+…or export it in your shell each session:
+
 ```bash
 export OPENROUTER_API_KEY=sk-or-v1-...
 

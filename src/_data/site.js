@@ -54,6 +54,9 @@ export default {
     portfolio: "https://mmajeed7864.github.io/",
     github: "https://mmajeed7864.github.io/",
     demo: "chatbot-demo.html",
+    // Internal multi-model "Brain Council" chat — runs in the browser on your
+    // own OpenRouter key (see BRAIN-COUNCIL.md).
+    council: "council.html",
   },
 
   footerCredit: "Built by Mohammed & Ravi.",

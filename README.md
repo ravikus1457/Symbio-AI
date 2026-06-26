@@ -51,6 +51,7 @@ src/
   reviews.njk           # Reviews — proof, not fluff (no fabricated testimonials)
   scan.njk              # Free scan / Contact — the conversion form + contact cards
   chatbot-demo.html     # Self-contained, shareable full-page chatbot demo (passthrough)
+  council.html          # Self-contained "Brain Council" multi-model AI chat (passthrough) — see BRAIN-COUNCIL.md
   assets/
     css/styles.css      # the single design system (CSS custom properties, sectioned)
     js/main.js          # theme toggle, mobile menu, reveals, living hero, scan form
@@ -60,9 +61,14 @@ src/
 README.md
 ```
 
-Eleventy only treats `.njk` files as templates; CSS, JS, images, and `chatbot-demo.html` are
-copied through verbatim. Links between pages are **relative** (`about.html`, `pricing.html`, …)
-so the built site works from any subpath.
+Eleventy only treats `.njk` files as templates; CSS, JS, images, and the self-contained
+`chatbot-demo.html` / `council.html` are copied through verbatim. Links between pages are
+**relative** (`about.html`, `pricing.html`, …) so the built site works from any subpath.
+
+> **🧠 Brain Council** — `council.html` is a separate power-tool: a multi-model AI chat that
+> prompts Claude, GLM, Qwen Coder, DeepSeek and Hermes at once (via OpenRouter, on your own
+> key), lets them debate, and synthesizes one final answer. There's also a CLI
+> (`scripts/council.mjs`, `npm run council`). Full guide in **[BRAIN-COUNCIL.md](BRAIN-COUNCIL.md)**.
 
 ---
 

@@ -11,6 +11,7 @@
     "build": "eleventy",
     "clean": "rimraf dist",
     "minify:widget": "terser src/assets/js/symbio-widget.js -c -m -o src/assets/js/symbio-widget.min.js",
+    "council": "node scripts/council.mjs",
     "lint": "npm run lint:css && npm run lint:js && npm run lint:html",
     "lint:css": "stylelint \"src/assets/css/**/*.css\"",
     "lint:js": "eslint \"src/assets/js/**/*.js\" \"*.js\"",

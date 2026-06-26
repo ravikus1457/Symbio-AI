@@ -15,6 +15,11 @@ export default function (eleventyConfig) {
   // The chatbot demo is a self-contained, shareable file — ship it untouched.
   eleventyConfig.addPassthroughCopy({ "src/chatbot-demo.html": "chatbot-demo.html" });
 
+  // The Brain Council (multi-model AI chat) is also a self-contained tool that
+  // runs entirely in the browser on the visitor's own OpenRouter key — copy it
+  // through verbatim, same as the demo.
+  eleventyConfig.addPassthroughCopy({ "src/council.html": "council.html" });
+
   // Rebuild when CSS/JS change even though they are passthrough-copied.
   eleventyConfig.setServerPassthroughCopyBehavior("passthrough");
   eleventyConfig.addWatchTarget("src/assets/");

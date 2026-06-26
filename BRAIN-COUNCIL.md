@@ -118,6 +118,7 @@ redirect cleanly (`node scripts/council.mjs "..." > answer.md`).
 | `--brains a,b,c`       | Roster of OpenRouter slugs                             |
 | `--synth <slug>`       | Model that writes the final answer                     |
 | `--all`                | Also print each brain's individual answer              |
+| `--no-synth`           | Brains answer only; you synthesize (no synth call)     |
 | `--json`               | Emit JSON (implies `--no-stream`)                      |
 | `--no-stream`          | Don't stream the final answer                          |
 | `--models`             | Print available slugs and exit                         |

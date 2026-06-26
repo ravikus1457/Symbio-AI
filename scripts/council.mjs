@@ -27,6 +27,7 @@
  *   --brains a,b,c     Override the roster with explicit OpenRouter model slugs.
  *   --synth <slug>     Model that writes the final answer (default: Claude).
  *   --all              Also print every brain's individual answer, not just the final.
+ *   --no-synth         Only the brains answer; you synthesize (no synthesizer call).
  *   --json             Emit a machine-readable JSON object instead of text.
  *   --no-stream        Don't stream the final answer token-by-token.
  *   -h, --help         Show help.
@@ -108,6 +109,7 @@ function parseArgs(argv) {
     json: false,
     stream: true,
     models: false,
+    noSynth: false,
     help: false,
     prompt: [],
   };
@@ -117,6 +119,7 @@ function parseArgs(argv) {
     else if (a === "--quick") opts.mode = "quick";
     else if (a === "--debate") opts.mode = "debate";
     else if (a === "--all") opts.all = true;
+    else if (a === "--no-synth" || a === "--raw") opts.noSynth = true;
     else if (a === "--json") {
       opts.json = true;
       opts.stream = false;
@@ -146,6 +149,8 @@ ${bold("Flags")}
   --brains a,b,c    Roster of OpenRouter model slugs to use
   --synth <slug>    Model that writes the final answer (default ${DEFAULT_SYNTH})
   --all             Also print each brain's individual answer
+  --no-synth        Print the brains' answers only; skip the synthesizer call
+                    (so you synthesize yourself — OpenRouter pays only the brains)
   --json            Emit JSON (implies --no-stream)
   --no-stream       Don't stream the final answer
   --models          Print the model slugs your account can use, then exit
@@ -343,6 +348,42 @@ async function main() {
   const good = answers.filter((a) => !a.error && a.text);
   if (!good.length)
     die("Every brain failed — check OPENROUTER_API_KEY and the model slugs (--models to list).");
+
+  // --no-synth: return the raw brain answers and let the caller (e.g. Claude in
+  // the desktop app) do the synthesis itself. OpenRouter is billed only for the
+  // brains, never for a synthesizer call.
+  if (opts.noSynth) {
+    if (opts.json) {
+      process.stdout.write(
+        JSON.stringify(
+          {
+            prompt,
+            mode: opts.mode,
+            synth: null,
+            brains: answers.map((a) => ({
+              name: a.name,
+              model: a.model,
+              error: a.error,
+              answer: a.text,
+              round1: a.round1,
+            })),
+            councilAnswer: null,
+          },
+          null,
+          2
+        ) + "\n"
+      );
+      return;
+    }
+    for (const a of answers) {
+      process.stdout.write("\n" + cyan(bold("── " + a.name + " (" + a.model + ") ──")) + "\n");
+      process.stdout.write((a.error ? red(a.errorMsg) : a.text) + "\n");
+    }
+    log(
+      dim("\n(no synthesizer ran — synthesize the Brain Council answer yourself from the above)")
+    );
+    return;
+  }
 
   // Optionally show individual answers
   if (opts.all && !opts.json) {

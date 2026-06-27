@@ -15,6 +15,11 @@ export default function (eleventyConfig) {
   // The chatbot demo is a self-contained, shareable file — ship it untouched.
   eleventyConfig.addPassthroughCopy({ "src/chatbot-demo.html": "chatbot-demo.html" });
 
+  // Client project sites live under clients/ as self-contained static files;
+  // copy them through verbatim so they publish alongside the marketing site
+  // (e.g. dist/clients/east-bay-hindu-temple/index.html).
+  eleventyConfig.addPassthroughCopy({ clients: "clients" });
+
   // Rebuild when CSS/JS change even though they are passthrough-copied.
   eleventyConfig.setServerPassthroughCopyBehavior("passthrough");
   eleventyConfig.addWatchTarget("src/assets/");

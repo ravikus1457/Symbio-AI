@@ -16,3 +16,6 @@ npm-debug.log*
 
 # Eleventy
 .eleventy.cache/
+
+# Generated outreach runs (tools/audit-outreach.mjs)
+tools/out/

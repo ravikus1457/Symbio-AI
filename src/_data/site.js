@@ -23,6 +23,7 @@ export default {
     { key: "about", label: "About", url: "about.html" },
     { key: "services", label: "Services", url: "services.html" },
     { key: "pricing", label: "Pricing", url: "pricing.html" },
+    { key: "packages", label: "Packages", url: "buy.html" },
     { key: "portfolio", label: "Portfolio", url: "portfolio.html" },
     { key: "reviews", label: "Reviews", url: "reviews.html" },
   ],
@@ -55,6 +56,72 @@ export default {
     github: "https://mmajeed7864.github.io/",
     demo: "chatbot-demo.html",
   },
+
+  // ── Productized packages (the "buy without a call" page: buy.html) ──────
+  // Fixed-price offers people can purchase directly. Each `checkoutUrl` should
+  // be a Stripe Payment Link (Dashboard → Payment Links → create one per
+  // package, paste the https://buy.stripe.com/... URL here). While a link is
+  // empty, the button gracefully falls back to the intake form below the cards
+  // — so there is never a dead button, and you can launch the page before
+  // Stripe is wired up. See tools/README.md → "Wiring up checkout".
+  packages: [
+    {
+      key: "speed-fix",
+      name: "Site speed & mobile fix",
+      price: "$499",
+      cadence: "one-time",
+      blurb: "The easy first yes. We make your existing site fast and flawless on phones.",
+      features: [
+        "Mobile + speed audit, then the fixes",
+        "Core Web Vitals & image cleanup",
+        "Done in days, not weeks",
+      ],
+      checkoutUrl: "",
+      featured: false,
+    },
+    {
+      key: "website-7-days",
+      name: "Website in 7 days",
+      price: "$1,500",
+      cadence: "flat",
+      blurb: "A fast, modern site that earns trust and turns visitors into enquiries.",
+      features: [
+        "Up to 5 pages, conversion-first",
+        "Lead capture + the AI assistant wired in",
+        "Live in a week — flat price, no surprises",
+      ],
+      checkoutUrl: "",
+      featured: true,
+    },
+    {
+      key: "booking-system",
+      name: "Booking + lead system",
+      price: "$1,200",
+      cadence: "one-time",
+      blurb: "Turn enquiries into booked time, with reminders that cut no-shows.",
+      features: [
+        "Online booking wired to your calendar",
+        "Lead capture flow — nothing dropped",
+        "Automatic reminders & follow-ups",
+      ],
+      checkoutUrl: "",
+      featured: false,
+    },
+    {
+      key: "ai-assistant",
+      name: "AI assistant install",
+      price: "$900",
+      cadence: "setup + monthly",
+      blurb: "Our always-on assistant on your site — answers, captures leads, books.",
+      features: [
+        "One-time $900 setup & styling",
+        "From $99/mo — hosting, AI & lead delivery",
+        "Every lead reaches a real person on your team",
+      ],
+      checkoutUrl: "",
+      featured: false,
+    },
+  ],
 
   footerCredit: "Built by Mohammed & Ravi.",
 };

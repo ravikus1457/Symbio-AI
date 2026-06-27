@@ -59,9 +59,9 @@
   var DONATION = {
     setupNotice: true,
     presets: [51, 101, 251, 501, 1100],
-    zelle: "donations@eastbayhindutemple.org",
+    zelle: "REPLACE",
     zelleName: "East Bay Hindu Temple",
-    venmo: "REPLACE",
+    venmo: "EastBayHinduTemple",
     paypal: "REPLACE",
     mailingAddress: "East Bay Hindu Temple, 595 School Street, Pittsburg, CA 94565",
   };
@@ -252,7 +252,11 @@
       return v && v !== "REPLACE" && String(v).trim() !== "";
     }
 
-    if (DONATION.setupNotice && setupEl && (!isSet(DONATION.venmo) || !isSet(DONATION.paypal))) {
+    if (
+      DONATION.setupNotice &&
+      setupEl &&
+      (!isSet(DONATION.venmo) || !isSet(DONATION.paypal) || !isSet(DONATION.zelle))
+    ) {
       setupEl.hidden = false;
     }
 
@@ -386,8 +390,12 @@
         buildMethod({
           name: "Zelle",
           iconText: "Z",
-          detail: DONATION.zelle + " · " + DONATION.zelleName,
-          action: { type: "copy", value: DONATION.zelle, label: "Copy" },
+          detail: isSet(DONATION.zelle)
+            ? DONATION.zelle + " · " + DONATION.zelleName
+            : "Coming soon — ask the temple",
+          action: isSet(DONATION.zelle)
+            ? { type: "copy", value: DONATION.zelle, label: "Copy" }
+            : { type: "disabled", label: "Setup" },
         })
       );
 

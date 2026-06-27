@@ -1034,6 +1034,7 @@ ul {
   border: 2px solid rgba(241, 207, 122, 0.55);
   border-radius: 50% 50% 8px 8px / 38% 38% 8px 8px;
   pointer-events: none;
+  z-index: 3;
 }
 
 .niche__arch img {
@@ -1042,6 +1043,7 @@ ul {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  z-index: 2;
 }
 
 .niche__placeholder {
@@ -1929,9 +1931,9 @@ ul {
   var DONATION = {
     setupNotice: true,
     presets: [51, 101, 251, 501, 1100],
-    zelle: "donations@eastbayhindutemple.org",
+    zelle: "REPLACE",
     zelleName: "East Bay Hindu Temple",
-    venmo: "REPLACE",
+    venmo: "EastBayHinduTemple",
     paypal: "REPLACE",
     mailingAddress: "East Bay Hindu Temple, 595 School Street, Pittsburg, CA 94565",
   };
@@ -2122,7 +2124,11 @@ ul {
       return v && v !== "REPLACE" && String(v).trim() !== "";
     }
 
-    if (DONATION.setupNotice && setupEl && (!isSet(DONATION.venmo) || !isSet(DONATION.paypal))) {
+    if (
+      DONATION.setupNotice &&
+      setupEl &&
+      (!isSet(DONATION.venmo) || !isSet(DONATION.paypal) || !isSet(DONATION.zelle))
+    ) {
       setupEl.hidden = false;
     }
 
@@ -2256,8 +2262,12 @@ ul {
         buildMethod({
           name: "Zelle",
           iconText: "Z",
-          detail: DONATION.zelle + " · " + DONATION.zelleName,
-          action: { type: "copy", value: DONATION.zelle, label: "Copy" },
+          detail: isSet(DONATION.zelle)
+            ? DONATION.zelle + " · " + DONATION.zelleName
+            : "Coming soon — ask the temple",
+          action: isSet(DONATION.zelle)
+            ? { type: "copy", value: DONATION.zelle, label: "Copy" }
+            : { type: "disabled", label: "Setup" },
         })
       );
 
@@ -2557,11 +2567,13 @@ ul {
             </p>
           </div>
 
-          <!-- Each niche holds a real murti photo. Until the temple's own photos
-               are added, an ornate placeholder keeps the layout devotional and
-               complete. To add a photo, drop e.g. assets/img/deities/ram.jpg and
-               replace the .niche__placeholder block with:
-               <img src="assets/img/deities/ram.jpg" alt="Shri Ram Darbar" /> -->
+          <!-- Each niche shows a public-domain painting (Raja Ravi Varma / Ravi
+               Varma Press, hot-linked from Wikimedia Commons) layered over an
+               original gold emblem, which shows automatically if an image fails.
+               To self-host the paintings, run assets/img/deities/download-deity-images.sh
+               and switch each src to the local file. To use the temple's OWN
+               murti photo instead, just change a niche's <img src> to e.g.
+               assets/img/deities/ram.jpg — see assets/img/README.md. -->
           <div class="grid grid--3">
             <article class="niche" data-reveal>
               <div class="niche__arch">
@@ -2575,6 +2587,7 @@ ul {
                     <path d="M48 58 l9 -5 m-9 5 l9 5" />
                   </svg>
                 </span>
+                <img class="niche__photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Bharata_welcoming_Rama%2C_Sita%2C_Lakshmana_and_Hanuman_to_Ayodhya_by_Raja_Ravi_Varma.jpg?width=640" alt="Shri Ram Darbar — painting by Raja Ravi Varma (public domain)" loading="lazy" onerror="this.style.display='none'" />
               </div>
               <div class="niche__body">
                 <h3 class="niche__name">Shri Ram Darbar</h3>
@@ -2598,6 +2611,7 @@ ul {
                     <path d="M53 74 L67 84 M53 84 L67 74 M53 74 V84 M67 74 V84" />
                   </svg>
                 </span>
+                <img class="niche__photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/An_Oleograph_of_Shiva%2C_Parvati_and_Nandi_by_Raja_Ravi_Varma.jpg?width=640" alt="Shiv Parivar — oleograph by Raja Ravi Varma (public domain)" loading="lazy" onerror="this.style.display='none'" />
               </div>
               <div class="niche__body">
                 <h3 class="niche__name">Shiv Parivar</h3>
@@ -2624,6 +2638,7 @@ ul {
                     <circle cx="60" cy="58" r="2.6" fill="currentColor" stroke="none" />
                   </svg>
                 </span>
+                <img class="niche__photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Goddess_Durga_by_Raja_Ravi_Varma.jpg?width=640" alt="Durga Maa — painting by Raja Ravi Varma (public domain)" loading="lazy" onerror="this.style.display='none'" />
               </div>
               <div class="niche__body">
                 <h3 class="niche__name">Durga Maa</h3>
@@ -2643,6 +2658,7 @@ ul {
                     <path d="M54 96 h12 M55 90 h10" />
                   </svg>
                 </span>
+                <img class="niche__photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Hanuman_fetches_the_herb-bearing_mountain%2C_in_a_print_from_the_Ravi_Varma_Press%2C_1910%27s.jpg?width=640" alt="Shri Hanuman ji — Ravi Varma Press print (public domain)" loading="lazy" onerror="this.style.display='none'" />
               </div>
               <div class="niche__body">
                 <h3 class="niche__name">Shri Hanuman ji</h3>
@@ -2668,6 +2684,7 @@ ul {
                     <path d="M55 70 l-2 7" /><path d="M65 70 l2 7" />
                   </svg>
                 </span>
+                <img class="niche__photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Ganapati1.jpg?width=640" alt="Shri Ganesh ji — Ravi Varma Press print (public domain)" loading="lazy" onerror="this.style.display='none'" />
               </div>
               <div class="niche__body">
                 <h3 class="niche__name">Shri Ganesh ji</h3>
@@ -2690,6 +2707,7 @@ ul {
                     <circle cx="43.5" cy="44" r="2" fill="#5e0a13" stroke="none" />
                   </svg>
                 </span>
+                <img class="niche__photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Raja_Ravi_Varma%2C_Radha_Waiting_for_Krishna.jpg?width=640" alt="Radha Krishna — painting by Raja Ravi Varma (public domain)" loading="lazy" onerror="this.style.display='none'" />
               </div>
               <div class="niche__body">
                 <h3 class="niche__name">Radha Krishna</h3>
@@ -2700,8 +2718,8 @@ ul {
           </div>
 
           <p class="center mt-6" style="color: var(--ink-faint); font-size: var(--fs-300)">
-            The deities shown reflect our temple's worship — we'll update names and add photographs
-            of our own murtis as the temple provides them.
+            Devotional artwork by Raja Ravi Varma &amp; the Ravi Varma Press (public domain).
+            Photographs of our own murtis will be added in time.
           </p>
         </div>
       </section>
@@ -2985,8 +3003,7 @@ ul {
 
             <div data-reveal data-reveal-delay="1">
               <span class="eyebrow">Our Priest · पुजारी</span>
-              <!-- NOTE: confirm the priest's exact name & spelling before publishing. -->
-              <h2 class="priest__name" id="priest-title">Pandit Rakesh Bhargav ji</h2>
+              <h2 class="priest__name" id="priest-title">Pandit Rakesh Bhargav Ji</h2>
               <p class="priest__role">Head Priest · East Bay Hindu Temple</p>
               <p class="lead">
                 Our head priest leads the daily worship of the temple and performs poojas and

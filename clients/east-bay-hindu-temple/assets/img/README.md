@@ -37,11 +37,22 @@ for the priest:
 
 The gold frame around it is added automatically.
 
-## A note on deity images
+## Deity images — already included (public domain)
 
-Please use the temple's **own** photographs of its murtis. They are the most
-accurate and respectful representation of how the temple actually looks — and
-they avoid any copyright issues that come with images pulled from the web.
+Each deity niche now shows a genuine **public-domain painting** by Raja Ravi
+Varma / the Ravi Varma Press, hot-linked from Wikimedia Commons, layered over an
+original gold emblem that appears automatically if an image ever fails to load.
+So the deity section looks complete right now — nothing to add.
+
+Two ways to make it permanent / faster:
+
+1. **Self-host the paintings** — run `deities/download-deity-images.sh` to save
+   them locally, then change each niche's `<img src="https://commons.wikimedia.org/…">`
+   to the local file (e.g. `assets/img/deities/ram.jpg`). Recommended for speed
+   and reliability. (For Wix Studio, upload them to Wix Media and use those URLs.)
+2. **Use the temple's own murti photos** instead — just swap a niche's `<img src>`
+   to your photo (e.g. `deities/ram.jpg`). Your own murti photos are the most
+   personal and accurate, so do this whenever you have them.
 
 ## Tips
 

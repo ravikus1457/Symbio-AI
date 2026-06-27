@@ -3,17 +3,17 @@ layout: base.njk
 pageKey: scan
 title: Free scan
 permalink: scan.html
-description: Get a free scan of your website. Tell us your link and we’ll reply with what’s leaking leads and the first fix we’d make. No commitment.
+description: Get a free scan of your website. Tell us your link and we’ll reply with what’s working, what isn’t, and the first thing we’d build. No commitment.
 ---
 
 {# ===== Page head ====================================================== #}
 <section class="section section--tight">
   <div class="container container--narrow center">
     <span class="eyebrow eyebrow--center">Free scan</span>
-    <h1 class="section__title">See what your site is leaking — free.</h1>
+    <h1 class="section__title">See what your site is missing, free.</h1>
     <p class="section__lead">
-      Tell us a bit about your business and drop your link. We’ll reply with the leaks we spot
-      and the first fix we’d make — no commitment, no pressure.
+      Tell us a bit about your business and drop your link. We’ll reply with what’s working, what
+      isn’t, and the first thing we’d build. No commitment, no pressure.
     </p>
   </div>
 </section>
@@ -48,7 +48,7 @@ description: Get a free scan of your website. Tell us your link and we’ll repl
             <div class="field field--full">
               <label class="field__label" for="scan-link">
                 Your website or social link
-                <span class="field__hint">— so we can scan it</span>
+                <span class="field__hint">(so we can take a look)</span>
               </label>
               <input class="input" id="scan-link" name="link" type="url" inputmode="url" placeholder="https://" />
             </div>
@@ -101,7 +101,7 @@ description: Get a free scan of your website. Tell us your link and we’ll repl
       {# --- Direct contact + what to expect --- #}
       <aside class="founder" data-reveal data-reveal-delay="1">
         <h2 class="founder__name">Prefer to just talk?</h2>
-        <p class="card__text">Reach the builders directly — you’ll hear back from a real person.</p>
+        <p class="card__text">Reach the builders directly. You’ll hear back from a real person.</p>
 
         <div class="founder__contact mt-6">
           {% for person in site.founders %}
@@ -117,9 +117,9 @@ description: Get a free scan of your website. Tell us your link and we’ll repl
 
         <h3 class="proof__title">What you’ll get</h3>
         <ul class="card__list">
-          <li>A quick read on where your site leaks leads</li>
-          <li>The single fix we’d make first</li>
-          <li>A rough, honest price range — no obligation</li>
+          <li>A quick read on what’s helping and what’s holding your site back</li>
+          <li>The first thing we’d build or fix</li>
+          <li>A rough, honest price range, no obligation</li>
         </ul>
       </aside>
     </div>

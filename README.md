@@ -6,7 +6,8 @@ system, and scripts are each written **once** and reused across every page. The 
 `dist/` is plain HTML/CSS/JS with **no client-side framework runtime** — it hosts trivially on
 any static host (Cloudflare tunnel, GitHub Pages, a Raspberry Pi) by simply serving the folder.
 
-> Brand: **Symbio AI** — _“We catch and convert leads in real time.”_
+> Brand: **Symbio AI** &middot; _“We design websites that win you customers.”_
+> A web design studio first, with apps, dashboards, chatbots, and AI agents as standalone products.
 > Built by Mohammed & Ravi.
 
 ---
@@ -43,13 +44,14 @@ src/
     nav.njk             # site header / primary navigation
     footer.njk          # site footer
     brand.njk           # logo + wordmark lockup (reused by nav and footer)
-  index.njk             # Home — the living hero, teasers, closing CTA
-  about.njk             # About / Vision — founders + Scan → Map → Build → Polish
-  services.njk          # Services — websites, booking, AI agents + AI-assistant highlight
-  pricing.njk           # Pricing — three honest tiers
-  portfolio.njk         # Portfolio — honest, early-stage work
-  reviews.njk           # Reviews — proof, not fluff (no fabricated testimonials)
-  scan.njk              # Free scan / Contact — the conversion form + contact cards
+  index.njk             # Home: web-design-first hero (browser mock-up + live lead inbox), teasers, CTA
+  about.njk             # About / Vision: founders + Scan, Plan, Build, Polish
+  services.njk          # Services: web design first, then apps/dashboards/chatbots/AI agents
+  demos.njk             # Demos: interactive showcase (Redesign Lab, App Canvas, Pulse, Concierge, Workflow)
+  pricing.njk           # Pricing: three honest tiers
+  portfolio.njk         # Portfolio: honest, early-stage work
+  reviews.njk           # Reviews: proof, not fluff (no fabricated testimonials)
+  scan.njk              # Free scan / Contact: the conversion form + contact cards
   chatbot-demo.html     # Self-contained, shareable full-page chatbot demo (passthrough)
   assets/
     css/styles.css      # the single design system (CSS custom properties, sectioned)
@@ -85,10 +87,18 @@ commented sections.
 ### The living hero
 
 The home hero is one orchestrated moment: a headline whose last word cycles through outcomes
-(booked leads → booked calls → new clients → real revenue), a soft drifting gradient aurora,
-and a live “lead inbox” where leads slide in, a typing indicator resolves to **Replied/Booked**,
-and a counter ticks up. Animation **pauses when the tab is hidden** and is replaced by a static
-populated state under reduced motion.
+(customers → bookings → regulars → revenue), a soft drifting gradient aurora, a clean **browser
+mock-up** of a website we built, and a live “lead inbox” floating on it where leads slide in, a
+typing indicator resolves to **Replied/Booked**, and a counter ticks up. Animation **pauses when
+the tab is hidden** and is replaced by a static populated state under reduced motion.
+
+### The Demos page
+
+`demos.njk` is an interactive showcase, web design first: a **Redesign Lab** before/after slider
+(drag from a dated site to a premium one), an **App Canvas** with tabbed flows, a **Pulse
+Dashboard** with live filters, a **Concierge Studio** chatbot, and a **Workflow Theater** that
+plays an AI-agent run. All controls are keyboard-operable and degrade gracefully under reduced
+motion. Behaviour lives in `main.js` (section 10) and styling in `styles.css` (section 18b).
 
 ---
 

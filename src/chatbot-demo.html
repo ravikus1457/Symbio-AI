@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light" />
-    <title>Symbio AI — Live Chatbot Demo</title>
+    <title>Symbio AI · Live Chatbot Demo</title>
     <meta
       name="description"
       content="A self-contained sales demo of the Symbio AI embeddable assistant. Switch industries to rebrand the page live, then watch leads land in real time."
@@ -356,7 +356,7 @@
     <div class="demobar">
       <span>
         <strong>Symbio AI</strong> live demo
-        <span class="demobar__tag">sample business — pick an industry →</span>
+        <span class="demobar__tag">sample business · pick an industry →</span>
       </span>
       <span class="demobar__actions">
         <button type="button" data-toggle="customize">Customize</button>
@@ -415,7 +415,7 @@
         <button type="button" data-close aria-label="Close customize panel">×</button>
       </div>
       <div class="panel__body">
-        <p class="hint">Pick an industry — the page <em>and</em> the assistant rebrand instantly.</p>
+        <p class="hint">Pick an industry. The page <em>and</em> the assistant rebrand instantly.</p>
         <div class="presets" data-presets></div>
         <label class="field">Business name
           <input type="text" data-cz-name />
@@ -438,7 +438,7 @@
       </div>
       <div class="panel__body">
         <ul class="leadlist" data-lead-list>
-          <li class="empty">No leads yet — open the chat and say “book”, then leave your details.</li>
+          <li class="empty">No leads yet. Open the chat and say “book”, then leave your details.</li>
         </ul>
       </div>
     </aside>
@@ -458,7 +458,7 @@
     </script>
 
     <!-- 2) The Symbio Widget, inlined so this file is fully self-contained.
-            This is a copy of assets/js/symbio-widget.js — keep them in sync. -->
+            This is a copy of assets/js/symbio-widget.js, keep them in sync. -->
     <script>
       (function () {
         "use strict";
@@ -681,7 +681,7 @@
           if (has(text, ["hour", "open", "close", "when are you"]))
             return { text: cfg.businessName + " is open " + cfg.hours + "." };
           if (has(text, ["where", "location", "address", "find you"]))
-            return { text: cfg.location ? "We're located in " + cfg.location + "." : "We mostly work online — tell me where you are and we'll sort it out." };
+            return { text: cfg.location ? "We're located in " + cfg.location + "." : "We mostly work online, tell me where you are and we'll sort it out." };
           if (has(text, ["price", "cost", "how much", "pricing", "rates", "fee"])) {
             const base = cfg.price ? "Pricing starts " + cfg.price + ". " : "Pricing depends on what you need. ";
             return { text: base + "Want me to have someone follow up with a quote?", offerLead: true };
@@ -721,7 +721,7 @@
         function startLead() {
           lead = { step: "name", name: "", contact: "", detail: "" };
           setChips([]);
-          addMessage("bot", "Happy to help with that. First — what's your name?");
+          addMessage("bot", "Happy to help with that. First, what's your name?");
         }
         function advanceLead(text) {
           if (lead.step === "name") {
@@ -730,7 +730,7 @@
             addMessage("bot", "Thanks, " + firstName(text) + "! What's the best email or phone to reach you?");
           } else if (lead.step === "contact") {
             if (!looksLikeContact(text)) {
-              addMessage("bot", "Hmm, that doesn't look like an email or phone — mind trying again?");
+              addMessage("bot", "Hmm, that doesn't look like an email or phone. Mind trying again?");
               return;
             }
             lead.contact = text;
@@ -747,7 +747,7 @@
             name: lead.name, contact: lead.contact, detail: lead.detail,
             business: cfg.businessName, page: window.location.href, at: new Date().toISOString(),
           };
-          addMessage("bot", "Perfect — thanks, " + firstName(record.name) + ". " + cfg.businessName + " will follow up shortly. ✅");
+          addMessage("bot", "Perfect, thanks, " + firstName(record.name) + ". " + cfg.businessName + " will follow up shortly. ✅");
           deliverLead(record);
           setChips(defaultChips());
         }
@@ -944,7 +944,7 @@
           setText("[data-biz-hours]", preset.hours);
           setText("[data-biz-location]", preset.location);
           setText("[data-biz-phone]", preset.phone);
-          document.title = preset.businessName + " — Symbio AI demo";
+          document.title = preset.businessName + " · Symbio AI demo";
 
           const wrap = $("[data-biz-services]");
           if (wrap) {

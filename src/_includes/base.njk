@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light dark" />
 
-    <title>{% if title %}{{ title }} · {{ site.name }}{% else %}{{ site.name }} — {{ site.tagline }}{% endif %}</title>
+    <title>{% if title %}{{ title }} · {{ site.name }}{% else %}{{ site.name }} · {{ site.tagline }}{% endif %}</title>
     <meta name="description" content="{{ description or site.description }}" />
 
     <link rel="icon" href="assets/img/logo-symbio.svg" type="image/svg+xml" />
@@ -64,9 +64,9 @@
       window.SymbioConfig = {
         businessName: {{ site.name | dump | safe }},
         accent: "#2f6bff",
-        services: ["Websites & landing pages", "Booking & lead systems", "AI agents & automation"],
+        services: ["Web design & redesigns", "Apps & dashboards", "AI chatbots & agents"],
         hours: "Mon–Fri, 9am–6pm PT",
-        location: "Online — we build remote",
+        location: "Online, we build remote",
         phone: {{ site.founders[0].phone | dump | safe }},
         price: "with a free scan first",
         position: "right",

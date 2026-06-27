@@ -29,6 +29,21 @@
       .toUpperCase();
   }
 
+  // Fire a conversion event to whatever analytics is loaded (Plausible if set),
+  // and a DOM event so anything else can hook it. No-op if nothing's listening.
+  function track(name, props) {
+    try {
+      if (window.plausible) window.plausible(name, props ? { props: props } : undefined);
+    } catch (e) {
+      /* analytics must never break the page */
+    }
+    try {
+      window.dispatchEvent(new CustomEvent("symbio:track", { detail: { name: name, props: props || {} } }));
+    } catch (e) {
+      /* CustomEvent unsupported — ignore */
+    }
+  }
+
   /* ---- 2. Theme toggle ------------------------------------------------- */
   const THEME_KEY = "symbio-theme";
 
@@ -431,6 +446,7 @@
             "success",
             "Thanks! Your scan request is in — we’ll reply within one business day."
           );
+          track("Lead", { source: "scan-form" });
           form.reset();
           if (sourceUrlInput) sourceUrlInput.value = window.location.href;
         } else {
@@ -469,6 +485,7 @@
     window.addEventListener("symbio:lead", (event) => {
       const lead = event.detail;
       if (!lead) return;
+      track("WidgetLead");
       submitScan(mapWidgetLead(lead)).catch(() => {
         /* best-effort; nothing else to do on the marketing pages */
       });
@@ -590,12 +607,30 @@
         const data = await res.json();
         if (!res.ok || !data || !data.ok) throw new Error((data && data.error) || "scan failed");
         renderResults(data);
+        track("Teardown", { reachable: !!data.reachable });
         setStatus("success", "Done — here’s what we found.");
       } catch (e) {
         setStatus("error", "Couldn’t scan that automatically — try the free scan form below.");
       } finally {
         if (submitBtn) submitBtn.disabled = false;
       }
+    });
+  }
+
+  /* ---- 12. Conversion tracking --------------------------------------- */
+  // One delegated listener turns checkout/package clicks into analytics events.
+  // Works with whatever analytics is loaded (Plausible if configured); silent otherwise.
+  function initTracking() {
+    document.addEventListener("click", (event) => {
+      const t = event.target;
+      if (!t || !t.closest) return;
+      const stripe = t.closest('a[href*="buy.stripe.com"]');
+      if (stripe) {
+        track("CheckoutClick", { href: stripe.getAttribute("href") });
+        return;
+      }
+      const pkg = t.closest("[data-buy-package]");
+      if (pkg) track("PackageClick", { package: pkg.getAttribute("data-buy-package") });
     });
   }
 
@@ -611,6 +646,7 @@
     initCardMotion();
     initBuyButtons();
     initTeardown();
+    initTracking();
     // Tell the pre-paint safety net that we ran, so it won't unhide reveals.
     window.__symbioReady = true;
   }

@@ -13,6 +13,12 @@ export default {
   // teardown page falls back to the normal free-scan form. e.g.
   // "https://symbio-scan.<you>.workers.dev"
   scanApi: "",
+  // Privacy-friendly analytics (cookieless). Set analyticsDomain to your domain
+  // to enable Plausible (free trial / self-host) — conversion events (Lead,
+  // Teardown, CheckoutClick, …) fire automatically. analyticsScript is a generic
+  // escape hatch for any other analytics <script> URL. Both empty → no tracking.
+  analyticsDomain: "",
+  analyticsScript: "",
   tagline: "We catch and convert leads in real time.",
   // Broader positioning — used as the hero subhead and where we describe the
   // full offer (websites + apps + systems), not just lead capture.

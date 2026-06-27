@@ -27,3 +27,10 @@ tools/hermes/REPORT.md
 
 # Cloudflare Worker local state
 infra/worker/.wrangler/
+
+# Generated client sites (tools/new-client.mjs)
+clients-out/
+
+# Sourced prospect lists (contain PII)
+/leads.csv
+*.leads.csv

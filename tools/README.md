@@ -7,9 +7,43 @@ nothing here ships to `dist/`.
 **What's here**
 
 - **`hermes/`** — the autonomous growth engine: outreach + an A/B learning loop that improves
-  with use, plus reporting. See [`hermes/README.md`](hermes/README.md). Start here.
+  with use, plus a speed-to-lead `nurture` sequence and reporting. See
+  [`hermes/README.md`](hermes/README.md). Start here.
 - **`audit-outreach.mjs`** — the simple one-shot outreach generator (no learning loop).
-- **`lib/outreach-core.mjs`** — the shared scan/finding/email engine both of the above use.
+- **`prospect-source.mjs`** — build a Hermes-ready `leads.csv` from the Google Places API or an
+  existing export, with best-effort email enrichment. `npm run source`.
+- **`new-client.mjs`** + **`client-template/`** — generate a deployable one-page client site from
+  a JSON config (reuses the design system + AI widget). `npm run new-client`.
+- **`set-stripe.mjs`** — paste Stripe Payment Links into the site by key. `npm run set-stripe`.
+- **`lib/scan-core.mjs`** — the pure (no-Node) scan engine shared by the CLIs and the Worker.
+- **`lib/outreach-core.mjs`** — the shared finding/email engine the outreach tools use.
+
+> **Analytics** (not a script): set `analyticsDomain` in `src/_data/site.js` to your domain to
+> enable cookieless Plausible analytics. Conversion events (`Lead`, `Teardown`, `CheckoutClick`,
+> `PackageClick`, `WidgetLead`) then fire automatically from `main.js`. Off by default.
+
+## 3. Prospect sourcing — `prospect-source.mjs`
+
+```bash
+# A) live, from Google Places (needs a key; costs per request):
+npm run source -- --query "dentists in Fremont, CA" --niche dentist --key $GOOGLE_PLACES_KEY --out leads.csv
+# B) normalize an existing export (Apify / Maps scrape / purchased list):
+npm run source -- --in raw.csv --niche dentist --out leads.csv
+```
+
+For each business with a website it fetches the homepage and extracts a contact email. Output
+columns feed Hermes directly. Respect the Places API terms and local law on email outreach.
+
+## 4. Client-site generator — `new-client.mjs`
+
+```bash
+npm run new-client -- --config tools/client-template/example.json
+# → clients-out/<slug>/  (index.html + assets, ready to deploy)
+```
+
+Fill a JSON (name, accent, services, about, contact, widget) and get a deployable one-page site
+that reuses the Symbio design system in the client's colour, with the AI widget configured for
+them. Turns each build into "edit a config, run a command." See `client-template/example.json`.
 
 ---
 

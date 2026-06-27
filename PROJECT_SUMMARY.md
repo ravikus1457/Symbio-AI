@@ -43,6 +43,15 @@ July). Everything below is built, tested, and on the branch in **Pull Request #5
   toward whichever ones actually get replies as we log results. It's legally careful: it won't send
   without a real mailing address and it honors unsubscribes.
 
+**Plus, to scale and speed things up:**
+- **Automated prospect sourcing** — build a ready-to-email list of local businesses (with their
+  emails) from Google Maps data or any export, in one command.
+- **Conversion tracking** — flip on privacy-friendly analytics by setting one value; it tracks
+  leads, teardowns, and checkout clicks automatically so we can see what's working.
+- **Client-site generator** — spin up a full one-page client website from a short config file in
+  seconds (our design, their brand, the AI chat widget built in) — so delivery is fast and we can
+  take on more clients with the same two people.
+
 ## What's done vs. what's left
 
 **Done (built, tested, in the PR):** all of the above — the SEO pages, instant teardown, packages
@@ -72,6 +81,7 @@ automated check keeps the whole site building and reports the funnel.
 - Marketing pages: `src/*.njk` (buy, widget, care, teardown, the `grow-*` SEO pages)
 - All prices, plans, and packages: `src/_data/site.js`
 - Outreach + learning engine: `tools/hermes/` (run with `npm run hermes -- …`)
+- Prospect sourcing: `npm run source` · Client-site generator: `npm run new-client`
 - Instant-teardown backend: `infra/worker/`
 - Go-live steps: `LAUNCH.md` · Strategy: `GROWTH_PLAYBOOK.md`
 

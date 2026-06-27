@@ -12,6 +12,7 @@
     "clean": "rimraf dist",
     "outreach": "node tools/audit-outreach.mjs",
     "hermes": "node tools/hermes/hermes.mjs",
+    "set-stripe": "node tools/set-stripe.mjs",
     "minify:widget": "terser src/assets/js/symbio-widget.js -c -m -o src/assets/js/symbio-widget.min.js",
     "lint": "npm run lint:css && npm run lint:js && npm run lint:html",
     "lint:css": "stylelint \"src/assets/css/**/*.css\"",

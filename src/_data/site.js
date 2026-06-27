@@ -127,5 +127,59 @@ export default {
     },
   ],
 
+  // ── AI assistant monthly plans (the recurring-revenue lane: widget.html) ─
+  // Same Stripe pattern as packages, but these are SUBSCRIPTION Payment Links.
+  // Paste a link into each checkoutUrl, or run:
+  //   npm run set-stripe -- widget-growth=https://buy.stripe.com/...
+  // Empty links fall back to the free scan, so there are never dead buttons.
+  widgetSetup: "$900 one-time setup",
+  widgetPlans: [
+    {
+      key: "widget-starter",
+      name: "Starter",
+      price: "$49",
+      cadence: "/mo",
+      blurb: "The always-on assistant on one site — answering questions and catching leads.",
+      features: [
+        "AI chat on one website",
+        "Lead capture → your inbox",
+        "Styled to your brand",
+        "Email support",
+      ],
+      checkoutUrl: "",
+      featured: false,
+    },
+    {
+      key: "widget-growth",
+      name: "Growth",
+      price: "$99",
+      cadence: "/mo",
+      blurb: "More volume, booking hand-off, and monthly tuning as you grow.",
+      features: [
+        "Everything in Starter",
+        "Higher monthly conversation limit",
+        "Booking / calendar hand-off",
+        "Monthly tuning & tweaks",
+      ],
+      checkoutUrl: "",
+      featured: true,
+    },
+    {
+      key: "widget-pro",
+      name: "Pro",
+      price: "$149",
+      cadence: "/mo",
+      blurb: "For busier sites that want priority support and custom answer flows.",
+      features: [
+        "Everything in Growth",
+        "Priority support",
+        "Custom answer flows",
+        "Lead delivery to your CRM",
+      ],
+      checkoutUrl: "",
+      featured: false,
+    },
+  ],
+
   footerCredit: "Built by Mohammed & Ravi.",
 };

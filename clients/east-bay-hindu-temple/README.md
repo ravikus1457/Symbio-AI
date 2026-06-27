@@ -86,6 +86,12 @@ design:
 3. **Embed pieces into Wix.** Individual interactive widgets (e.g. the aarti
    timings, festival countdown) can be dropped into Wix "Embed HTML" blocks.
 
+**Chosen path: Wix Studio.** A complete migration kit lives in
+[`wix-studio/`](wix-studio/README.md) — the colour palette and fonts for Site
+Styles, a CSS file for Wix Studio's global CSS panel, three ready-to-paste
+embed widgets (hero, live timings, festival countdown), and a step-by-step
+build guide.
+
 We're happy to do the deployment and the domain switch as part of the project.
 
 ---

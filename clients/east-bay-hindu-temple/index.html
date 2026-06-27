@@ -1,0 +1,817 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>East Bay Hindu Temple · Pittsburg, CA — Darshan, Aarti & Sevas</title>
+    <meta
+      name="description"
+      content="East Bay Hindu Temple in Pittsburg, California — a community temple for daily darshan, aarti, poojas, and festivals. Plan your visit, view aarti timings, and book a seva."
+    />
+    <meta name="theme-color" content="#5e0a13" />
+
+    <link rel="icon" href="assets/img/logo-temple.svg" type="image/svg+xml" />
+
+    <!-- Open Graph / social -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="East Bay Hindu Temple — Pittsburg, CA" />
+    <meta
+      property="og:description"
+      content="A community temple for daily darshan, aarti, poojas, and festivals in Pittsburg, California."
+    />
+    <meta property="og:image" content="assets/img/logo-temple.svg" />
+
+    <!-- Fonts: elegant serif display + readable body + Devanagari for Sanskrit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Mukta:wght@400;500;600;700&family=Tiro+Devanagari+Hindi:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="assets/css/temple.css" />
+    <script>
+      document.documentElement.classList.add("js");
+    </script>
+    <script src="assets/js/temple.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <div class="temple-border" aria-hidden="true"></div>
+
+    <!-- ===== Top bar ===================================================== -->
+    <div class="topbar">
+      <div class="container topbar__inner">
+        <span class="status-dot" data-open-status>Checking hours…</span>
+        <div class="topbar__group">
+          <span aria-hidden="true">🪔 595 School St, Pittsburg, CA</span>
+          <a href="tel:+19252520551">Call: (925) 252-0551</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Header ===================================================== -->
+    <header class="site-header" data-header>
+      <div class="container site-header__inner">
+        <a class="brand" href="#top" aria-label="East Bay Hindu Temple — home">
+          <img class="brand__mark" src="assets/img/logo-temple.svg" alt="" width="46" height="46" />
+          <span class="brand__text">
+            <span class="brand__name">East Bay Hindu Temple</span>
+            <span class="brand__sub deva">पूर्वी खाड़ी हिन्दू मंदिर · Pittsburg, CA</span>
+          </span>
+        </a>
+
+        <nav class="site-nav" aria-label="Primary">
+          <ul class="site-nav__list" id="primary-menu" data-nav-menu>
+            <li><a class="site-nav__link" href="#welcome">Welcome</a></li>
+            <li><a class="site-nav__link" href="#deities">Deities</a></li>
+            <li><a class="site-nav__link" href="#timings">Timings</a></li>
+            <li><a class="site-nav__link" href="#sevas">Sevas</a></li>
+            <li><a class="site-nav__link" href="#festivals">Festivals</a></li>
+            <li><a class="site-nav__link" href="#priest">Our Priest</a></li>
+            <li><a class="site-nav__link" href="#visit">Visit</a></li>
+            <li class="site-nav__cta">
+              <a class="btn btn--primary btn--sm" href="#visit">Plan a Visit</a>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="site-header__actions">
+          <a class="btn btn--primary header-cta" href="#sevas">Book a Pooja</a>
+          <button
+            class="nav-toggle"
+            type="button"
+            data-nav-toggle
+            aria-expanded="false"
+            aria-controls="primary-menu"
+            aria-label="Open menu"
+          >
+            <span class="nav-toggle__bars" aria-hidden="true"></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <span id="top"></span>
+
+      <!-- ===== Hero ===================================================== -->
+      <section class="hero" aria-labelledby="hero-title">
+        <svg class="hero__mandala" viewBox="0 0 200 200" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="0.6">
+          <g>
+            <circle cx="100" cy="100" r="96" />
+            <circle cx="100" cy="100" r="78" />
+            <circle cx="100" cy="100" r="58" />
+            <circle cx="100" cy="100" r="38" />
+          </g>
+          <g stroke-width="0.5">
+            <path d="M100 4 V196 M4 100 H196 M30 30 L170 170 M170 30 L30 170" />
+          </g>
+        </svg>
+        <span class="hero__glow" aria-hidden="true"></span>
+
+        <div class="container hero__inner">
+          <div class="diya" aria-hidden="true">
+            <svg viewBox="0 0 64 64">
+              <path class="diya__flame" d="M32 10c4 7 7 10 7 16a7 7 0 0 1-14 0c0-4 3-7 7-16Z" fill="#f4a623" />
+              <path class="diya__flame" d="M32 18c2 4 3.5 6 3.5 9a3.5 3.5 0 0 1-7 0c0-2 1.5-4 3.5-9Z" fill="#fff3cf" />
+              <path d="M14 44c4 6 32 6 36 0 2 5-6 10-18 10S12 49 14 44Z" fill="#c89b3c" />
+              <ellipse cx="32" cy="44" rx="20" ry="4" fill="#9a7322" />
+            </svg>
+          </div>
+
+          <p class="hero__shloka shloka deva">
+            ॐ सर्वे भवन्तु सुखिनः · सर्वे सन्तु निरामयाः
+            <span class="shloka__en">May all be happy. May all be free from illness.</span>
+          </p>
+
+          <h1 class="hero__title" id="hero-title">
+            <span class="deva">पूर्वी खाड़ी हिन्दू मंदिर</span>
+            East Bay Hindu Temple
+          </h1>
+
+          <p class="hero__tagline">
+            A home for faith and family in Pittsburg, California — where the lamp is always lit, the
+            doors are open, and every devotee is welcome for darshan, aarti, and prasad.
+          </p>
+
+          <div class="btn-row hero__cta">
+            <a class="btn btn--primary btn--lg" href="#visit">Plan Your Visit</a>
+            <a class="btn btn--on-red btn--lg" href="#timings">Aarti &amp; Darshan Timings</a>
+          </div>
+
+          <div class="hero__meta">
+            <span>🪔 <strong>Daily Darshan</strong> &amp; Aarti</span>
+            <span>🛕 <strong>Poojas &amp; Sevas</strong> by appointment</span>
+            <span>🎉 <strong>Festivals</strong> all year round</span>
+          </div>
+        </div>
+
+        <svg class="hero__wave" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
+          <path
+            fill="currentColor"
+            d="M0 80 V40 C240 8 480 8 720 30 C960 52 1200 52 1440 28 V80 Z"
+          />
+        </svg>
+      </section>
+
+      <!-- ===== Welcome / about ========================================= -->
+      <section class="section" id="welcome" aria-labelledby="welcome-title">
+        <div class="container">
+          <div class="welcome">
+            <div data-reveal>
+              <span class="eyebrow">Welcome · स्वागतम्</span>
+              <h2 class="title" id="welcome-title">A temple built by the community, for the community</h2>
+              <p class="lead">
+                East Bay Hindu Temple is a non-profit place of worship serving Hindu families across
+                Pittsburg and the greater East Bay. We are dedicated to keeping our traditions alive
+                — through daily worship, the teaching of our scriptures, and joyful festivals that
+                bring families together across generations.
+              </p>
+              <p class="mt-5" style="color: var(--ink-soft)">
+                Whether you are visiting for a quiet moment of darshan, booking a pooja for your
+                home, or celebrating a festival with the whole community, you will find a warm
+                welcome here. Everyone is welcome, regardless of background.
+              </p>
+
+              <div class="stat-row">
+                <div class="stat">
+                  <div class="stat__num">Daily</div>
+                  <div class="stat__label">Darshan &amp; aarti for every devotee</div>
+                </div>
+                <div class="stat">
+                  <div class="stat__num">10+</div>
+                  <div class="stat__label">Sevas &amp; poojas offered by our priest</div>
+                </div>
+                <div class="stat">
+                  <div class="stat__num">All</div>
+                  <div class="stat__label">Major Hindu festivals celebrated each year</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="welcome__media" data-reveal data-reveal-delay="1">
+              <div class="framed">
+                <div class="framed__inner">
+                  <!-- TODO: replace with a real photo of the temple / main altar.
+                       Drop a file at assets/img/temple-altar.jpg and swap the
+                       placeholder below for:
+                       <img src="assets/img/temple-altar.jpg" alt="The main altar at East Bay Hindu Temple" /> -->
+                  <div class="photo-slot">
+                    <span class="photo-slot__om deva">ॐ</span>
+                    <span class="photo-slot__label">Temple photo</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="container">
+        <div class="divider" aria-hidden="true">
+          <svg class="divider__lotus" viewBox="0 0 48 48" fill="currentColor">
+            <path d="M24 6c2 6 2 10 0 16-2-6-2-10 0-16Z" />
+            <path d="M24 22c5-4 9-5 15-5-3 5-7 8-13 9 6 1 10 4 13 9-6 0-10-1-15-5-5 4-9 5-15 5 3-5 7-8 13-9-6-1-10-4-13-9 6 0 10 1 15 5Z" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- ===== Deities (darshan) ======================================= -->
+      <section class="section section--tight" id="deities" aria-labelledby="deities-title">
+        <div class="container">
+          <div class="section__head center" data-reveal>
+            <span class="eyebrow">Darshan · दर्शन</span>
+            <h2 class="title" id="deities-title">Our Deities</h2>
+            <p class="lead">
+              Come and receive the blessings of the divine. Each murti is lovingly cared for and
+              adorned daily. Bow your head, light a lamp, and feel at home.
+            </p>
+          </div>
+
+          <!-- Each niche holds a real murti photo. Until the temple's own photos
+               are added, an ornate placeholder keeps the layout devotional and
+               complete. To add a photo, drop e.g. assets/img/deities/ram.jpg and
+               replace the .niche__placeholder block with:
+               <img src="assets/img/deities/ram.jpg" alt="Shri Ram Darbar" /> -->
+          <div class="grid grid--3">
+            <article class="niche" data-reveal>
+              <div class="niche__arch">
+                <div class="niche__placeholder">
+                  <span class="photo-slot__om deva">ॐ</span>
+                </div>
+              </div>
+              <div class="niche__body">
+                <h3 class="niche__name">Shri Ram Darbar</h3>
+                <p class="niche__deva deva">श्री राम दरबार</p>
+                <p class="niche__note">Bhagwan Ram, Mata Sita, Lakshman &amp; Hanuman ji</p>
+              </div>
+            </article>
+
+            <article class="niche" data-reveal data-reveal-delay="1">
+              <div class="niche__arch">
+                <div class="niche__placeholder">
+                  <span class="photo-slot__om deva">ॐ</span>
+                </div>
+              </div>
+              <div class="niche__body">
+                <h3 class="niche__name">Shiv Parivar</h3>
+                <p class="niche__deva deva">शिव परिवार</p>
+                <p class="niche__note">Bhagwan Shiv, Mata Parvati &amp; family</p>
+              </div>
+            </article>
+
+            <article class="niche" data-reveal data-reveal-delay="2">
+              <div class="niche__arch">
+                <div class="niche__placeholder">
+                  <span class="photo-slot__om deva">ॐ</span>
+                </div>
+              </div>
+              <div class="niche__body">
+                <h3 class="niche__name">Durga Maa</h3>
+                <p class="niche__deva deva">दुर्गा माता</p>
+                <p class="niche__note">The Divine Mother, worshipped through the year</p>
+              </div>
+            </article>
+
+            <article class="niche" data-reveal>
+              <div class="niche__arch">
+                <div class="niche__placeholder">
+                  <span class="photo-slot__om deva">ॐ</span>
+                </div>
+              </div>
+              <div class="niche__body">
+                <h3 class="niche__name">Shri Hanuman ji</h3>
+                <p class="niche__deva deva">श्री हनुमान जी</p>
+                <p class="niche__note">Protector and devoted servant of Shri Ram</p>
+              </div>
+            </article>
+
+            <article class="niche" data-reveal data-reveal-delay="1">
+              <div class="niche__arch">
+                <div class="niche__placeholder">
+                  <span class="photo-slot__om deva">ॐ</span>
+                </div>
+              </div>
+              <div class="niche__body">
+                <h3 class="niche__name">Shri Ganesh ji</h3>
+                <p class="niche__deva deva">श्री गणेश जी</p>
+                <p class="niche__note">Remover of obstacles, worshipped first</p>
+              </div>
+            </article>
+
+            <article class="niche" data-reveal data-reveal-delay="2">
+              <div class="niche__arch">
+                <div class="niche__placeholder">
+                  <span class="photo-slot__om deva">ॐ</span>
+                </div>
+              </div>
+              <div class="niche__body">
+                <h3 class="niche__name">Radha Krishna</h3>
+                <p class="niche__deva deva">राधा कृष्ण</p>
+                <p class="niche__note">Divine love, devotion, and joy</p>
+              </div>
+            </article>
+          </div>
+
+          <p class="center mt-6" style="color: var(--ink-faint); font-size: var(--fs-300)">
+            The deities shown reflect our temple's worship — we'll update names and add photographs
+            of our own murtis as the temple provides them.
+          </p>
+        </div>
+      </section>
+
+      <!-- ===== Timings ================================================= -->
+      <section class="section section--red" id="timings" aria-labelledby="timings-title">
+        <div class="container">
+          <div class="section__head center" data-reveal>
+            <span class="eyebrow">Timings · समय</span>
+            <h2 class="title" id="timings-title">Darshan &amp; Aarti Timings</h2>
+            <p class="lead">
+              The temple lamp is lit every day we are open. Aarti times are a guide — they shift for
+              festivals and special occasions, so please call ahead for those.
+            </p>
+          </div>
+
+          <div class="timings">
+            <table class="timetable" data-reveal>
+              <caption>Weekly Darshan Hours</caption>
+              <tbody>
+                <tr data-day="1"><th scope="row">Monday</th><td>10:00 AM – 4:00 PM</td></tr>
+                <tr data-day="2"><th scope="row">Tuesday</th><td>10:00 AM – 8:00 PM</td></tr>
+                <tr data-day="3"><th scope="row">Wednesday</th><td class="is-closed">Closed</td></tr>
+                <tr data-day="4"><th scope="row">Thursday</th><td class="is-closed">Closed</td></tr>
+                <tr data-day="5"><th scope="row">Friday</th><td>10:00 AM – 4:00 PM</td></tr>
+                <tr data-day="6"><th scope="row">Saturday</th><td>10:00 AM – 4:00 PM</td></tr>
+                <tr data-day="0"><th scope="row">Sunday</th><td>10:00 AM – 4:00 PM</td></tr>
+              </tbody>
+            </table>
+
+            <div class="card-soft" data-reveal data-reveal-delay="1">
+              <h3 style="color: #fff">Daily Aarti</h3>
+              <ul class="aarti-list mt-5">
+                <li>
+                  <span class="aarti__name">Mangala Aarti <span class="deva">मंगला आरती</span></span>
+                  <span class="aarti__time">Morning</span>
+                </li>
+                <li>
+                  <span class="aarti__name">Madhyahna Aarti <span class="deva">मध्याह्न आरती</span></span>
+                  <span class="aarti__time">Midday</span>
+                </li>
+                <li>
+                  <span class="aarti__name">Sandhya Aarti <span class="deva">संध्या आरती</span></span>
+                  <span class="aarti__time">Evening</span>
+                </li>
+                <li>
+                  <span class="aarti__name">Tuesday Hanuman Chalisa</span>
+                  <span class="aarti__time">Evening</span>
+                </li>
+              </ul>
+              <p style="color: var(--on-red-soft); font-size: var(--fs-300); margin-top: 1rem">
+                Exact aarti times are confirmed by the temple — please call
+                <a href="tel:+19258120581" style="color: var(--gold-bright); font-weight: 700"
+                  >(925) 812-0581</a
+                >
+                to confirm before you travel.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Sevas & poojas ========================================== -->
+      <section class="section" id="sevas" aria-labelledby="sevas-title">
+        <div class="container">
+          <div class="section__head center" data-reveal>
+            <span class="eyebrow">Sevas · सेवा</span>
+            <h2 class="title" id="sevas-title">Poojas &amp; Sevas</h2>
+            <p class="lead">
+              Our priest performs poojas at the temple and at your home for every occasion — from a
+              child's naming to a new home, a wedding, or a memorial. Call to book and discuss
+              sankalp.
+            </p>
+          </div>
+
+          <div class="grid grid--3">
+            <article class="card" data-reveal>
+              <span class="card__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                  <path d="M12 3v4M12 7c-3 0-5 2-5 5v6h10v-6c0-3-2-5-5-5Z" stroke-linejoin="round" />
+                  <path d="M5 18h14" stroke-linecap="round" />
+                </svg>
+              </span>
+              <h3 class="card__title">Archana &amp; Daily Pooja</h3>
+              <p class="card__text">
+                Offer archana in your name and gotra at the feet of the deities, with prasad to take
+                home.
+              </p>
+            </article>
+
+            <article class="card" data-reveal data-reveal-delay="1">
+              <span class="card__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                  <path d="M6 20c0-4 2.7-7 6-7s6 3 6 7" stroke-linecap="round" />
+                  <path d="M9 9l3-4 3 4M12 5v8" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+              <h3 class="card__title">Abhishekam &amp; Havan</h3>
+              <p class="card__text">
+                Sacred abhishekam and havan / homam for health, prosperity, and the fulfilment of
+                vows.
+              </p>
+            </article>
+
+            <article class="card" data-reveal data-reveal-delay="2">
+              <span class="card__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                  <path d="M4 21V8l8-5 8 5v13" stroke-linejoin="round" />
+                  <path d="M9 21v-6h6v6" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+              <h3 class="card__title">Griha Pravesh &amp; Home Visits</h3>
+              <p class="card__text">
+                House-warming, Vastu pooja, and home ceremonies — our priest will visit your home on
+                request.
+              </p>
+            </article>
+
+            <article class="card" data-reveal>
+              <span class="card__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                  <circle cx="9" cy="8" r="3" />
+                  <circle cx="16" cy="8" r="3" />
+                  <path d="M4 20c0-3 2.2-5 5-5s5 2 5 5M14 20c0-3 2-5 5-5" stroke-linecap="round" />
+                </svg>
+              </span>
+              <h3 class="card__title">Weddings &amp; Sanskaars</h3>
+              <p class="card__text">
+                Vivah (wedding), Namkaran (naming), Mundan, and the sixteen sanskaars performed with
+                full vidhi.
+              </p>
+            </article>
+
+            <article class="card" data-reveal data-reveal-delay="1">
+              <span class="card__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                  <path d="M4 5h16v12H4z" stroke-linejoin="round" />
+                  <path d="M4 9h16M9 13h6" stroke-linecap="round" />
+                  <path d="M9 17v3M15 17v3" stroke-linecap="round" />
+                </svg>
+              </span>
+              <h3 class="card__title">Satyanarayan Katha</h3>
+              <p class="card__text">
+                Monthly and on-request Satyanarayan pooja and katha for the well-being of your
+                family.
+              </p>
+            </article>
+
+            <article class="card" data-reveal data-reveal-delay="2">
+              <span class="card__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                  <path d="M12 21s-7-4.5-7-10a7 7 0 0 1 14 0c0 5.5-7 10-7 10Z" stroke-linejoin="round" />
+                  <circle cx="12" cy="11" r="2.4" />
+                </svg>
+              </span>
+              <h3 class="card__title">Memorial &amp; Shanti Pooja</h3>
+              <p class="card__text">
+                Antim sanskaar rites, shraddh, and shanti poojas performed with care and compassion.
+              </p>
+            </article>
+          </div>
+
+          <div class="btn-row btn-row--center mt-7" data-reveal>
+            <a class="btn btn--primary btn--lg" href="tel:+19258120581">Call to Book a Seva</a>
+            <a class="btn btn--ghost btn--lg" href="#visit">Visit the Temple</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Festivals =============================================== -->
+      <section class="section section--cream" id="festivals" aria-labelledby="festivals-title">
+        <div class="container">
+          <div class="section__head center" data-reveal>
+            <span class="eyebrow">Utsav · उत्सव</span>
+            <h2 class="title" id="festivals-title">Festivals &amp; Celebrations</h2>
+            <p class="lead" data-festival-countdown>
+              We celebrate every major Hindu festival with the whole community — aarti, bhajan,
+              katha, and prasad for all.
+            </p>
+          </div>
+
+          <div class="grid grid--2">
+            <div class="festival" data-festival="shivaratri" data-reveal>
+              <div class="festival__date"><span class="festival__day">15</span><span class="festival__mon">Feb</span></div>
+              <div>
+                <div class="festival__name">Maha Shivaratri <span data-festival-badge></span></div>
+                <div class="festival__deva deva">महाशिवरात्रि</div>
+                <div class="festival__desc">Night-long worship of Bhagwan Shiv with abhishekam.</div>
+              </div>
+            </div>
+
+            <div class="festival" data-festival="holi" data-reveal data-reveal-delay="1">
+              <div class="festival__date"><span class="festival__day">3</span><span class="festival__mon">Mar</span></div>
+              <div>
+                <div class="festival__name">Holi <span data-festival-badge></span></div>
+                <div class="festival__deva deva">होली</div>
+                <div class="festival__desc">The festival of colours — joy, music, and community.</div>
+              </div>
+            </div>
+
+            <div class="festival" data-festival="ramnavami" data-reveal>
+              <div class="festival__date"><span class="festival__day">26</span><span class="festival__mon">Mar</span></div>
+              <div>
+                <div class="festival__name">Ram Navami <span data-festival-badge></span></div>
+                <div class="festival__deva deva">राम नवमी</div>
+                <div class="festival__desc">Celebrating the birth of Bhagwan Shri Ram.</div>
+              </div>
+            </div>
+
+            <div class="festival" data-festival="hanuman" data-reveal data-reveal-delay="1">
+              <div class="festival__date"><span class="festival__day">2</span><span class="festival__mon">Apr</span></div>
+              <div>
+                <div class="festival__name">Hanuman Jayanti <span data-festival-badge></span></div>
+                <div class="festival__deva deva">हनुमान जयंती</div>
+                <div class="festival__desc">Sundar Kand and Hanuman Chalisa paath.</div>
+              </div>
+            </div>
+
+            <div class="festival" data-festival="janmashtami" data-reveal>
+              <div class="festival__date"><span class="festival__day">4</span><span class="festival__mon">Sep</span></div>
+              <div>
+                <div class="festival__name">Krishna Janmashtami <span data-festival-badge></span></div>
+                <div class="festival__deva deva">जन्माष्टमी</div>
+                <div class="festival__desc">Midnight celebration of Bhagwan Krishna's birth.</div>
+              </div>
+            </div>
+
+            <div class="festival" data-festival="ganesh" data-reveal data-reveal-delay="1">
+              <div class="festival__date"><span class="festival__day">14</span><span class="festival__mon">Sep</span></div>
+              <div>
+                <div class="festival__name">Ganesh Chaturthi <span data-festival-badge></span></div>
+                <div class="festival__deva deva">गणेश चतुर्थी</div>
+                <div class="festival__desc">Welcoming Shri Ganesh with pooja and modak.</div>
+              </div>
+            </div>
+
+            <div class="festival" data-festival="navratri" data-reveal>
+              <div class="festival__date"><span class="festival__day">11</span><span class="festival__mon">Oct</span></div>
+              <div>
+                <div class="festival__name">Sharad Navratri <span data-festival-badge></span></div>
+                <div class="festival__deva deva">नवरात्रि</div>
+                <div class="festival__desc">Nine nights of Durga Maa — garba, aarti, and fasting.</div>
+              </div>
+            </div>
+
+            <div class="festival" data-festival="diwali" data-reveal data-reveal-delay="1">
+              <div class="festival__date"><span class="festival__day">8</span><span class="festival__mon">Nov</span></div>
+              <div>
+                <div class="festival__name">Diwali &amp; Lakshmi Pooja <span data-festival-badge></span></div>
+                <div class="festival__deva deva">दीपावली</div>
+                <div class="festival__desc">The festival of lights and Lakshmi pooja.</div>
+              </div>
+            </div>
+          </div>
+
+          <p class="center mt-6" style="color: var(--ink-faint); font-size: var(--fs-300)">
+            Dates are based on the Hindu calendar and may shift by a day — confirmed dates and timings
+            are announced by the temple ahead of each festival.
+          </p>
+        </div>
+      </section>
+
+      <!-- ===== Head priest ============================================= -->
+      <section class="section" id="priest" aria-labelledby="priest-title">
+        <div class="container">
+          <div class="priest">
+            <div class="priest__media" data-reveal>
+              <div class="framed">
+                <div class="framed__inner">
+                  <!-- TODO: add the head priest's photograph here.
+                       Drop the provided photo at assets/img/priest-panditji.jpg
+                       and replace the placeholder below with:
+                       <img src="assets/img/priest-panditji.jpg" alt="Pandit ji, head priest of East Bay Hindu Temple" /> -->
+                  <div class="photo-slot">
+                    <span class="photo-slot__om deva">ॐ</span>
+                    <span class="photo-slot__label">Pandit ji's photo</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div data-reveal data-reveal-delay="1">
+              <span class="eyebrow">Our Priest · पुजारी</span>
+              <!-- NOTE: confirm the priest's exact name & spelling before publishing. -->
+              <h2 class="priest__name" id="priest-title">Pandit Rakesh Bhargav ji</h2>
+              <p class="priest__role">Head Priest · East Bay Hindu Temple</p>
+              <p class="lead">
+                Our head priest leads the daily worship of the temple and performs poojas and
+                sanskaars for families across the East Bay. Trained in the Vedic tradition, he
+                guides devotees through every ceremony with patience, devotion, and a deep knowledge
+                of the scriptures.
+              </p>
+              <blockquote class="priest__quote">
+                “Our temple is a home for every family. Come as you are — the lamp is lit, and the
+                Lord is waiting.”
+              </blockquote>
+              <div class="btn-row mt-6">
+                <a class="btn btn--primary btn--lg" href="tel:+19258120581">Speak with Pandit ji</a>
+                <a class="btn btn--ghost btn--lg" href="#sevas">Book a Pooja</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Seva / donation band ==================================== -->
+      <section class="section section--tight">
+        <div class="container">
+          <div class="seva-band" data-reveal>
+            <svg class="hero__mandala" viewBox="0 0 200 200" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="0.6" style="opacity: 0.12">
+              <circle cx="100" cy="100" r="96" />
+              <circle cx="100" cy="100" r="70" />
+              <circle cx="100" cy="100" r="44" />
+            </svg>
+            <span class="eyebrow">Daan · दान</span>
+            <h2 class="seva-band__title">Support Your Temple</h2>
+            <p class="seva-band__text">
+              East Bay Hindu Temple runs entirely on the generosity of devotees. Your seva keeps the
+              lamp lit, the doors open, and our festivals alive for the next generation. Every
+              contribution, large or small, is a blessing.
+            </p>
+            <div class="btn-row btn-row--center">
+              <!-- TODO: link to the temple's preferred donation method (Zelle, PayPal,
+                   or an online giving page). -->
+              <a class="btn btn--gold btn--lg" href="#visit">Make a Donation</a>
+              <a class="btn btn--on-red btn--lg" href="tel:+19252520551">Call the Temple</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Visit & contact ========================================= -->
+      <section class="section section--cream" id="visit" aria-labelledby="visit-title">
+        <div class="container">
+          <div class="section__head center" data-reveal>
+            <span class="eyebrow">Visit Us · पधारें</span>
+            <h2 class="title" id="visit-title">Plan Your Visit</h2>
+            <p class="lead">
+              We are in the heart of Pittsburg, California. Come for darshan, stay for prasad —
+              parking is available and all are welcome.
+            </p>
+          </div>
+
+          <div class="visit">
+            <div data-reveal>
+              <dl class="contact-list">
+                <li>
+                  <span class="contact-list__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                      <path d="M12 21s-7-5-7-11a7 7 0 0 1 14 0c0 6-7 11-7 11Z" stroke-linejoin="round" />
+                      <circle cx="12" cy="10" r="2.5" />
+                    </svg>
+                  </span>
+                  <div>
+                    <dt>Address</dt>
+                    <dd>
+                      <a
+                        href="https://www.google.com/maps/search/?api=1&query=595+School+St,+Pittsburg,+CA+94565"
+                        target="_blank"
+                        rel="noopener"
+                        >595 School Street, Pittsburg, CA 94565</a
+                      >
+                    </dd>
+                  </div>
+                </li>
+                <li>
+                  <span class="contact-list__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                      <path d="M5 4h4l2 5-3 2a12 12 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z" stroke-linejoin="round" />
+                    </svg>
+                  </span>
+                  <div>
+                    <dt>Phone</dt>
+                    <dd>
+                      <a href="tel:+19252520551">(925) 252-0551</a> · Pandit ji
+                      <a href="tel:+19258120581">(925) 812-0581</a>
+                    </dd>
+                  </div>
+                </li>
+                <li>
+                  <span class="contact-list__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                      <circle cx="12" cy="12" r="9" />
+                      <path d="M12 7v5l3 2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </span>
+                  <div>
+                    <dt>Open Today</dt>
+                    <dd><span data-open-status>See weekly hours above</span></dd>
+                  </div>
+                </li>
+                <li>
+                  <span class="contact-list__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                      <path d="M4 4h16v12H7l-3 3z" stroke-linejoin="round" />
+                    </svg>
+                  </span>
+                  <div>
+                    <dt>Connect</dt>
+                    <dd>
+                      <a
+                        href="https://www.facebook.com/pittsburgeastbayhindutemple/"
+                        target="_blank"
+                        rel="noopener"
+                        >Follow us on Facebook</a
+                      >
+                    </dd>
+                  </div>
+                </li>
+              </dl>
+
+              <div class="btn-row mt-6">
+                <a
+                  class="btn btn--primary btn--lg"
+                  href="https://www.google.com/maps/dir/?api=1&destination=595+School+St,+Pittsburg,+CA+94565"
+                  target="_blank"
+                  rel="noopener"
+                  >Get Directions</a
+                >
+              </div>
+            </div>
+
+            <div class="map-frame" data-reveal data-reveal-delay="1">
+              <iframe
+                title="Map to East Bay Hindu Temple, 595 School Street, Pittsburg, CA"
+                src="https://www.google.com/maps?q=595+School+St,+Pittsburg,+CA+94565&output=embed"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+              ></iframe>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ===== Footer =================================================== -->
+    <footer class="site-footer">
+      <div class="container site-footer__inner">
+        <div class="site-footer__brand">
+          <a class="brand" href="#top" aria-label="East Bay Hindu Temple — home">
+            <img class="brand__mark" src="assets/img/logo-temple.svg" alt="" width="46" height="46" />
+            <span class="brand__text">
+              <span class="brand__name">East Bay Hindu Temple</span>
+              <span class="brand__sub deva">पूर्वी खाड़ी हिन्दू मंदिर</span>
+            </span>
+          </a>
+          <p class="site-footer__blurb">
+            A community temple in Pittsburg, California — daily darshan, aarti, poojas, and festivals
+            for all. <span class="deva">ॐ नमः शिवाय।</span>
+          </p>
+        </div>
+
+        <nav class="site-footer__col" aria-label="Footer — explore">
+          <h2 class="site-footer__heading">Explore</h2>
+          <ul class="site-footer__list">
+            <li><a href="#welcome">Welcome</a></li>
+            <li><a href="#deities">Our Deities</a></li>
+            <li><a href="#timings">Timings</a></li>
+            <li><a href="#sevas">Poojas &amp; Sevas</a></li>
+            <li><a href="#festivals">Festivals</a></li>
+            <li><a href="#priest">Our Priest</a></li>
+          </ul>
+        </nav>
+
+        <div class="site-footer__col">
+          <h2 class="site-footer__heading">Visit &amp; Contact</h2>
+          <ul class="site-footer__list">
+            <li>595 School Street<br />Pittsburg, CA 94565</li>
+            <li><a href="tel:+19252520551">(925) 252-0551</a></li>
+            <li><a href="tel:+19258120581">Pandit ji · (925) 812-0581</a></li>
+            <li>
+              <a
+                href="https://www.facebook.com/pittsburgeastbayhindutemple/"
+                target="_blank"
+                rel="noopener"
+                >Facebook ↗</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="container site-footer__bottom">
+        <p>&copy; <span id="year">2026</span> East Bay Hindu Temple. A non-profit place of worship.</p>
+        <p class="site-footer__credit">
+          Website by <a href="https://symbioai.example" rel="noopener">Symbio AI</a>
+        </p>
+      </div>
+    </footer>
+
+    <button class="back-to-top" type="button" data-back-to-top aria-label="Back to top">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 19V6M6 11l6-6 6 6" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </button>
+  </body>
+</html>

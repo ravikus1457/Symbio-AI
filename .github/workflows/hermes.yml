@@ -1,0 +1,63 @@
+name: Hermes growth heartbeat
+
+# Full-automation safety net for the growth system:
+#  - health: rebuilds the site (incl. the programmatic-SEO matrix) + lints, so the
+#    30+ generated pages can never silently break a deploy.
+#  - heartbeat: refreshes the Hermes funnel report and (on manual dispatch with a
+#    prospects file) generates an outreach batch artifact. Email is NEVER sent from
+#    CI — sending belongs in your warmed cold-email tool. Nothing here touches prod.
+
+on:
+  schedule:
+    - cron: "0 14 * * 1" # Mondays, 14:00 UTC
+  workflow_dispatch:
+    inputs:
+      prospects:
+        description: "Repo path to a prospects CSV to generate an outreach batch (optional — nothing is sent)"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Build site (incl. programmatic SEO matrix)
+        run: npm run build
+      - name: Lint
+        run: npm run lint
+
+  heartbeat:
+    needs: health
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Hermes funnel report
+        run: node tools/hermes/hermes.mjs report || true
+      - name: Generate outreach batch (only if a prospects file was provided; nothing is sent)
+        if: ${{ github.event.inputs.prospects != '' }}
+        env:
+          PROSPECTS: ${{ github.event.inputs.prospects }}
+        run: node tools/hermes/hermes.mjs outreach --in "$PROSPECTS" || true
+      - name: Upload report + any batch as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: hermes-${{ github.run_id }}
+          path: |
+            tools/hermes/REPORT.md
+            tools/hermes/out/
+          if-no-files-found: ignore
+          retention-days: 14

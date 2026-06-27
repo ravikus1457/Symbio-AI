@@ -4,9 +4,20 @@ Internal automation that backs the [growth playbook](../GROWTH_PLAYBOOK.md). The
 under `tools/` and are **not** part of the published site — Eleventy only processes `src/`, so
 nothing here ships to `dist/`.
 
+**What's here**
+
+- **`hermes/`** — the autonomous growth engine: outreach + an A/B learning loop that improves
+  with use, plus reporting. See [`hermes/README.md`](hermes/README.md). Start here.
+- **`audit-outreach.mjs`** — the simple one-shot outreach generator (no learning loop).
+- **`lib/outreach-core.mjs`** — the shared scan/finding/email engine both of the above use.
+
 ---
 
 ## 1. Audit-first outreach generator — `audit-outreach.mjs`
+
+> For the self-improving version with A/B learning and reporting, use **Hermes**
+> (`tools/hermes/`). This one is the plain, one-shot generator; both share
+> `tools/lib/outreach-core.mjs`.
 
 Turns a list of local businesses into ready-to-send, personalized cold emails. For each
 prospect it runs a lightweight "scan" of their site, picks the **3 most compelling fixes**, and

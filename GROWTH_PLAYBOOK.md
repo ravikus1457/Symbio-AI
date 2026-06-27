@@ -183,14 +183,23 @@ plans = a clearly profitable July, with SEO and recurring revenue compounding in
 
 ---
 
-## What I can build for you in this repo right now
+## What's now built in this repo ✅
 
-1. **Productized checkout section** — packages + Stripe Payment Link buttons + an intake form
-   (Engine 2), on your existing pricing page.
-2. **Programmatic SEO generator** — a data file + Eleventy template that emits hundreds of
-   {service × niche × city} landing pages (Engine 5).
-3. **Automated audit/outreach script** — a Node script that scans a list of sites (Lighthouse +
-   checks), generates the 3-finding personalized email, and exports a ready-to-send CSV for
-   Smartlead/Instantly (Engine 1).
-4. **Widget pricing/landing page** — a self-serve page that sells the AI assistant as a monthly
-   plan (Engine 3).
+- **Self-serve checkout (Engine 2)** — `buy.html` (Packages): 4 fixed-price packages with
+  Stripe Payment Link buttons (data-driven in `src/_data/site.js`) + an intake form. Add your
+  Stripe links and it's live. _Wiring: `tools/README.md`._
+- **Audit-first outreach (Engine 1)** — `tools/audit-outreach.mjs`: scans prospect sites, finds
+  the 3 best talking points, writes CAN-SPAM-compliant personalized emails to CSV for
+  Smartlead/Instantly. `npm run outreach`.
+- **Programmatic SEO (Engine 5)** — 30 penalty-safe landing pages (18 service×niche + 12 curated
+  city pages) at `/grow-*.html`, with a hub + 3 service hubs, full JSON-LD, canonical tags,
+  `sitemap.xml`, and `robots.txt`. Generated from `src/_data/{landingPages,cells,cities,niches}.js`.
+- **Hermes — the autonomous growth engine** — `tools/hermes/`: orchestrates outreach with an A/B
+  **learning loop** (a bandit that shifts toward the subject lines/CTAs that get replies), logs
+  outcomes, and reports the funnel. A weekly GitHub Action keeps the site building and refreshes
+  the dashboard. `npm run hermes -- run --in leads.csv`. _See `tools/hermes/README.md`._
+
+### Still worth building next
+- A self-serve **widget landing page** that sells the AI assistant as a monthly plan (Engine 3).
+- Real **case studies + testimonials** wired onto the matching `/grow-*` pages — the single
+  biggest lever for turning the city pages from "indexed" into "ranking + converting".

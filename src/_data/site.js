@@ -6,6 +6,9 @@
 export default {
   name: "Symbio AI",
   shortName: "Symbio",
+  // Production origin (no trailing slash). Used for absolute canonical URLs,
+  // og:url, sitemap entries, and JSON-LD @id values. Set to the live domain.
+  url: "https://symbioai.dev",
   tagline: "We catch and convert leads in real time.",
   // Broader positioning — used as the hero subhead and where we describe the
   // full offer (websites + apps + systems), not just lead capture.
@@ -24,6 +27,7 @@ export default {
     { key: "services", label: "Services", url: "services.html" },
     { key: "pricing", label: "Pricing", url: "pricing.html" },
     { key: "packages", label: "Packages", url: "buy.html" },
+    { key: "grow", label: "Industries", url: "grow.html" },
     { key: "portfolio", label: "Portfolio", url: "portfolio.html" },
     { key: "reviews", label: "Reviews", url: "reviews.html" },
   ],

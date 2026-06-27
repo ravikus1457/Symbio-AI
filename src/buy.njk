@@ -26,6 +26,7 @@ description: Buy a fixed-price package — no call required. Website in 7 days, 
     <div class="grid grid--auto">
       {% for pkg in site.packages %}
         <article
+          id="{{ pkg.key }}"
           class="price{% if pkg.featured %} price--popular{% endif %}"
           data-reveal
           data-reveal-delay="{{ loop.index0 }}"

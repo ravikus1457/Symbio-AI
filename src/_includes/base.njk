@@ -18,6 +18,24 @@
     <meta property="og:image" content="assets/img/logo-symbio-color.svg" />
     <meta name="twitter:card" content="summary" />
 
+    {# Canonical + og:url — self-referencing absolute URL. A page may set its own
+       `canonical`; otherwise we derive it from site.url + this page's path, so
+       every page gets one. Guarded on site.url so an empty origin emits nothing. #}
+    {% if site.url %}
+      {% set pageCanonical = canonical or (site.url + page.url) %}
+      <link rel="canonical" href="{{ pageCanonical }}" />
+      <meta property="og:url" content="{{ pageCanonical }}" />
+    {% endif %}
+
+    {# Opt-in noindex for thin/gated pages (still follow links). #}
+    {% if noindex %}<meta name="robots" content="noindex, follow" />{% endif %}
+
+    {# JSON-LD structured data — only when a page provides `jsonLd` (the matrix
+       landing pages do). Existing pages set nothing, so this stays silent. #}
+    {% if jsonLd %}
+      <script type="application/ld+json">{{ jsonLd | safe }}</script>
+    {% endif %}
+
     {# Runs before first paint. Sets the theme (localStorage wins, else the OS
        preference governs via CSS) and flags `.js` so reveal-on-scroll content
        starts hidden without a flash. A safety net unhides it if main.js never

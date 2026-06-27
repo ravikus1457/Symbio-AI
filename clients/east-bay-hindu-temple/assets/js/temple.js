@@ -49,6 +49,23 @@
     { id: "diwali", date: [2026, 10, 8] },
   ];
 
+  /* Donation methods. Fill these with the temple's REAL handles to activate each
+     option, then set setupNotice:false to hide the on-screen setup reminder.
+     - zelle:  the temple's Zelle email OR phone number
+     - venmo:  Venmo username WITHOUT the @ (e.g. "EastBayHinduTemple")
+     - paypal: a PayPal.me link ("https://paypal.me/yourtemple") or a hosted
+               donate URL ("https://www.paypal.com/donate/?hosted_button_id=...")
+     Leave a value as "REPLACE" (or empty) to show it as "coming soon". */
+  var DONATION = {
+    setupNotice: true,
+    presets: [51, 101, 251, 501, 1100],
+    zelle: "donations@eastbayhindutemple.org",
+    zelleName: "East Bay Hindu Temple",
+    venmo: "REPLACE",
+    paypal: "REPLACE",
+    mailingAddress: "East Bay Hindu Temple, 595 School Street, Pittsburg, CA 94565",
+  };
+
   function fmtTime(hour24) {
     var period = hour24 >= 12 ? "PM" : "AM";
     var h = hour24 % 12;
@@ -219,7 +236,225 @@
     }
   }
 
-  /* ---- 7. Back-to-top -------------------------------------------------- */
+  /* ---- 7. Donation modal ---------------------------------------------- */
+  function initDonation() {
+    var modal = document.getElementById("donate-modal");
+    if (!modal) return;
+
+    var openers = document.querySelectorAll("[data-donate-open]");
+    var amountRow = modal.querySelector("[data-amount-row]");
+    var methodsEl = modal.querySelector("[data-give-methods]");
+    var setupEl = modal.querySelector("[data-donate-setup]");
+    var lastFocus = null;
+    var amount = null;
+
+    function isSet(v) {
+      return v && v !== "REPLACE" && String(v).trim() !== "";
+    }
+
+    if (DONATION.setupNotice && setupEl && (!isSet(DONATION.venmo) || !isSet(DONATION.paypal))) {
+      setupEl.hidden = false;
+    }
+
+    function venmoUrl() {
+      var p = "txn=pay&note=" + encodeURIComponent("Temple Donation — " + DONATION.zelleName);
+      if (amount) p += "&amount=" + amount;
+      return "https://venmo.com/u/" + encodeURIComponent(DONATION.venmo) + "?" + p;
+    }
+
+    function paypalUrl() {
+      var base = DONATION.paypal;
+      if (/paypal\.me\//i.test(base)) return base.replace(/\/+$/, "") + (amount ? "/" + amount : "");
+      return base;
+    }
+
+    function fallbackCopy(text) {
+      try {
+        var ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      } catch (e) {
+        /* clipboard unavailable; the value is shown on screen to copy by hand */
+      }
+    }
+
+    function copyText(text, btn) {
+      var original = btn.textContent;
+      var done = function () {
+        btn.textContent = "Copied!";
+        window.setTimeout(function () {
+          btn.textContent = original;
+        }, 1500);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () {
+          fallbackCopy(text);
+          done();
+        });
+      } else {
+        fallbackCopy(text);
+        done();
+      }
+    }
+
+    function buildMethod(o) {
+      var row = document.createElement("div");
+      row.className = "give-method";
+
+      var icon = document.createElement("span");
+      icon.className = "give-method__icon";
+      icon.setAttribute("aria-hidden", "true");
+      icon.innerHTML =
+        o.iconSvg ||
+        '<strong style="font-family:var(--font-display);font-size:1.25rem">' + o.iconText + "</strong>";
+
+      var main = document.createElement("div");
+      main.className = "give-method__main";
+      var nm = document.createElement("div");
+      nm.className = "give-method__name";
+      nm.textContent = o.name;
+      var dt = document.createElement("div");
+      dt.className = "give-method__detail";
+      dt.textContent = o.detail;
+      main.appendChild(nm);
+      main.appendChild(dt);
+
+      var act = document.createElement("div");
+      act.className = "give-method__action";
+      if (o.action.type === "link") {
+        var a = document.createElement("a");
+        a.className = "btn btn--primary";
+        a.href = o.action.href;
+        a.target = "_blank";
+        a.rel = "noopener";
+        a.textContent = o.action.label;
+        act.appendChild(a);
+      } else if (o.action.type === "copy") {
+        var cb = document.createElement("button");
+        cb.type = "button";
+        cb.className = "btn btn--ghost";
+        cb.textContent = o.action.label;
+        cb.addEventListener("click", function () {
+          copyText(o.action.value, cb);
+        });
+        act.appendChild(cb);
+      } else {
+        var span = document.createElement("span");
+        span.className = "give-method__disabled";
+        span.textContent = o.action.label;
+        act.appendChild(span);
+      }
+
+      row.appendChild(icon);
+      row.appendChild(main);
+      row.appendChild(act);
+      return row;
+    }
+
+    function renderMethods() {
+      if (!methodsEl) return;
+      methodsEl.textContent = "";
+
+      methodsEl.appendChild(
+        buildMethod({
+          name: "Venmo",
+          iconText: "V",
+          detail: isSet(DONATION.venmo) ? "@" + DONATION.venmo : "Coming soon — ask the temple",
+          action: isSet(DONATION.venmo)
+            ? { type: "link", href: venmoUrl(), label: "Open Venmo" }
+            : { type: "disabled", label: "Setup" },
+        })
+      );
+
+      methodsEl.appendChild(
+        buildMethod({
+          name: "PayPal",
+          iconText: "P",
+          detail: isSet(DONATION.paypal) ? "Secure online giving" : "Coming soon — ask the temple",
+          action: isSet(DONATION.paypal)
+            ? { type: "link", href: paypalUrl(), label: "Give with PayPal" }
+            : { type: "disabled", label: "Setup" },
+        })
+      );
+
+      methodsEl.appendChild(
+        buildMethod({
+          name: "Zelle",
+          iconText: "Z",
+          detail: DONATION.zelle + " · " + DONATION.zelleName,
+          action: { type: "copy", value: DONATION.zelle, label: "Copy" },
+        })
+      );
+
+      methodsEl.appendChild(
+        buildMethod({
+          name: "Mail a check",
+          iconSvg:
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg>',
+          detail: DONATION.mailingAddress,
+          action: { type: "copy", value: DONATION.mailingAddress, label: "Copy" },
+        })
+      );
+    }
+
+    if (amountRow) {
+      var makeChip = function (label, value) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "amount-chip";
+        b.textContent = label;
+        b.addEventListener("click", function () {
+          amount = value;
+          amountRow.querySelectorAll(".amount-chip").forEach(function (c) {
+            c.classList.remove("is-active");
+          });
+          b.classList.add("is-active");
+          renderMethods();
+        });
+        return b;
+      };
+      DONATION.presets.forEach(function (amt) {
+        amountRow.appendChild(makeChip("$" + amt, amt));
+      });
+      amountRow.appendChild(makeChip("Other", null));
+    }
+
+    renderMethods();
+
+    function openModal() {
+      lastFocus = document.activeElement;
+      modal.hidden = false;
+      document.body.style.overflow = "hidden";
+      var c = modal.querySelector(".modal__close");
+      if (c) c.focus();
+    }
+
+    function closeModal() {
+      modal.hidden = true;
+      document.body.style.overflow = "";
+      if (lastFocus && lastFocus.focus) lastFocus.focus();
+    }
+
+    openers.forEach(function (o) {
+      o.addEventListener("click", function (e) {
+        e.preventDefault();
+        openModal();
+      });
+    });
+    modal.querySelectorAll("[data-donate-close]").forEach(function (c) {
+      c.addEventListener("click", closeModal);
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !modal.hidden) closeModal();
+    });
+  }
+
+  /* ---- 8. Back-to-top -------------------------------------------------- */
   function initBackToTop() {
     var btn = document.querySelector("[data-back-to-top]");
     if (!btn) return;
@@ -242,6 +477,7 @@
     initReveals();
     initOpenStatus();
     initFestivals();
+    initDonation();
     initBackToTop();
     document.getElementById("year") &&
       (document.getElementById("year").textContent = String(new Date().getFullYear()));

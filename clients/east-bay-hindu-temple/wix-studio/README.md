@@ -133,7 +133,7 @@ HTML** and paste the matching file. For one-paste, use `full-site.html` instead.
 | Festivals (grid) | `embeds/festivals.html` | ~1080px |
 | Festival countdown (banner) | `embeds/festival-countdown.html` | ~150px |
 | Our Priest | `embeds/priest.html` | ~760px |
-| Support / Daan | `embeds/donation.html` | ~460px |
+| Support / Daan (working donation popup) | `embeds/donation.html` | ~700px |
 | Visit + Map | `embeds/visit.html` | ~780px |
 | Footer | `embeds/footer.html` | ~520px |
 
@@ -142,11 +142,16 @@ Notes:
   per breakpoint (heights above are starting points — nudge to fit).
 - The embeds are self-contained (only Google Fonts, and the Google Map in
   `visit.html`, load externally) and use **HTTPS**, which Wix requires.
-- **Edit the links/data** inside each embed: the hero/visit/donation buttons,
-  the hours in `timings.html`, and the festival lists in `festivals.html` /
-  `festival-countdown.html` — each has a clearly commented data block. (The
-  donation button ships pointing at a placeholder; set it to the temple's real
-  giving URL.)
+- **Edit the links/data** inside each embed: the hero/visit buttons, the hours
+  in `timings.html`, and the festival lists in `festivals.html` /
+  `festival-countdown.html` — each has a clearly commented data block.
+- **Donation:** the "Make a Donation" button opens a working popup with Zelle,
+  PayPal, Venmo and mail-a-check options plus suggested amounts. Fill in the
+  temple's real handles in the `DONATION` block near the top of `temple.js`
+  (inside the embed), then set `setupNotice:false`. Zelle + check work out of the
+  box; PayPal/Venmo activate once you add their handles. As a standalone embed,
+  give it generous height (popup is confined to the iframe) — or use
+  `full-site.html`, where the popup fills the screen.
 - Prefer native over iframe where it's easy: if you'd rather build the timetable
   as a native Wix table, you can — the embed just saves you the live "open now"
   logic. (That logic can also be done with **Velo**: add the table natively, then

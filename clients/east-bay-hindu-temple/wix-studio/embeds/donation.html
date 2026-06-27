@@ -2,8 +2,8 @@
 <!--
   East Bay Hindu Temple — "donation" section embed for Wix Studio.
   Wix Studio → Add (+) → Embed Code → "Embed HTML" → paste this entire file.
-  Full width; scrollbars OFF; suggested height ~460px (adjust per breakpoint).
-  Support / Daan band — point the donation button at the temple's giving link.
+  Full width; scrollbars OFF; suggested height ~700px (adjust per breakpoint).
+  Support / Daan band with a working multi-method donation popup (Zelle/PayPal/Venmo/check). Configure handles in the DONATION block of temple.js. NOTE: as a STANDALONE embed the popup is confined to this iframe — give it generous height (~700px+), or use full-site.html where the popup fills the screen.
   Self-contained — only Google Fonts load externally (HTTPS).
 -->
 <html lang="en">
@@ -1038,6 +1038,25 @@ ul {
   font-size: 2.8rem;
 }
 
+/* Original gold deity emblem shown in each arch (until a real murti photo is
+   dropped in). Sits on the maroon radial backdrop like a shrine icon. */
+.niche__art {
+  display: grid;
+  place-items: center;
+  width: 62%;
+  max-width: 150px;
+  aspect-ratio: 1;
+  color: var(--gold-bright);
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.4));
+  z-index: 1;
+}
+
+.niche__art svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
 .niche__body {
   padding: var(--space-4) var(--space-5) var(--space-5);
   text-align: center;
@@ -1620,6 +1639,214 @@ ul {
   }
 }
 
+/* -------------------------------------------------------------------------
+   21. Donation modal
+   ------------------------------------------------------------------------- */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: 1.2rem;
+}
+
+.modal[hidden] {
+  display: none;
+}
+
+.modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(40, 12, 6, 0.62);
+  backdrop-filter: blur(3px);
+}
+
+.modal__dialog {
+  position: relative;
+  width: min(560px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--cream);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--gold);
+  box-shadow: var(--shadow-lg);
+  animation: modal-in var(--dur) var(--ease);
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+}
+
+.modal__head {
+  position: relative;
+  background: var(--grad-red);
+  color: var(--on-red);
+  padding: 1.5rem 1.6rem;
+}
+
+.modal__title {
+  color: #fff;
+  font-size: var(--fs-700);
+}
+
+.modal__sub {
+  color: var(--on-red-soft);
+  font-size: var(--fs-300);
+  margin-top: 0.3rem;
+}
+
+.modal__close {
+  position: absolute;
+  top: 0.9rem;
+  right: 0.9rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 0;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.modal__close:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.modal__body {
+  padding: 1.5rem 1.6rem 1.7rem;
+}
+
+.modal__body .eyebrow {
+  display: block;
+  margin-bottom: 0.6rem;
+}
+
+.modal__note {
+  font-size: var(--fs-200);
+  color: var(--ink-faint);
+  margin-top: 1.2rem;
+  line-height: 1.6;
+}
+
+.give-setup {
+  background: rgba(232, 134, 30, 0.12);
+  border: 1px solid rgba(232, 134, 30, 0.4);
+  color: var(--ink-soft);
+  border-radius: var(--radius-sm);
+  padding: 0.7rem 0.9rem;
+  font-size: var(--fs-200);
+  margin-bottom: 1.2rem;
+}
+
+.give-setup code {
+  background: rgba(0, 0, 0, 0.06);
+  padding: 0.05rem 0.3rem;
+  border-radius: 4px;
+}
+
+.amount-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.3rem;
+}
+
+.amount-chip {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: var(--fs-300);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--line-strong);
+  background: var(--cream);
+  color: var(--ink);
+  cursor: pointer;
+  transition:
+    border-color var(--dur-fast) var(--ease),
+    background var(--dur-fast) var(--ease);
+}
+
+.amount-chip:hover {
+  border-color: var(--gold);
+}
+
+.amount-chip.is-active {
+  background: var(--grad-saffron);
+  color: #3a1402;
+  border-color: transparent;
+}
+
+.give-list {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.give-method {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+}
+
+.give-method__icon {
+  flex: none;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: rgba(200, 155, 60, 0.16);
+  color: var(--red);
+}
+
+.give-method__icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.give-method__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.give-method__name {
+  font-weight: 700;
+  color: var(--red);
+}
+
+.give-method__detail {
+  font-size: var(--fs-200);
+  color: var(--ink-soft);
+  word-break: break-word;
+}
+
+.give-method__action {
+  flex: none;
+}
+
+.give-method .btn {
+  padding: 0.55rem 1rem;
+  font-size: var(--fs-200);
+}
+
+.give-method__disabled {
+  font-size: var(--fs-200);
+  color: var(--ink-faint);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-pill);
+  padding: 0.4rem 0.8rem;
+  white-space: nowrap;
+}
+
     </style>
   </head>
   <body class="page">
@@ -1639,10 +1866,37 @@ ul {
               contribution, large or small, is a blessing.
             </p>
             <div class="btn-row btn-row--center">
-              <!-- TODO: link to the temple's preferred donation method (Zelle, PayPal,
-                   or an online giving page). -->
-              <a class="btn btn--gold btn--lg" href="#visit">Make a Donation</a>
+              <button class="btn btn--gold btn--lg" type="button" data-donate-open>Make a Donation</button>
               <a class="btn btn--on-red btn--lg" href="tel:+19252520551">Call the Temple</a>
+            </div>
+          </div>
+
+          <!-- Donation flow. The giving methods are driven by the DONATION config
+               near the top of assets/js/temple.js — fill in the temple's real
+               Zelle / PayPal / Venmo handles there to activate each option, then
+               set setupNotice:false to hide the on-screen setup reminder. -->
+          <div class="modal" id="donate-modal" hidden>
+            <div class="modal__backdrop" data-donate-close></div>
+            <div class="modal__dialog" role="dialog" aria-modal="true" aria-labelledby="donate-title">
+              <div class="modal__head">
+                <h2 class="modal__title" id="donate-title">Make a Donation</h2>
+                <p class="modal__sub">Your seva keeps the lamp lit. 🪔 Choose an amount and a way to give.</p>
+                <button class="modal__close" type="button" data-donate-close aria-label="Close">✕</button>
+              </div>
+              <div class="modal__body">
+                <p class="give-setup" data-donate-setup hidden>
+                  ⚙ Setup: some details below are placeholders. Add the temple’s real accounts in
+                  <code>temple.js</code> (the <code>DONATION</code> block) before going live.
+                </p>
+                <span class="eyebrow">Choose an amount</span>
+                <div class="amount-row" data-amount-row></div>
+                <span class="eyebrow">Choose how to give</span>
+                <div class="give-list" data-give-methods></div>
+                <p class="modal__note">
+                  East Bay Hindu Temple is a non-profit. Donations may be tax-deductible — a receipt
+                  is available on request. Thank you for your seva. 🙏
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -1698,6 +1952,23 @@ ul {
     { id: "navratri", date: [2026, 9, 11] },
     { id: "diwali", date: [2026, 10, 8] },
   ];
+
+  /* Donation methods. Fill these with the temple's REAL handles to activate each
+     option, then set setupNotice:false to hide the on-screen setup reminder.
+     - zelle:  the temple's Zelle email OR phone number
+     - venmo:  Venmo username WITHOUT the @ (e.g. "EastBayHinduTemple")
+     - paypal: a PayPal.me link ("https://paypal.me/yourtemple") or a hosted
+               donate URL ("https://www.paypal.com/donate/?hosted_button_id=...")
+     Leave a value as "REPLACE" (or empty) to show it as "coming soon". */
+  var DONATION = {
+    setupNotice: true,
+    presets: [51, 101, 251, 501, 1100],
+    zelle: "donations@eastbayhindutemple.org",
+    zelleName: "East Bay Hindu Temple",
+    venmo: "REPLACE",
+    paypal: "REPLACE",
+    mailingAddress: "East Bay Hindu Temple, 595 School Street, Pittsburg, CA 94565",
+  };
 
   function fmtTime(hour24) {
     var period = hour24 >= 12 ? "PM" : "AM";
@@ -1869,7 +2140,225 @@ ul {
     }
   }
 
-  /* ---- 7. Back-to-top -------------------------------------------------- */
+  /* ---- 7. Donation modal ---------------------------------------------- */
+  function initDonation() {
+    var modal = document.getElementById("donate-modal");
+    if (!modal) return;
+
+    var openers = document.querySelectorAll("[data-donate-open]");
+    var amountRow = modal.querySelector("[data-amount-row]");
+    var methodsEl = modal.querySelector("[data-give-methods]");
+    var setupEl = modal.querySelector("[data-donate-setup]");
+    var lastFocus = null;
+    var amount = null;
+
+    function isSet(v) {
+      return v && v !== "REPLACE" && String(v).trim() !== "";
+    }
+
+    if (DONATION.setupNotice && setupEl && (!isSet(DONATION.venmo) || !isSet(DONATION.paypal))) {
+      setupEl.hidden = false;
+    }
+
+    function venmoUrl() {
+      var p = "txn=pay&note=" + encodeURIComponent("Temple Donation — " + DONATION.zelleName);
+      if (amount) p += "&amount=" + amount;
+      return "https://venmo.com/u/" + encodeURIComponent(DONATION.venmo) + "?" + p;
+    }
+
+    function paypalUrl() {
+      var base = DONATION.paypal;
+      if (/paypal\.me\//i.test(base)) return base.replace(/\/+$/, "") + (amount ? "/" + amount : "");
+      return base;
+    }
+
+    function fallbackCopy(text) {
+      try {
+        var ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      } catch (e) {
+        /* clipboard unavailable; the value is shown on screen to copy by hand */
+      }
+    }
+
+    function copyText(text, btn) {
+      var original = btn.textContent;
+      var done = function () {
+        btn.textContent = "Copied!";
+        window.setTimeout(function () {
+          btn.textContent = original;
+        }, 1500);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () {
+          fallbackCopy(text);
+          done();
+        });
+      } else {
+        fallbackCopy(text);
+        done();
+      }
+    }
+
+    function buildMethod(o) {
+      var row = document.createElement("div");
+      row.className = "give-method";
+
+      var icon = document.createElement("span");
+      icon.className = "give-method__icon";
+      icon.setAttribute("aria-hidden", "true");
+      icon.innerHTML =
+        o.iconSvg ||
+        '<strong style="font-family:var(--font-display);font-size:1.25rem">' + o.iconText + "</strong>";
+
+      var main = document.createElement("div");
+      main.className = "give-method__main";
+      var nm = document.createElement("div");
+      nm.className = "give-method__name";
+      nm.textContent = o.name;
+      var dt = document.createElement("div");
+      dt.className = "give-method__detail";
+      dt.textContent = o.detail;
+      main.appendChild(nm);
+      main.appendChild(dt);
+
+      var act = document.createElement("div");
+      act.className = "give-method__action";
+      if (o.action.type === "link") {
+        var a = document.createElement("a");
+        a.className = "btn btn--primary";
+        a.href = o.action.href;
+        a.target = "_blank";
+        a.rel = "noopener";
+        a.textContent = o.action.label;
+        act.appendChild(a);
+      } else if (o.action.type === "copy") {
+        var cb = document.createElement("button");
+        cb.type = "button";
+        cb.className = "btn btn--ghost";
+        cb.textContent = o.action.label;
+        cb.addEventListener("click", function () {
+          copyText(o.action.value, cb);
+        });
+        act.appendChild(cb);
+      } else {
+        var span = document.createElement("span");
+        span.className = "give-method__disabled";
+        span.textContent = o.action.label;
+        act.appendChild(span);
+      }
+
+      row.appendChild(icon);
+      row.appendChild(main);
+      row.appendChild(act);
+      return row;
+    }
+
+    function renderMethods() {
+      if (!methodsEl) return;
+      methodsEl.textContent = "";
+
+      methodsEl.appendChild(
+        buildMethod({
+          name: "Venmo",
+          iconText: "V",
+          detail: isSet(DONATION.venmo) ? "@" + DONATION.venmo : "Coming soon — ask the temple",
+          action: isSet(DONATION.venmo)
+            ? { type: "link", href: venmoUrl(), label: "Open Venmo" }
+            : { type: "disabled", label: "Setup" },
+        })
+      );
+
+      methodsEl.appendChild(
+        buildMethod({
+          name: "PayPal",
+          iconText: "P",
+          detail: isSet(DONATION.paypal) ? "Secure online giving" : "Coming soon — ask the temple",
+          action: isSet(DONATION.paypal)
+            ? { type: "link", href: paypalUrl(), label: "Give with PayPal" }
+            : { type: "disabled", label: "Setup" },
+        })
+      );
+
+      methodsEl.appendChild(
+        buildMethod({
+          name: "Zelle",
+          iconText: "Z",
+          detail: DONATION.zelle + " · " + DONATION.zelleName,
+          action: { type: "copy", value: DONATION.zelle, label: "Copy" },
+        })
+      );
+
+      methodsEl.appendChild(
+        buildMethod({
+          name: "Mail a check",
+          iconSvg:
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg>',
+          detail: DONATION.mailingAddress,
+          action: { type: "copy", value: DONATION.mailingAddress, label: "Copy" },
+        })
+      );
+    }
+
+    if (amountRow) {
+      var makeChip = function (label, value) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "amount-chip";
+        b.textContent = label;
+        b.addEventListener("click", function () {
+          amount = value;
+          amountRow.querySelectorAll(".amount-chip").forEach(function (c) {
+            c.classList.remove("is-active");
+          });
+          b.classList.add("is-active");
+          renderMethods();
+        });
+        return b;
+      };
+      DONATION.presets.forEach(function (amt) {
+        amountRow.appendChild(makeChip("$" + amt, amt));
+      });
+      amountRow.appendChild(makeChip("Other", null));
+    }
+
+    renderMethods();
+
+    function openModal() {
+      lastFocus = document.activeElement;
+      modal.hidden = false;
+      document.body.style.overflow = "hidden";
+      var c = modal.querySelector(".modal__close");
+      if (c) c.focus();
+    }
+
+    function closeModal() {
+      modal.hidden = true;
+      document.body.style.overflow = "";
+      if (lastFocus && lastFocus.focus) lastFocus.focus();
+    }
+
+    openers.forEach(function (o) {
+      o.addEventListener("click", function (e) {
+        e.preventDefault();
+        openModal();
+      });
+    });
+    modal.querySelectorAll("[data-donate-close]").forEach(function (c) {
+      c.addEventListener("click", closeModal);
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !modal.hidden) closeModal();
+    });
+  }
+
+  /* ---- 8. Back-to-top -------------------------------------------------- */
   function initBackToTop() {
     var btn = document.querySelector("[data-back-to-top]");
     if (!btn) return;
@@ -1892,6 +2381,7 @@ ul {
     initReveals();
     initOpenStatus();
     initFestivals();
+    initDonation();
     initBackToTop();
     document.getElementById("year") &&
       (document.getElementById("year").textContent = String(new Date().getFullYear()));

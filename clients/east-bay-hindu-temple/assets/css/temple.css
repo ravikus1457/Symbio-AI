@@ -1022,6 +1022,25 @@ ul {
   font-size: 2.8rem;
 }
 
+/* Original gold deity emblem shown in each arch (until a real murti photo is
+   dropped in). Sits on the maroon radial backdrop like a shrine icon. */
+.niche__art {
+  display: grid;
+  place-items: center;
+  width: 62%;
+  max-width: 150px;
+  aspect-ratio: 1;
+  color: var(--gold-bright);
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.4));
+  z-index: 1;
+}
+
+.niche__art svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
 .niche__body {
   padding: var(--space-4) var(--space-5) var(--space-5);
   text-align: center;
@@ -1602,4 +1621,212 @@ ul {
     opacity: 1;
     transform: none;
   }
+}
+
+/* -------------------------------------------------------------------------
+   21. Donation modal
+   ------------------------------------------------------------------------- */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: 1.2rem;
+}
+
+.modal[hidden] {
+  display: none;
+}
+
+.modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(40, 12, 6, 0.62);
+  backdrop-filter: blur(3px);
+}
+
+.modal__dialog {
+  position: relative;
+  width: min(560px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--cream);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--gold);
+  box-shadow: var(--shadow-lg);
+  animation: modal-in var(--dur) var(--ease);
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+}
+
+.modal__head {
+  position: relative;
+  background: var(--grad-red);
+  color: var(--on-red);
+  padding: 1.5rem 1.6rem;
+}
+
+.modal__title {
+  color: #fff;
+  font-size: var(--fs-700);
+}
+
+.modal__sub {
+  color: var(--on-red-soft);
+  font-size: var(--fs-300);
+  margin-top: 0.3rem;
+}
+
+.modal__close {
+  position: absolute;
+  top: 0.9rem;
+  right: 0.9rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 0;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.modal__close:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.modal__body {
+  padding: 1.5rem 1.6rem 1.7rem;
+}
+
+.modal__body .eyebrow {
+  display: block;
+  margin-bottom: 0.6rem;
+}
+
+.modal__note {
+  font-size: var(--fs-200);
+  color: var(--ink-faint);
+  margin-top: 1.2rem;
+  line-height: 1.6;
+}
+
+.give-setup {
+  background: rgba(232, 134, 30, 0.12);
+  border: 1px solid rgba(232, 134, 30, 0.4);
+  color: var(--ink-soft);
+  border-radius: var(--radius-sm);
+  padding: 0.7rem 0.9rem;
+  font-size: var(--fs-200);
+  margin-bottom: 1.2rem;
+}
+
+.give-setup code {
+  background: rgba(0, 0, 0, 0.06);
+  padding: 0.05rem 0.3rem;
+  border-radius: 4px;
+}
+
+.amount-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.3rem;
+}
+
+.amount-chip {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: var(--fs-300);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--line-strong);
+  background: var(--cream);
+  color: var(--ink);
+  cursor: pointer;
+  transition:
+    border-color var(--dur-fast) var(--ease),
+    background var(--dur-fast) var(--ease);
+}
+
+.amount-chip:hover {
+  border-color: var(--gold);
+}
+
+.amount-chip.is-active {
+  background: var(--grad-saffron);
+  color: #3a1402;
+  border-color: transparent;
+}
+
+.give-list {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.give-method {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+}
+
+.give-method__icon {
+  flex: none;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: rgba(200, 155, 60, 0.16);
+  color: var(--red);
+}
+
+.give-method__icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.give-method__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.give-method__name {
+  font-weight: 700;
+  color: var(--red);
+}
+
+.give-method__detail {
+  font-size: var(--fs-200);
+  color: var(--ink-soft);
+  word-break: break-word;
+}
+
+.give-method__action {
+  flex: none;
+}
+
+.give-method .btn {
+  padding: 0.55rem 1rem;
+  font-size: var(--fs-200);
+}
+
+.give-method__disabled {
+  font-size: var(--fs-200);
+  color: var(--ink-faint);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-pill);
+  padding: 0.4rem 0.8rem;
+  white-space: nowrap;
 }

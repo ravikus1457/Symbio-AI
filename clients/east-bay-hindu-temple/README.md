@@ -69,10 +69,15 @@ Search `index.html` for `TODO` and `NOTE` comments. The key ones:
 - [ ] **Priest's name & spelling** — currently "Pandit Rakesh Bhargav ji" from
       public listings; please confirm.
 - [ ] **Add the priest's photo** (`assets/img/priest-panditji.jpg`).
-- [ ] **Add deity & temple photos** (see `assets/img/README.md`).
+- [ ] **Deity & temple photos** — each deity niche currently shows an original
+      gold emblem (bow & arrow, trishul, lotus, gada, the elephant form, flute &
+      feather). Drop in the temple's own murti photos to replace them when ready
+      (see `assets/img/README.md`).
 - [ ] **Confirm aarti times** and any festival dates.
-- [ ] **Donation link** — point the "Make a Donation" button at the temple's
-      preferred method (Zelle / PayPal / giving page).
+- [ ] **Donation details** — the "Make a Donation" button opens a working popup
+      (Zelle / PayPal / Venmo / mail-a-check + suggested amounts). Fill in the
+      temple's real handles in the `DONATION` block at the top of
+      `assets/js/temple.js`, then set `setupNotice:false`.
 
 The address `595 School Street, Pittsburg, CA 94565`, phone numbers, hours, and
 the Facebook link are taken from the temple's public listings — please give them

@@ -20,6 +20,7 @@ eleventyComputed:
 <section class="section section--tight">
   <div class="container container--narrow">
     <nav class="eyebrow" aria-label="Breadcrumb">
+      <a href="index.html">Home</a> ·
       <a href="grow.html">Industries</a> ·
       <a href="grow-{{ c.serviceKey }}.html">{{ c.serviceLabel }}</a>
       {%- if c.city %} ·
@@ -135,6 +136,25 @@ eleventyComputed:
         {% for rel in c.related %}
           <a class="card card__link" href="{{ rel.url }}" data-reveal data-reveal-delay="{{ loop.index0 }}">
             <span class="card__title">{{ rel.title }}</span>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endif %}
+
+{# ===== Also serving (Tier-A → its city pages; anti-orphan) ============ #}
+{% if c.cityChildren and c.cityChildren.length %}
+  <section class="section section--tight">
+    <div class="container">
+      <div class="section__head section__head--center" data-reveal>
+        <span class="eyebrow eyebrow--center">Local</span>
+        <h2 class="section__title">{{ c.serviceLabel }} for {{ c.nicheLabel | lower }} near you</h2>
+      </div>
+      <div class="grid grid--auto">
+        {% for child in c.cityChildren %}
+          <a class="card card__link" href="{{ child.url }}" data-reveal data-reveal-delay="{{ loop.index0 }}">
+            <span class="card__title">{{ child.title }}</span>
           </a>
         {% endfor %}
       </div>

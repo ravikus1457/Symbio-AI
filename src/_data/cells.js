@@ -8,7 +8,7 @@ export default {
   "web-design/dentists": {
     "lead": "Dental practices get judged in about three seconds — the moment a nervous, in-pain stranger lands on your site at 9pm. If it loads slow on their phone, hides your hours behind a menu, and buries the one thing they want (book now, see the office, find out if you take their insurance), they hit back and call the practice two doors down. Web design is the fix: a fast, mobile-first site that makes a new patient trust you before they've met you. That's the whole job here.",
     "pains": [
-      "Your current site is a slow, template-y page from 2015 — stock photos of strangers' teeth, no shots of your actual operatories, and it takes five seconds to load on a phone where 70-plus percent of your traffic comes from.",
+      "Your current site is a slow, template-y page from 2015 — stock photos of strangers' teeth, no shots of your actual operatories, and it's sluggish on a phone, which is where most of your patients are searching.",
       "New patients can't tell in ten seconds whether you take their PPO, do Invisalign, or see kids — so they bounce instead of calling to ask.",
       "The 'Book Appointment' button is a tiny link in the footer, or it dumps people on a generic contact form, when it should be the loudest thing above the fold.",
       "You're a single-location practice competing in Google results against corporate DSO chains with polished sites, and yours looks like an afterthought by comparison."
@@ -40,10 +40,10 @@ export default {
     ]
   },
   "web-design/restaurants": {
-    "lead": "For a restaurant, the website is the host stand online. Most are a blurry PDF menu, a stock photo of someone else's pasta, and a phone number — and they crawl on a phone, where 80 percent of your hungry traffic actually lands. We build a fast, mobile-first site in 7 days at a flat price: real photos of your food, a menu that loads instantly and is easy to update, and the order and reservation buttons sitting where a thumb expects them. No template soup. Just a site that makes someone decide to come in.",
+    "lead": "For a restaurant, the website is the host stand online. Most are a blurry PDF menu, a stock photo of someone else's pasta, and a phone number — and they crawl on a phone, where most of your hungry traffic actually lands. We build a fast, mobile-first site in 7 days at a flat price: real photos of your food, a menu that loads instantly and is easy to update, and the order and reservation buttons sitting where a thumb expects them. No template soup. Just a site that makes someone decide to come in.",
     "pains": [
       "The menu is a PDF that has to be pinch-zoomed on a phone — and it's three prices out of date because updating it means re-exporting a file nobody can find.",
-      "The site takes five seconds to load on cell data outside the restaurant, so people bounce back to Google and pick the place next door.",
+      "The site is slow to load on cell data outside the restaurant, so people bounce back to Google and pick the place next door.",
       "Online ordering and reservations are buried below a giant hero image, so guests can't find the one button that actually matters.",
       "Photos are stock images or dim phone snaps from 2019 — nothing that makes someone actually want to eat there tonight."
     ],
@@ -74,7 +74,7 @@ export default {
     ]
   },
   "web-design/law-firms": {
-    "lead": "For a law firm, the website is the first cross-examination — a prospect is sizing you up before they ever pick up the phone. If your site looks like it was built in 2014, buries your practice areas, and reads the same as every other firm in town, the case walks. We build fast, modern sites that load in under two seconds, make your practice areas and attorney bios easy to scan, and turn a stranger's late-night \"lawyer near me\" search into a confidential intake request — flat price, live in 7 days.",
+    "lead": "For a law firm, the website is the first cross-examination — a prospect is sizing you up before they ever pick up the phone. If your site looks like it was built in 2014, buries your practice areas, and reads the same as every other firm in town, the case walks. We build fast, modern sites that load fast on a phone, make your practice areas and attorney bios easy to scan, and turn a stranger's late-night \"lawyer near me\" search into a confidential intake request — flat price, live in 7 days.",
     "pains": [
       "Generic template sites that look identical to every other firm — same stock gavel photo, same 'Aggressive. Experienced. Trusted.' headline — so nothing tells a prospect why to choose you over the firm down the street.",
       "Practice areas and attorney bios buried three clicks deep, when a prospect just wants to confirm you handle their exact matter — personal injury vs. family law vs. estate planning — and see who'd actually work their case.",
@@ -176,7 +176,7 @@ export default {
     ]
   },
   "web-design/nonprofits": {
-    "lead": "For a nonprofit, the website is the donate button — and everything that earns the click before it. Most sites bury the mission under a wall of text, hide the giving form three pages deep, and break on the phone where half your traffic actually lands. We build a fast, clear site in 7 days for a flat price: a homepage that says who you help in one line, a donation flow that doesn't make people quit halfway, and pages your board and grant officers can actually point to. Mission up top, ask within reach.",
+    "lead": "For a nonprofit, the website is the donate button — and everything that earns the click before it. Most sites bury the mission under a wall of text, hide the giving form three pages deep, and break on the phone, where a lot of your traffic actually lands. We build a fast, clear site in 7 days for a flat price: a homepage that says who you help in one line, a donation flow that doesn't make people quit halfway, and pages your board and grant officers can actually point to. Mission up top, ask within reach.",
     "pains": [
       "The donate button is buried or routes to a clunky third-party page that doesn't match your branding, so people bounce before finishing the gift.",
       "Your impact lives in a year-old PDF annual report nobody opens, instead of a clear page a grant officer or major donor can skim in 30 seconds.",
@@ -235,7 +235,7 @@ export default {
       },
       {
         "q": "Will it tell patients the wrong thing about insurance or treatment?",
-        "a": "It only answers from what you give us — your accepted carriers, services, new-patient policy, and hours. For anything clinical or coverage-specific it's set to confirm the basics and route to your team rather than guess. We tune the boundaries with you before it goes live and adjust as questions come up."
+        "a": "We load it with your accepted carriers, services, new-patient policy, and hours — and nothing beyond that. Clinical or coverage-specific questions are set to confirm the basics and hand straight to your team, never to guess. You sign off on the boundaries before launch, and we adjust them as real questions come in."
       },
       {
         "q": "Is this just a chatbot, or does it handle the after-hours and recall work too?",
@@ -265,7 +265,7 @@ export default {
     "faqs": [
       {
         "q": "Will the assistant give wrong answers about our menu or allergens?",
-        "a": "It only answers from what you give it — your real menu, hours, and allergen notes — and we set it to defer to a person on anything it isn't sure about. For serious allergy questions it points the guest to staff rather than guessing."
+        "a": "Its answers come straight from your menu, hours, and allergen notes — nothing invented. Anything it isn't certain about goes to a person, and serious allergy questions are pointed to staff rather than guessed at."
       },
       {
         "q": "Does this replace our host or our phone?",
@@ -401,7 +401,7 @@ export default {
     "faqs": [
       {
         "q": "Will the assistant give wrong answers about tax-deductibility or how gifts are used?",
-        "a": "It only answers from what we load — your EIN, 501(c)(3) status, fund designations, and your own giving FAQs. Anything it's unsure about, or anything legal or major-gift related, it routes to a real person instead of guessing."
+        "a": "It draws only on what you load — your EIN, 501(c)(3) status, fund designations, and your own giving FAQs. Anything unclear, legal, or major-gift related is routed to a real person instead of guessed at."
       },
       {
         "q": "Does this connect to our donation and donor tools, or is it separate?",
@@ -438,7 +438,7 @@ export default {
         "a": "Yes — that's the point. We wire the booking system to your practice management software so online appointments land in the same schedule your front desk already runs. The integration depends on your setup and version, so we confirm exactly how it'll sync before we build. No more re-typing requests by hand."
       },
       {
-        "q": "How does it actually cut no-shows?",
+        "q": "What actually stops the no-shows?",
         "a": "A confirmation goes out when the appointment is booked, then timed reminders by text and email lead up to the visit, each with a one-tap confirm and a reschedule link. When someone cancels, the slot can be offered to a waitlist automatically — so a no-show turns into a filled chair instead of dead time."
       },
       {
@@ -476,7 +476,7 @@ export default {
         "a": "Yes — we build around what you already run. Toast, Square, SevenRooms, and most reservation tools connect cleanly, so table inventory, party size, and turn times stay accurate and the kitchen sees covers coming. If something doesn't have a clean integration, we'll tell you straight before we start."
       },
       {
-        "q": "How does it actually cut no-shows?",
+        "q": "How do you keep no-shows from emptying a booked night?",
         "a": "Two things. Automated confirm-or-cancel texts the day of the booking, so a guest who can't make it tells you while you can still re-seat the table. And a card hold or deposit on large parties and prime slots, so a day-of ghost costs them instead of you. We set the rules to match how your room runs."
       }
     ]
@@ -575,7 +575,7 @@ export default {
       },
       {
         "q": "How do reminders and waitlists actually cut no-shows?",
-        "a": "Two things. Everyone booked gets a text the night before and the morning of, so the class doesn't slip their mind. And when someone cancels, the system instantly texts the next person on the waitlist — so the spot gets refilled instead of sitting empty."
+        "a": "Reminders plus an auto-waitlist. Everyone booked gets a text the night before and the morning of, so the class doesn't slip their mind. And when someone cancels, the system instantly texts the next person on the waitlist — so the spot gets refilled instead of sitting empty."
       },
       {
         "q": "Can it handle drop-ins, class packs, and memberships differently?",

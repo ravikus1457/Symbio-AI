@@ -15,7 +15,7 @@
     <meta property="og:site_name" content="{{ site.name }}" />
     <meta property="og:title" content="{% if title %}{{ title }} · {{ site.name }}{% else %}{{ site.name }}{% endif %}" />
     <meta property="og:description" content="{{ description or site.description }}" />
-    <meta property="og:image" content="assets/img/logo-symbio-color.svg" />
+    <meta property="og:image" content="{{ (site.url + '/assets/img/logo-symbio-color.svg') if site.url else 'assets/img/logo-symbio-color.svg' }}" />
     <meta name="twitter:card" content="summary" />
 
     {# Canonical + og:url — self-referencing absolute URL. A page may set its own

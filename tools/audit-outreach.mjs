@@ -23,7 +23,7 @@
 import { writeFile, mkdir } from "node:fs/promises";
 import { argv, exit } from "node:process";
 import path from "node:path";
-import { loadConfig, loadProspects, processProspect, runPool, toCsv, businessOf, DEFAULT_UA } from "./lib/outreach-core.mjs";
+import { loadConfig, loadProspects, processProspect, runPool, toCsv, businessOf, addressIsPlaceholder, DEFAULT_UA } from "./lib/outreach-core.mjs";
 
 function parseArgs(args) {
   const out = {};
@@ -57,6 +57,11 @@ const COLUMNS = [
 
 async function main() {
   const cfg = await loadConfig(CONFIG);
+  const blocked = addressIsPlaceholder(cfg);
+  if (blocked) {
+    console.warn("\n⚠️  PHYSICAL ADDRESS NOT SET in " + CONFIG + ".");
+    console.warn("   Generating BLOCKED placeholders only — set a real postal address before sending (CAN-SPAM).\n");
+  }
   const prospects = await loadProspects(IN, LIMIT);
   if (!prospects.length) {
     console.error(`No prospects found in ${IN}. Expected columns: business, website, email, first_name, city, niche`);
@@ -68,7 +73,7 @@ async function main() {
   const records = await runPool(
     prospects,
     async (row) => {
-      const rec = await processProspect(row, cfg, { timeout: TIMEOUT, ua: DEFAULT_UA });
+      const rec = await processProspect(row, cfg, { timeout: TIMEOUT, ua: DEFAULT_UA, blockSend: blocked });
       if (rec.status === "ok") reachable += 1;
       console.log(`  [${rec.status.padEnd(11)}] ${businessOf(row)}`);
       return rec;

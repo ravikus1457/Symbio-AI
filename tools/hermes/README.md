@@ -68,6 +68,17 @@ edit variants freely in `variants.json` — new ones enter the rotation automati
 
 > Rankings are noisy under ~30 sends — `learn` says so. Keep logging before trusting them.
 
+## Built-in guardrails
+
+- **Honors unsubscribes.** Any email you've logged with `--unsub` is suppressed on every future
+  `outreach` run (status `suppressed-unsub`, no email generated) — CAN-SPAM compliance.
+- **Dedupes by email.** The same address is never queued twice in one run (avoids double-emailing
+  and keeps the learning counts honest).
+- **Blocks fake-address sends.** Until `physicalAddress` in `tools/outreach.config.json` is a real
+  postal address, `outreach` emits non-sendable `blocked-no-address` placeholders, not emails.
+- **Scanner is sandboxed.** The site scan refuses non-http(s) URLs and private/loopback/metadata
+  hosts.
+
 ## Files
 
 | file | what | committed? |
@@ -83,8 +94,8 @@ edit variants freely in `variants.json` — new ones enter the rotation automati
 
 `.github/workflows/hermes.yml` runs a weekly **growth heartbeat**: it rebuilds the site
 (including the 30+ programmatic-SEO pages) and lints — so the generated matrix can never
-silently break a deploy — then refreshes the Hermes report as an artifact. On manual dispatch
-with a `prospects` path it also generates an outreach batch artifact. **It never sends email.**
+silently break a deploy — then refreshes the Hermes report (REPORT.md) as an artifact. Outreach
+generation is **not** run in CI (it produces prospect PII); run it locally. CI never sends email.
 
 ## The human-only switches
 

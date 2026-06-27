@@ -38,6 +38,13 @@ const CITY_CELLS = [
   ["booking-systems", "nonprofits", "berkeley"],
 ];
 
+// Tier-B (city) pages reuse their Tier-A parent's copy plus a local overlay, so
+// until each carries genuinely city-specific proof (a local case study /
+// testimonial) they are kept OUT of the index to avoid scaled-content/doorway
+// risk — exactly the staged rollout the design calls for. Flip to true (or gate
+// per-cell) once the city pages are enriched and Batch 1 has validated in GSC.
+const INDEX_TIER_B = false;
+
 const GEO_RADIUS_M = 40000; // ~25mi service radius for the GeoCircle
 const ORG_ID = `${site.url}/#org`;
 const PHONE = site.founders[0].phone ? `+1-${site.founders[0].phone}` : undefined;
@@ -143,7 +150,13 @@ function buildJsonLd(combo) {
     about: { "@id": `${pageUrl}#service` },
   };
 
-  return JSON.stringify({ "@context": "https://schema.org", "@graph": [orgNode, service, breadcrumb, faqPage, webPage] });
+  // Escape <, >, & so the serialized JSON can never break out of the
+  // <script type="application/ld+json"> tag (e.g. a stray "</script>" in copy).
+  // \uXXXX escapes are parser-identical, so the structured data is unchanged.
+  return JSON.stringify({ "@context": "https://schema.org", "@graph": [orgNode, service, breadcrumb, faqPage, webPage] })
+    .replace(/</g, "\\u003c")
+    .replace(/>/g, "\\u003e")
+    .replace(/&/g, "\\u0026");
 }
 
 function makeCombo({ tier, svc, nicheKey, cityKey }) {
@@ -172,7 +185,7 @@ function makeCombo({ tier, svc, nicheKey, cityKey }) {
     city, // null for Tier A
     cell,
     permalink,
-    noindex: false,
+    noindex: tier === "B" ? !INDEX_TIER_B : false,
   };
   combo.title = titleFor(svc, niche, city);
   combo.description = descFor(svc, niche, city, cell);
@@ -202,6 +215,15 @@ export default function () {
     const sameSvc = out.filter((o) => o.serviceKey === c.serviceKey && o.permalink !== c.permalink);
     const ordered = [...sameSvc.filter((o) => o.tier === "A"), ...sameSvc.filter((o) => o.tier === "B")];
     c.related = ordered.slice(0, 3).map((o) => ({ title: o.title, url: o.permalink }));
+  }
+
+  // Tier-A pages link DOWN to their Tier-B city children (so city pages aren't
+  // near-orphans, and users can reach the local variants from the niche page).
+  for (const c of out) {
+    if (c.tier !== "A") continue;
+    c.cityChildren = out
+      .filter((o) => o.tier === "B" && o.serviceKey === c.serviceKey && o.nicheKey === c.nicheKey)
+      .map((o) => ({ title: o.city.name, url: o.permalink }));
   }
 
   // Build-time slug-collision assertion.

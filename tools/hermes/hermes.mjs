@@ -13,10 +13,10 @@
  *   hermes report                Print + write the funnel dashboard (REPORT.md).
  *   hermes run --in <csv>        outreach -> report in one go.
  *
- * "Ever-improving" is real here: the bandit reads outcomes you log and shifts
- * sends toward the winners (epsilon-greedy with Laplace smoothing). It is honest
- * about its limits — it learns only from outcomes you actually record, and it
- * generates emails; sending stays in your warmed cold-email tool.
+ * It is honest about its limits: Hermes generates outreach and learns from
+ * outcomes you record; it does not send email (that belongs in your warmed
+ * cold-email tool), it honours unsubscribes, and it refuses to produce sendable
+ * bodies until a real physical address is set (CAN-SPAM).
  *
  * Pure Node, zero deps (Node 18+). Reuses tools/lib/outreach-core.mjs.
  */
@@ -26,7 +26,8 @@ import { argv, exit } from "node:process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
-  loadConfig, loadProspects, processProspect, runPool, toCsv, businessOf, DEFAULT_UA,
+  loadConfig, loadProspects, processProspect, runPool, toCsv,
+  businessOf, firstNameOf, normalizeUrl, addressIsPlaceholder, DEFAULT_UA,
 } from "../lib/outreach-core.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -75,18 +76,29 @@ const DEFAULT_VARIANTS = {
   ],
 };
 
+// Returns { cfg, malformed }. malformed=true means variants.json exists but
+// could not be parsed — callers must NOT overwrite it (don't clobber the file).
 async function loadVariants() {
-  const v = await readJson(VARIANTS_PATH, null);
-  return v && Array.isArray(v.variants) ? v : DEFAULT_VARIANTS;
+  let raw;
+  try {
+    raw = await readFile(VARIANTS_PATH, "utf8");
+  } catch {
+    return { cfg: DEFAULT_VARIANTS, malformed: false }; // missing → defaults are fine to write
+  }
+  try {
+    const v = JSON.parse(raw);
+    if (v && Array.isArray(v.variants)) return { cfg: v, malformed: false };
+    return { cfg: DEFAULT_VARIANTS, malformed: true };
+  } catch {
+    return { cfg: DEFAULT_VARIANTS, malformed: true };
+  }
 }
 
 /* ---- the bandit ------------------------------------------------------ */
 // Laplace-smoothed reply rate so untried variants start optimistic (~0.5) and
 // get explored; epsilon-greedy adds forced exploration.
 function variantScore(stats) {
-  const sends = stats.sends || 0;
-  const replies = stats.replies || 0;
-  return (replies + 1) / (sends + 2);
+  return ((stats.replies || 0) + 1) / ((stats.sends || 0) + 2);
 }
 
 function statsFromLedger(ledger, variantId) {
@@ -98,16 +110,13 @@ function statsFromLedger(ledger, variantId) {
   };
 }
 
-function chooseVariant(variants, ledger, epsilon) {
-  const scored = variants.map((v) => {
-    const stats = statsFromLedger(ledger, v.id);
-    return { v, stats, score: variantScore(stats) };
-  });
-  // Explore with probability epsilon.
-  if (Math.random() < epsilon) return scored[Math.floor(Math.random() * scored.length)];
-  // Exploit: best score, ties broken toward the LESS-sent variant (spread).
-  scored.sort((a, b) => b.score - a.score || a.stats.sends - b.stats.sends);
-  return scored[0];
+// Choose over a LIVE stats map (callers reserve picks by bumping sends), so
+// assignment within one run still explores under any concurrency.
+function chooseVariant(variants, statsMap, epsilon) {
+  if (Math.random() < epsilon) return variants[Math.floor(Math.random() * variants.length)];
+  const scored = variants.map((v) => ({ v, s: statsMap[v.id] || { sends: 0, replies: 0 } }));
+  scored.sort((a, b) => variantScore(b.s) - variantScore(a.s) || a.s.sends - b.s.sends);
+  return scored[0].v;
 }
 
 /* ---- commands -------------------------------------------------------- */
@@ -117,11 +126,16 @@ async function cmdOutreach(flags) {
   const concurrency = Math.max(1, parseInt(flags.concurrency || "4", 10));
   const timeout = parseInt(flags.timeout || "12000", 10);
   const delay = parseInt(flags.delay || "250", 10);
-  const epsilon = flags.epsilon != null ? parseFloat(flags.epsilon) : null;
 
   const cfg = await loadConfig(CONFIG_PATH);
-  const variantsCfg = await loadVariants();
-  const eps = epsilon != null ? epsilon : variantsCfg.epsilon;
+  const blocked = addressIsPlaceholder(cfg);
+  if (blocked) {
+    console.warn("\n⚠️  PHYSICAL ADDRESS NOT SET in tools/outreach.config.json.");
+    console.warn("   Generating BLOCKED placeholders only — set a real postal address before sending (CAN-SPAM).\n");
+  }
+
+  const { cfg: variantsCfg } = await loadVariants();
+  const eps = flags.epsilon != null ? parseFloat(flags.epsilon) : variantsCfg.epsilon;
   const ledger = await readJson(LEDGER_PATH, []);
   const prospects = await loadProspects(inPath, limit);
   if (!prospects.length) {
@@ -129,32 +143,59 @@ async function cmdOutreach(flags) {
     exit(1);
   }
 
-  console.log(`Hermes outreach — ${prospects.length} prospect(s), ε=${eps}, ${variantsCfg.variants.length} variants…\n`);
+  // Suppress unsubscribed contacts, and dedupe by email (never email one address twice).
+  const unsub = new Set(ledger.filter((r) => r.unsub).map((r) => (r.email || "").toLowerCase()));
+  const seen = new Set();
+  let dupSkipped = 0, suppressed = 0;
+
+  // Phase 1 (sequential): assign a variant per prospect, reserving each pick in a
+  // live stats map so exploration holds regardless of the concurrent scan below.
+  const stats = {};
+  for (const v of variantsCfg.variants) stats[v.id] = statsFromLedger(ledger, v.id);
   const byVariant = {};
+  const work = [];
+  for (const row of prospects) {
+    const em = (row.email || "").trim().toLowerCase();
+    if (em && seen.has(em)) { dupSkipped += 1; continue; }
+    if (em) seen.add(em);
+    if (em && unsub.has(em)) { suppressed += 1; work.push({ row, suppressed: true }); continue; }
 
+    const variant = chooseVariant(variantsCfg.variants, stats, eps);
+    stats[variant.id].sends += 1; // reserve
+    byVariant[variant.id] = (byVariant[variant.id] || 0) + 1;
+    work.push({ row, variant });
+
+    if (em && !blocked) {
+      const existing = ledger.find((r) => r.email === row.email);
+      const entry = existing || { email: row.email, replied: false, booked: false, unsub: false };
+      entry.company = businessOf(row);
+      entry.niche = row.niche || "";
+      entry.city = row.city || "";
+      entry.variantId = variant.id;
+      entry.queuedAt = new Date().toISOString();
+      if (!existing) ledger.push(entry);
+    }
+  }
+
+  console.log(`Hermes outreach — ${work.length} to process, ε=${eps}, ${variantsCfg.variants.length} variants` +
+    (dupSkipped ? `, ${dupSkipped} dup email(s) skipped` : "") + (suppressed ? `, ${suppressed} unsubscribed suppressed` : "") + "…\n");
+
+  // Phase 2 (concurrent): scan + build email for each non-suppressed prospect.
   const records = await runPool(
-    prospects,
-    async (row) => {
-      const pick = chooseVariant(variantsCfg.variants, ledger, eps);
-      const rec = await processProspect(row, cfg, { timeout, ua: DEFAULT_UA, variant: pick.v });
-      rec.variant_id = pick.v.id;
-      byVariant[pick.v.id] = (byVariant[pick.v.id] || 0) + 1;
-
-      // Upsert a ledger entry (assignment == a queued send we learn from).
-      if (rec.email) {
-        const existing = ledger.find((r) => r.email === rec.email);
-        const entry = existing || { email: rec.email };
-        entry.company = rec.company;
-        entry.niche = rec.niche;
-        entry.city = rec.city;
-        entry.variantId = pick.v.id;
-        entry.queuedAt = new Date().toISOString();
-        if (entry.replied == null) entry.replied = false;
-        if (entry.booked == null) entry.booked = false;
-        if (entry.unsub == null) entry.unsub = false;
-        if (!existing) ledger.push(entry);
+    work,
+    async ({ row, variant, suppressed: isSup }) => {
+      if (isSup) {
+        console.log(`  [suppressed ] ${businessOf(row).padEnd(28)} → unsubscribed`);
+        return {
+          email: row.email || "", first_name: firstNameOf(row) === "there" ? "" : firstNameOf(row),
+          company: businessOf(row), website: normalizeUrl(row.website), city: row.city || "", niche: row.niche || "",
+          finding_1: "", finding_2: "", finding_3: "", subject: "",
+          email_body: "(suppressed — this contact unsubscribed; not re-contacted)", variant_id: "", status: "suppressed-unsub",
+        };
       }
-      console.log(`  [${rec.status.padEnd(11)}] ${businessOf(row).padEnd(28)} → variant:${pick.v.id}`);
+      const rec = await processProspect(row, cfg, { timeout, ua: DEFAULT_UA, variant, blockSend: blocked });
+      rec.variant_id = blocked ? "" : variant.id;
+      console.log(`  [${rec.status.padEnd(11)}] ${businessOf(row).padEnd(28)} → variant:${rec.variant_id || "—"}`);
       return rec;
     },
     { concurrency, delay }
@@ -165,13 +206,13 @@ async function cmdOutreach(flags) {
   const cols = ["email", "first_name", "company", "website", "city", "niche", "finding_1", "finding_2", "finding_3", "subject", "email_body", "variant_id", "status"];
   await writeFile(outCsv, toCsv(records, cols), "utf8");
   await writeFile(path.join(OUT_DIR, "outreach.json"), JSON.stringify(records, null, 2), "utf8");
-  await writeJson(LEDGER_PATH, ledger);
+  if (!blocked) await writeJson(LEDGER_PATH, ledger);
 
   console.log("\n────────────────────────────────────────────");
-  console.log("variant assignment:", Object.entries(byVariant).map(([k, n]) => `${k}=${n}`).join("  "));
-  console.log(`CSV: ${outCsv}  (column variant_id tracks which A/B test each got)`);
-  console.log(`Ledger updated: ${LEDGER_PATH}`);
-  console.log(`\nNext: send from a warmed domain, then record replies:`);
+  console.log("variant assignment:", Object.entries(byVariant).map(([k, n]) => `${k}=${n}`).join("  ") || "(none)");
+  if (blocked) console.log("⚠️  Output is BLOCKED placeholders — set your address, then re-run.");
+  else console.log(`CSV: ${outCsv} (variant_id column tracks each A/B test) · ledger updated.`);
+  console.log(`\nNext: send from a warmed domain, then record outcomes:`);
   console.log(`  node tools/hermes/hermes.mjs log --email someone@biz.com --replied`);
 }
 
@@ -198,25 +239,27 @@ async function cmdLog(flags) {
 }
 
 async function cmdLearn() {
-  const variantsCfg = await loadVariants();
+  const { cfg: variantsCfg, malformed } = await loadVariants();
   const ledger = await readJson(LEDGER_PATH, []);
   const board = variantsCfg.variants
     .map((v) => ({ id: v.id, ...statsFromLedger(ledger, v.id) }))
     .map((s) => ({ ...s, rate: s.sends ? s.replies / s.sends : 0, score: variantScore(s) }))
     .sort((a, b) => b.score - a.score);
 
-  // Persist the latest tallies back into variants.json for transparency.
-  variantsCfg.variants = variantsCfg.variants.map((v) => {
-    const s = board.find((b) => b.id === v.id);
-    return { ...v, sends: s.sends, replies: s.replies, booked: s.booked };
-  });
-  await writeJson(VARIANTS_PATH, variantsCfg);
+  if (malformed) {
+    console.warn("⚠️  variants.json could not be parsed — using defaults and NOT overwriting the file. Fix the JSON.");
+  } else {
+    variantsCfg.variants = variantsCfg.variants.map((v) => {
+      const s = board.find((b) => b.id === v.id);
+      return { ...v, sends: s.sends, replies: s.replies, booked: s.booked };
+    });
+    await writeJson(VARIANTS_PATH, variantsCfg);
+  }
 
   console.log("Hermes learn — variant leaderboard (by smoothed score):\n");
   console.log("  rank  variant      sends  replies  booked  reply-rate  score");
   board.forEach((s, i) =>
-    console.log(
-      `  ${String(i + 1).padEnd(4)}  ${s.id.padEnd(11)}  ${String(s.sends).padEnd(5)}  ${String(s.replies).padEnd(7)}  ${String(s.booked).padEnd(6)}  ${(s.rate * 100).toFixed(0).padStart(8)}%  ${s.score.toFixed(3)}`)
+    console.log(`  ${String(i + 1).padEnd(4)}  ${s.id.padEnd(11)}  ${String(s.sends).padEnd(5)}  ${String(s.replies).padEnd(7)}  ${String(s.booked).padEnd(6)}  ${(s.rate * 100).toFixed(0).padStart(8)}%  ${s.score.toFixed(3)}`)
   );
   const total = board.reduce((a, b) => a + b.sends, 0);
   console.log(`\n${total} sends recorded. The next \`hermes outreach\` will favour the top variant (ε=${variantsCfg.epsilon} still explores).`);
@@ -255,41 +298,27 @@ async function cmdReport() {
     if (r.booked) byNiche[k].booked += 1;
   }
 
-  const addressSet = !/\<add your/i.test(cfg.physicalAddress || "");
+  const addressSet = !addressIsPlaceholder(cfg);
   const md = [
-    `# Hermes — Growth Report`,
-    ``,
-    `_Generated ${new Date().toISOString()}_`,
-    ``,
+    `# Hermes — Growth Report`, ``, `_Generated ${new Date().toISOString()}_`, ``,
     `## Inbound surface (programmatic SEO)`,
     `- Landing pages live: **${seo.total}** (${seo.tierA} service×niche, ${seo.tierB} city pages)`,
-    `- Plus hub + 3 service hubs, sitemap.xml, robots.txt.`,
-    ``,
+    `- Plus hub + 3 service hubs, sitemap.xml, robots.txt.`, ``,
     `## Outreach funnel`,
-    `| metric | value |`,
-    `| --- | --- |`,
-    `| Prospects queued | ${queued} |`,
-    `| Replies | ${replied} |`,
-    `| Booked | ${booked} |`,
-    `| Unsubscribed | ${unsub} |`,
-    `| Reply rate | ${rate}% |`,
-    ``,
+    `| metric | value |`, `| --- | --- |`,
+    `| Prospects queued | ${queued} |`, `| Replies | ${replied} |`, `| Booked | ${booked} |`,
+    `| Unsubscribed | ${unsub} |`, `| Reply rate | ${rate}% |`, ``,
     `## A/B variant leaderboard`,
-    `| rank | variant | sends | replies | booked | reply-rate |`,
-    `| --- | --- | --- | --- | --- | --- |`,
-    ...board.map((s, i) => `| ${i + 1} | ${s.id} | ${s.sends} | ${s.replies} | ${s.booked} | ${(s.rate * 100).toFixed(0)}% |`),
-    ``,
+    `| rank | variant | sends | replies | booked | reply-rate |`, `| --- | --- | --- | --- | --- | --- |`,
+    ...board.map((s, i) => `| ${i + 1} | ${s.id} | ${s.sends} | ${s.replies} | ${s.booked} | ${(s.rate * 100).toFixed(0)}% |`), ``,
     `## Reply rate by niche`,
-    `| niche | queued | replied | booked |`,
-    `| --- | --- | --- | --- |`,
-    ...Object.entries(byNiche).map(([k, v]) => `| ${k} | ${v.queued} | ${v.replied} | ${v.booked} |`),
-    ``,
+    `| niche | queued | replied | booked |`, `| --- | --- | --- | --- |`,
+    ...Object.entries(byNiche).map(([k, v]) => `| ${k} | ${v.queued} | ${v.replied} | ${v.booked} |`), ``,
     `## Next actions (the human-only switches)`,
     `- [${addressSet ? "x" : " "}] Real mailing address + opt-out set in \`tools/outreach.config.json\` (CAN-SPAM).`,
     `- [ ] Stripe Payment Links pasted into \`src/_data/site.js\` packages (self-serve checkout).`,
     `- [ ] Separate, warmed sending domain connected in Smartlead/Instantly.`,
-    `- [ ] After sending a batch, log outcomes: \`hermes log --email … --replied\`.`,
-    ``,
+    `- [ ] After sending a batch, log outcomes: \`hermes log --email … --replied\`.`, ``,
   ].join("\n");
 
   await writeFile(REPORT_PATH, md, "utf8");

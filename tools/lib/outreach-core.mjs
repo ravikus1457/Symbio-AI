@@ -25,6 +25,28 @@ export const DEFAULT_CONFIG = {
 /* ---- small helpers --------------------------------------------------- */
 export const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+// CAN-SPAM: every commercial email needs a REAL postal address. Refuse to
+// generate sendable bodies while the config still holds the placeholder.
+export function addressIsPlaceholder(cfg) {
+  return /<add your|<City, ST ZIP>/i.test(cfg.physicalAddress || "");
+}
+
+// SSRF guard: block loopback / private / link-local / cloud-metadata hosts so a
+// hostile prospects list can't point the scanner at internal addresses.
+export function hostIsPrivate(hostname) {
+  const h = (hostname || "").toLowerCase();
+  if (!h || h === "localhost" || h === "::1" || h.endsWith(".localhost")) return true;
+  const m = h.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+  if (m) {
+    const a = +m[1], b = +m[2];
+    if (a === 0 || a === 127 || a === 10) return true;
+    if (a === 192 && b === 168) return true;
+    if (a === 172 && b >= 16 && b <= 31) return true;
+    if (a === 169 && b === 254) return true; // link-local incl. 169.254.169.254 metadata
+  }
+  return false;
+}
+
 export function firstNameOf(row) {
   return row.first_name ? row.first_name.trim() : "there";
 }
@@ -109,6 +131,17 @@ export function toCsv(objects, columns) {
 
 /* ---- the scan -------------------------------------------------------- */
 export async function fetchSite(url, { timeout = 12000, ua = DEFAULT_UA } = {}) {
+  let u;
+  try {
+    u = new URL(url);
+  } catch {
+    return { ok: false, status: 0, finalUrl: url, ms: 0, error: "invalid URL" };
+  }
+  if (u.protocol !== "http:" && u.protocol !== "https:")
+    return { ok: false, status: 0, finalUrl: url, ms: 0, error: "unsupported scheme" };
+  if (hostIsPrivate(u.hostname))
+    return { ok: false, status: 0, finalUrl: url, ms: 0, error: "blocked host (private/loopback)" };
+
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeout);
   const started = Date.now();
@@ -264,7 +297,23 @@ export async function loadProspects(path, limit = Infinity) {
 }
 
 // One prospect -> a complete outreach record (scan + findings + email).
-export async function processProspect(row, cfg, { timeout, ua, variant } = {}) {
+// blockSend short-circuits with a non-sendable record when the config still has
+// a placeholder physical address (CAN-SPAM) — no scan, no email body.
+export async function processProspect(row, cfg, { timeout, ua, variant, blockSend = false } = {}) {
+  if (blockSend) {
+    return {
+      email: row.email || "",
+      first_name: firstNameOf(row) === "there" ? "" : firstNameOf(row),
+      company: businessOf(row),
+      website: normalizeUrl(row.website),
+      city: row.city || "",
+      niche: row.niche || "",
+      finding_1: "", finding_2: "", finding_3: "",
+      subject: "",
+      email_body: "[BLOCKED] Set a real physical address in tools/outreach.config.json before generating emails — CAN-SPAM requires a valid postal address in every message.",
+      status: "blocked-no-address",
+    };
+  }
   const url = normalizeUrl(row.website);
   const scan = url ? await fetchSite(url, { timeout, ua }) : { ok: false, status: 0, ms: 0, bytes: 0 };
   const found = findings(scan, row);

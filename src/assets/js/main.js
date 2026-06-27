@@ -499,6 +499,25 @@
     });
   }
 
+  /* ---- 10. Packages: prefill intake from a package button -------------- */
+  // On buy.html, package buttons without a Stripe checkout link point at the
+  // intake form (#intake). When one is clicked, pre-select that package so the
+  // visitor doesn't have to choose again. Guarded — no-op on every other page.
+  function initBuyButtons() {
+    const select = document.querySelector("[data-intake-package]");
+    if (!select) return;
+
+    document.querySelectorAll("[data-buy-package]").forEach((btn) => {
+      // Only the fallback buttons (href="#intake") need prefilling; real
+      // Stripe checkout links navigate away and are left alone.
+      if ((btn.getAttribute("href") || "").charAt(0) !== "#") return;
+      btn.addEventListener("click", () => {
+        const name = btn.getAttribute("data-buy-package");
+        if (name) select.value = name; // option text doubles as its value
+      });
+    });
+  }
+
   /* ---- Init ------------------------------------------------------------ */
   function init() {
     initTheme();
@@ -509,6 +528,7 @@
     initScanForm();
     initWidgetLeadBridge();
     initCardMotion();
+    initBuyButtons();
     // Tell the pre-paint safety net that we ran, so it won't unhide reveals.
     window.__symbioReady = true;
   }

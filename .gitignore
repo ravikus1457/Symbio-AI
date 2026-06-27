@@ -16,3 +16,11 @@ npm-debug.log*
 
 # Eleventy
 .eleventy.cache/
+
+# Generated outreach runs (tools/audit-outreach.mjs)
+tools/out/
+
+# Hermes: generated batches + real outcome ledger (contains prospect PII) + report
+tools/hermes/out/
+tools/hermes/ledger.json
+tools/hermes/REPORT.md

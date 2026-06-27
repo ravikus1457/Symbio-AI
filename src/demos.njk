@@ -3,7 +3,7 @@ layout: base.njk
 pageKey: demos
 title: Demos
 permalink: demos.html
-description: Interactive product demos you can try before a call. A website redesign slider, an app preview, a live dashboard, a chatbot, and an AI workflow agent.
+description: Interactive product demos you can try before a call. A drag-to-compare website redesign, an app preview, a live dashboard, a chatbot, and an AI workflow agent.
 ---
 
 {# ===== Page head ====================================================== #}
@@ -11,41 +11,42 @@ description: Interactive product demos you can try before a call. A website rede
   <div class="aurora" aria-hidden="true"></div>
   <div class="container container--narrow center">
     <span class="eyebrow eyebrow--center">Product demos</span>
-    <h1 class="section__title">See how your idea turns into something people can use</h1>
+    <h1 class="section__title">Try the work before you spend a dollar</h1>
     <p class="section__lead">
-      Pick the lane that matches your problem: a premium website, a custom app, a dashboard, a
-      chatbot, or an AI workflow agent. These are here so you can judge the work before a call.
+      Five things we build, all live and hands-on. Drag a redesign, click through an app, change a
+      dashboard, chat with the assistant, and run an AI agent. Judge the work for yourself.
     </p>
     <div class="btn-row btn-row--center mt-6">
-      <a class="btn btn--primary btn--lg" href="#redesign-lab">Start with the demos</a>
+      <a class="btn btn--primary btn--lg" href="#redesign-lab">Start with the Redesign Lab</a>
       <a class="btn btn--secondary btn--lg" href="{{ site.cta.url }}">Get a free scan</a>
     </div>
   </div>
 </section>
 
-{# ===== Switchboard ==================================================== #}
-<section class="section section--tight">
+{# ===== Sticky switchboard (scroll-spy) =============================== #}
+<div class="demo-nav" data-demo-nav>
   <div class="container">
-    <div class="demo-switchboard" data-reveal>
-      <a href="#redesign-lab">Premium websites</a>
-      <a href="#app-canvas">Custom apps</a>
-      <a href="#pulse-dashboard">Dashboards</a>
-      <a href="#concierge-studio">Chatbots</a>
-      <a href="#workflow-theater">AI agents</a>
+    <div class="demo-nav__track">
+      <a href="#redesign-lab" data-demo-link><span>01</span> Premium websites</a>
+      <a href="#app-canvas" data-demo-link><span>02</span> Custom apps</a>
+      <a href="#pulse-dashboard" data-demo-link><span>03</span> Dashboards</a>
+      <a href="#concierge-studio" data-demo-link><span>04</span> Chatbots</a>
+      <a href="#workflow-theater" data-demo-link><span>05</span> AI agents</a>
     </div>
   </div>
-</section>
+</div>
 
 {# ===== Demo 01 · The Redesign Lab (websites, flagship) =============== #}
-<section class="section section--tight" id="redesign-lab">
+<section class="section demo-lane" id="redesign-lab">
   <div class="container">
     <div class="demo-product demo-product--wide" data-reveal>
       <div class="demo-product__copy">
         <span class="eyebrow">Demo 01 · Premium websites</span>
         <h2 class="section__title">The Redesign Lab</h2>
         <p class="section__lead">
-          Slide from “the site technically exists” to “this looks like a business I can trust.”
-          It’s the first impression people feel before they read a single detail.
+          Grab the handle and drag. On the left is the kind of site that quietly loses customers.
+          On the right is the redesign. It’s the first impression people feel before they read a
+          single word.
         </p>
         <ul class="demo-points">
           <li>What it sells: new websites and redesigns</li>
@@ -58,13 +59,16 @@ description: Interactive product demos you can try before a call. A website rede
         </div>
       </div>
 
-      <div class="redesign-demo" data-redesign-demo role="group" aria-label="Interactive website redesign preview">
+      <div class="redesign-demo" data-redesign-demo>
         <div class="redesign-demo__frame">
           <div class="redesign-demo__browser">
             <span></span><span></span><span></span>
             <strong>sample clinic homepage</strong>
           </div>
-          <div class="redesign-demo__stage">
+          <div class="redesign-demo__stage" data-redesign-stage role="group" aria-label="Drag to compare the old site and the redesign">
+            <span class="redesign-demo__tag redesign-demo__tag--before" aria-hidden="true">Before</span>
+            <span class="redesign-demo__tag redesign-demo__tag--after" aria-hidden="true">After</span>
+
             <div class="redesign-site redesign-site--before" aria-hidden="true">
               <div class="cheap-nav">
                 <strong>Best Local Services</strong>
@@ -81,7 +85,8 @@ description: Interactive product demos you can try before a call. A website rede
               </div>
               <div class="cheap-footer">Copyright 2014 | last updated 2019 | no mobile booking</div>
             </div>
-            <div class="redesign-site redesign-site--after" role="group" aria-label="Premium redesigned website preview">
+
+            <div class="redesign-site redesign-site--after" aria-label="Premium redesigned website preview">
               <div class="premium-loader" aria-hidden="true"></div>
               <div class="premium-orbit" aria-hidden="true"><span></span><span></span><span></span></div>
               <div class="premium-nav">
@@ -111,151 +116,217 @@ description: Interactive product demos you can try before a call. A website rede
                 <strong data-premium-feed>Consultation request routed</strong>
               </div>
             </div>
+
+            <div class="redesign-demo__divider" data-redesign-handle aria-hidden="true">
+              <span class="redesign-demo__grip">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 6 4 12l5 6M15 6l5 6-5 6" />
+                </svg>
+              </span>
+            </div>
           </div>
         </div>
         <label class="redesign-demo__control">
-          <span>Before</span>
-          <input data-redesign-range type="range" min="0" max="100" value="88" aria-label="Reveal redesigned website" />
-          <span>After</span>
+          <span>Old site</span>
+          <input data-redesign-range type="range" min="0" max="100" value="50" aria-label="Reveal the redesign" />
+          <span>Redesign</span>
         </label>
       </div>
     </div>
   </div>
 </section>
 
-{# ===== Standalone product demos ===================================== #}
-<section class="section section--tint" id="product-demos">
+{# ===== Standalone products intro ==================================== #}
+<section class="section section--tight">
+  <div class="container container--narrow center">
+    <span class="eyebrow eyebrow--center">Standalone products</span>
+    <h2 class="section__title">Need more than a website?</h2>
+    <p class="section__lead">
+      Each one stands on its own, so you can take just the piece you need. If you want a full
+      system later, we connect the pieces cleanly.
+    </p>
+  </div>
+</section>
+
+{# ===== Demo 02 · App Canvas ========================================= #}
+<section class="section section--tint demo-lane" id="app-canvas">
   <div class="container">
-    <div class="section__head section__head--center" data-reveal>
-      <span class="eyebrow eyebrow--center">Standalone products</span>
-      <h2 class="section__title">Choose the build your business actually needs</h2>
-      <p class="section__lead">
-        Each lane can be bought on its own. If you need a full system later, we connect the pieces
-        cleanly.
-      </p>
-    </div>
-
-    <div class="demo-grid">
-      <article class="demo-product" id="app-canvas" data-reveal>
-        <div class="demo-product__copy">
-          <span class="eyebrow">Demo 02 · Custom apps</span>
-          <h3 class="card__title">App Canvas</h3>
-          <p class="card__text">
-            Click through a portal, a booking tool, and an internal board so the app feels real
-            before you fund the full build.
-          </p>
+    <div class="demo-product demo-product--wide demo-product--flip" data-reveal>
+      <div class="demo-product__copy">
+        <span class="eyebrow">Demo 02 · Custom apps</span>
+        <h2 class="section__title">App Canvas</h2>
+        <p class="section__lead">
+          Click through a client portal, a booking tool, and an internal board so the app feels
+          real before you fund the full build.
+        </p>
+        <ul class="demo-points">
+          <li>What it sells: custom apps and client portals</li>
+          <li>The moment it clicks: “my whole operation could live in one place.”</li>
+          <li>Best for: teams run on spreadsheets, email threads, and sticky notes</li>
+        </ul>
+        <div class="btn-row mt-6">
+          <a class="btn btn--primary" href="{{ site.cta.url }}">Plan my app</a>
+          <a class="btn btn--ghost" href="pricing.html">See pricing</a>
         </div>
-        <div class="app-demo" data-app-demo>
-          <div class="app-demo__tabs" role="group" aria-label="App demo flows">
-            <button class="is-active" type="button" data-app-view="portal" aria-pressed="true">Client portal</button>
-            <button type="button" data-app-view="booking" aria-pressed="false">Booking app</button>
-            <button type="button" data-app-view="ops" aria-pressed="false">Ops board</button>
-          </div>
-          <div class="app-demo__screen">
-            <div class="app-demo__top"><span data-app-title>Client Portal</span><b>Live preview</b></div>
-            <div class="app-demo__body" data-app-body aria-live="polite">
-              <div class="app-demo__stat-row">
-                <span><strong>3</strong> requests</span>
-                <span><strong>12m</strong> avg reply</span>
-              </div>
-              <p>Clients can log in, upload files, check status, and message your team.</p>
-              <div class="app-demo__timeline"><i></i><i></i><i></i></div>
-              <i>Secure intake</i><i>Status tracking</i><i>File notes</i>
+      </div>
+
+      <div class="app-demo" data-app-demo>
+        <div class="app-demo__tabs" role="tablist" aria-label="App demo flows">
+          <button class="is-active" type="button" data-app-view="portal">Client portal</button>
+          <button type="button" data-app-view="booking">Booking app</button>
+          <button type="button" data-app-view="ops">Ops board</button>
+        </div>
+        <div class="app-demo__screen">
+          <div class="app-demo__top"><span data-app-title>Client Portal</span><b>Live preview</b></div>
+          <div class="app-demo__body" data-app-body>
+            <div class="app-demo__stat-row">
+              <span><strong>3</strong> requests</span>
+              <span><strong>12m</strong> avg reply</span>
             </div>
+            <p>Clients can log in, upload files, check status, and message your team.</p>
+            <div class="app-demo__activity"><span>New file uploaded</span><b>Founder notified</b></div>
+            <div class="app-demo__timeline"><i></i><i></i><i></i></div>
+            <i>Secure intake</i><i>Status tracking</i><i>File notes</i>
           </div>
         </div>
-      </article>
+      </div>
+    </div>
+  </div>
+</section>
 
-      <article class="demo-product" id="pulse-dashboard" data-reveal data-reveal-delay="1">
-        <div class="demo-product__copy">
-          <span class="eyebrow">Demo 03 · Dashboards</span>
-          <h3 class="card__title">Pulse Dashboard</h3>
-          <p class="card__text">
-            Watch leads, bookings, and the next best fix update in one place, instead of living
-            across messages and spreadsheets.
-          </p>
+{# ===== Demo 03 · Pulse Dashboard ==================================== #}
+<section class="section demo-lane" id="pulse-dashboard">
+  <div class="container">
+    <div class="demo-product demo-product--wide" data-reveal>
+      <div class="demo-product__copy">
+        <span class="eyebrow">Demo 03 · Dashboards</span>
+        <h2 class="section__title">Pulse Dashboard</h2>
+        <p class="section__lead">
+          Switch the time range and watch the numbers move. Leads, bookings, and the next best fix,
+          in one place instead of across messages and spreadsheets.
+        </p>
+        <ul class="demo-points">
+          <li>What it sells: live dashboards and plain-English reporting</li>
+          <li>The moment it clicks: “I can finally see what’s working.”</li>
+          <li>Best for: owners flying blind on leads, bookings, and follow-up</li>
+        </ul>
+        <div class="btn-row mt-6">
+          <a class="btn btn--primary" href="{{ site.cta.url }}">Plan my dashboard</a>
+          <a class="btn btn--ghost" href="pricing.html">See pricing</a>
         </div>
-        <div class="dash-demo" data-dashboard-demo>
-          <div class="dash-demo__filters" role="group" aria-label="Dashboard time range">
-            <button class="is-active" type="button" data-dashboard-range="week" aria-pressed="true">Week</button>
-            <button type="button" data-dashboard-range="month" aria-pressed="false">Month</button>
-            <button type="button" data-dashboard-range="quarter" aria-pressed="false">Quarter</button>
-          </div>
-          <div class="dash-demo__metrics" aria-live="polite">
-            <span><strong data-dashboard-leads>142</strong> leads</span>
-            <span><strong data-dashboard-booked>38</strong> booked</span>
-          </div>
-          <div class="dash-demo__command" aria-live="polite">
-            <span>AI insight</span>
-            <strong data-dashboard-command>Call back mobile leads within 10 minutes.</strong>
-          </div>
-          <div class="dash-demo__bars" aria-hidden="true">
-            <i style="--h:52%"></i><i style="--h:76%"></i><i style="--h:61%"></i><i style="--h:88%"></i><i style="--h:69%"></i>
-          </div>
-          <div class="dash-demo__ticker" aria-hidden="true">
-            <span>Live</span>
-            <strong>Mobile lead booked after a 3-minute follow-up</strong>
-          </div>
-          <p class="dash-demo__insight" data-dashboard-insight>
-            Best channel: mobile visitors. Biggest fix: shorten the contact form.
-          </p>
-        </div>
-      </article>
+      </div>
 
-      <article class="demo-product" id="concierge-studio" data-reveal>
-        <div class="demo-product__copy">
-          <span class="eyebrow">Demo 04 · Chatbots</span>
-          <h3 class="card__title">Concierge Studio</h3>
-          <p class="card__text">
-            See how a customer question turns into a clean answer, a captured lead, and a real
-            follow-up from a founder.
-          </p>
+      <div class="dash-demo" data-dashboard-demo>
+        <div class="dash-demo__filters">
+          <button class="is-active" type="button" data-dashboard-range="week">Week</button>
+          <button type="button" data-dashboard-range="month">Month</button>
+          <button type="button" data-dashboard-range="quarter">Quarter</button>
         </div>
-        <div class="concierge-demo" data-concierge-demo>
-          <div class="concierge-demo__chat" aria-live="polite">
-            <p class="bot">Hi, I can help with pricing, booking, or planning a project.</p>
-            <p class="user" data-concierge-user>Can you help redesign my salon site?</p>
-            <p class="bot" data-concierge-answer>Yes. Send the link and we’ll review mobile flow, trust, booking, and follow-up.</p>
-          </div>
-          <div class="concierge-demo__handoff">
-            <span>Lead card</span>
-            <strong>Needs a redesign and a booking path</strong>
-            <em>Routed to a founder with the website link and notes</em>
-          </div>
-          <div class="concierge-demo__chips">
-            <button type="button" data-concierge-prompt="website">Website</button>
-            <button type="button" data-concierge-prompt="app">App</button>
-            <button type="button" data-concierge-prompt="agent">Agent</button>
-          </div>
+        <div class="dash-demo__metrics">
+          <span><strong data-dashboard-leads>142</strong> leads</span>
+          <span><strong data-dashboard-booked>38</strong> booked</span>
         </div>
-      </article>
+        <div class="dash-demo__command">
+          <span>AI insight</span>
+          <strong data-dashboard-command>Call back mobile leads within 10 minutes.</strong>
+        </div>
+        <div class="dash-demo__bars" aria-hidden="true">
+          <i style="--h:52%"></i><i style="--h:76%"></i><i style="--h:61%"></i><i style="--h:88%"></i><i style="--h:69%"></i>
+        </div>
+        <div class="dash-demo__ticker" aria-hidden="true">
+          <span>Live</span>
+          <strong>Mobile lead booked after a 3-minute follow-up</strong>
+        </div>
+        <p class="dash-demo__insight" data-dashboard-insight>
+          Best channel: mobile visitors. Biggest fix: shorten the contact form.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
 
-      <article class="demo-product" id="workflow-theater" data-reveal data-reveal-delay="1">
-        <div class="demo-product__copy">
-          <span class="eyebrow">Demo 05 · AI agents</span>
-          <h3 class="card__title">Workflow Theater</h3>
-          <p class="card__text">
-            Run a simple agent story: a lead comes in, the next step gets drafted, the queue
-            updates, and a human stays in control.
-          </p>
+{# ===== Demo 04 · Concierge Studio =================================== #}
+<section class="section section--tint demo-lane" id="concierge-studio">
+  <div class="container">
+    <div class="demo-product demo-product--wide demo-product--flip" data-reveal>
+      <div class="demo-product__copy">
+        <span class="eyebrow">Demo 04 · Chatbots</span>
+        <h2 class="section__title">Concierge Studio</h2>
+        <p class="section__lead">
+          Pick a question and watch it play out: a clean answer, a captured lead, and a real
+          follow-up from a founder. Want the full thing? The live chatbot is one click away.
+        </p>
+        <ul class="demo-points">
+          <li>What it sells: AI chatbots with built-in lead capture</li>
+          <li>The moment it clicks: “it answers like my best receptionist.”</li>
+          <li>Best for: businesses losing after-hours and first-touch leads</li>
+        </ul>
+        <div class="btn-row mt-6">
+          <a class="btn btn--primary" href="{{ site.links.demo }}">Try the live chatbot</a>
+          <a class="btn btn--ghost" href="pricing.html">See pricing</a>
         </div>
-        <div class="workflow-demo" data-workflow-demo>
-          <button class="btn btn--primary btn--sm" type="button" data-workflow-run>Run sample workflow</button>
-          <div class="workflow-demo__map" aria-hidden="true">
-            <span class="workflow-demo__node is-active">Lead</span>
-            <span class="workflow-demo__node">Draft</span>
-            <span class="workflow-demo__node">Queue</span>
-            <span class="workflow-demo__node">Approve</span>
-            <b class="workflow-demo__packet">Agent packet</b>
-          </div>
-          <ol class="workflow-demo__steps" aria-live="polite">
-            <li class="is-active">Lead received</li>
-            <li>Message drafted</li>
-            <li>CRM updated</li>
-            <li>Founder approves</li>
-          </ol>
+      </div>
+
+      <div class="concierge-demo" data-concierge-demo>
+        <div class="concierge-demo__chat" data-concierge-chat>
+          <p class="bot">Hi, I can help with pricing, booking, or planning a project.</p>
+          <p class="user" data-concierge-user>Can you help redesign my salon site?</p>
+          <p class="bot" data-concierge-answer>Yes. Send the link and we’ll review mobile flow, trust, booking, and follow-up.</p>
         </div>
-      </article>
+        <div class="concierge-demo__handoff">
+          <span>Lead card</span>
+          <strong data-concierge-card>Needs a redesign and a booking path</strong>
+          <em>Routed to a founder with the website link and notes</em>
+        </div>
+        <div class="concierge-demo__chips">
+          <span class="concierge-demo__chips-label">Ask about:</span>
+          <button type="button" data-concierge-prompt="website">A website</button>
+          <button type="button" data-concierge-prompt="app">An app</button>
+          <button type="button" data-concierge-prompt="agent">An agent</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ===== Demo 05 · Workflow Theater =================================== #}
+<section class="section demo-lane" id="workflow-theater">
+  <div class="container">
+    <div class="demo-product demo-product--wide" data-reveal>
+      <div class="demo-product__copy">
+        <span class="eyebrow">Demo 05 · AI agents</span>
+        <h2 class="section__title">Workflow Theater</h2>
+        <p class="section__lead">
+          Press play and watch a simple agent story: a lead comes in, the next step gets drafted,
+          the queue updates, and a human stays in control the whole time.
+        </p>
+        <ul class="demo-points">
+          <li>What it sells: AI agents and automations with approval gates</li>
+          <li>The moment it clicks: “the busywork runs itself, but I still decide.”</li>
+          <li>Best for: repetitive follow-ups, intake, and routing</li>
+        </ul>
+        <div class="btn-row mt-6">
+          <a class="btn btn--primary" href="{{ site.cta.url }}">Plan my agent</a>
+          <a class="btn btn--ghost" href="pricing.html">See pricing</a>
+        </div>
+      </div>
+
+      <div class="workflow-demo" data-workflow-demo>
+        <button class="btn btn--primary btn--sm" type="button" data-workflow-run>Run sample workflow</button>
+        <div class="workflow-demo__map" aria-hidden="true">
+          <span class="workflow-demo__node is-active">Lead</span>
+          <span class="workflow-demo__node">Draft</span>
+          <span class="workflow-demo__node">Queue</span>
+          <span class="workflow-demo__node">Approve</span>
+          <b class="workflow-demo__packet">Agent packet</b>
+        </div>
+        <ol class="workflow-demo__steps">
+          <li class="is-active">Lead received</li>
+          <li>Message drafted</li>
+          <li>CRM updated</li>
+          <li>Founder approves</li>
+        </ol>
+      </div>
     </div>
   </div>
 </section>

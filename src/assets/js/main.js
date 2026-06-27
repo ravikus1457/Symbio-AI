@@ -597,24 +597,75 @@
     website: {
       user: "Can you help redesign my salon site?",
       answer: "Yes. Send the link and we’ll review mobile flow, trust, booking, and follow-up.",
+      card: "Needs a redesign and a booking path",
     },
     app: {
       user: "I need clients to log in and upload files.",
       answer:
         "That sounds like a custom portal. We can map the login, upload, notes, and status flow first.",
+      card: "Needs a client login and file uploads",
     },
     agent: {
       user: "Can an agent follow up with leads?",
       answer:
         "Yes, with human approval gates. It can draft the reply, update the queue, and wait before sending.",
+      card: "Needs lead follow-up with approval gates",
     },
   };
+
+  /* --- shared demo helpers --- */
+  function onFirstView(el, cb) {
+    if (!("IntersectionObserver" in window)) {
+      cb();
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries, obs) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            obs.disconnect();
+            cb();
+          }
+        });
+      },
+      { threshold: 0.35 }
+    );
+    io.observe(el);
+  }
+
+  function formatNum(n) {
+    return Math.round(n).toLocaleString("en-US");
+  }
+
+  function countTo(el, target) {
+    const to = parseInt(String(target).replace(/[^0-9]/g, ""), 10);
+    if (!Number.isFinite(to)) {
+      el.textContent = target;
+      return;
+    }
+    if (prefersReducedMotion()) {
+      el.textContent = formatNum(to);
+      return;
+    }
+    const from = parseInt(el.textContent.replace(/[^0-9]/g, ""), 10) || 0;
+    const start = performance.now();
+    const dur = 650;
+    function frame(now) {
+      const p = Math.min(1, (now - start) / dur);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = formatNum(from + (to - from) * eased);
+      if (p < 1) window.requestAnimationFrame(frame);
+    }
+    window.requestAnimationFrame(frame);
+  }
 
   function initRedesignDemo() {
     const demo = document.querySelector("[data-redesign-demo]");
     if (!demo) return;
     const range = demo.querySelector("[data-redesign-range]");
-    if (!range) return;
+    const stage = demo.querySelector("[data-redesign-stage]");
+    if (!range || !stage) return;
+
     const routeButtons = demo.querySelectorAll("[data-premium-route]");
     const premiumFields = {
       kicker: demo.querySelector("[data-premium-kicker]"),
@@ -632,45 +683,96 @@
       feed: demo.querySelector("[data-premium-feed]"),
     };
 
-    function update() {
-      const value = Number(range.value);
-      demo.style.setProperty("--reveal", 100 - value + "%");
+    function clamp(n, lo, hi) {
+      return Math.max(lo, Math.min(hi, n));
     }
+
+    // --reveal is the seam position from the left edge. The range reads as the
+    // amount of redesign shown, so reveal = 100 - value.
+    function applyReveal(pct) {
+      demo.style.setProperty("--reveal", clamp(pct, 3, 97) + "%");
+    }
+    function setFromRange() {
+      applyReveal(100 - Number(range.value));
+    }
+    function setFromPct(pct) {
+      pct = clamp(pct, 3, 97);
+      range.value = String(Math.round(100 - pct));
+      applyReveal(pct);
+    }
+    function pointerPct(event) {
+      const rect = stage.getBoundingClientRect();
+      return ((event.clientX - rect.left) / rect.width) * 100;
+    }
+
+    let dragging = false;
+    stage.addEventListener("pointerdown", (event) => {
+      if (event.target.closest("[data-premium-route]")) return; // let buttons work
+      dragging = true;
+      demo.classList.add("is-dragged");
+      try {
+        stage.setPointerCapture(event.pointerId);
+      } catch (e) {
+        /* not all pointers support capture */
+      }
+      setFromPct(pointerPct(event));
+    });
+    stage.addEventListener("pointermove", (event) => {
+      if (dragging) setFromPct(pointerPct(event));
+    });
+    function endDrag() {
+      dragging = false;
+    }
+    stage.addEventListener("pointerup", endDrag);
+    stage.addEventListener("pointercancel", endDrag);
+
+    range.addEventListener("input", () => {
+      demo.classList.add("is-dragged");
+      setFromRange();
+    });
 
     function setPremiumRoute(route) {
       const data = PREMIUM_ROUTES[route];
       if (!data) return;
-
       routeButtons.forEach((button) => {
         const active = button.getAttribute("data-premium-route") === route;
         button.classList.toggle("is-active", active);
         button.setAttribute("aria-current", active ? "true" : "false");
       });
-
       Object.entries(data).forEach(([key, value]) => {
         if (premiumFields[key]) premiumFields[key].textContent = value;
       });
-
       demo.classList.remove("is-premium-changing");
-      window.requestAnimationFrame(() => {
-        demo.classList.add("is-premium-changing");
-      });
-
-      if (Number(range.value) < 88) {
-        range.value = "88";
-        update();
-      }
+      window.requestAnimationFrame(() => demo.classList.add("is-premium-changing"));
+      // reveal enough of the redesign that the change is visible
+      if (Number(range.value) < 70) setFromPct(18);
     }
-
-    const mobileDefault = window.matchMedia("(max-width: 720px)").matches;
-    range.value = mobileDefault ? "100" : range.getAttribute("value") || "64";
-    range.addEventListener("input", update);
     routeButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        setPremiumRoute(button.getAttribute("data-premium-route"));
-      });
+      button.addEventListener("click", () =>
+        setPremiumRoute(button.getAttribute("data-premium-route"))
+      );
     });
-    update();
+
+    // Clean 50/50 split on desktop; mostly-redesign on small screens.
+    setFromPct(window.matchMedia("(max-width: 720px)").matches ? 22 : 50);
+
+    // One-time "drag me" nudge when the lab first scrolls into view.
+    if (!prefersReducedMotion() && window.matchMedia("(hover: hover)").matches) {
+      onFirstView(demo, () => {
+        const base = 50;
+        const peak = 72;
+        const start = performance.now();
+        function frame(now) {
+          if (demo.classList.contains("is-dragged")) return;
+          const p = Math.min(1, (now - start) / 1100);
+          const wave = Math.sin(p * Math.PI); // 0 -> 1 -> 0
+          applyReveal(base + (peak - base) * wave);
+          range.value = String(Math.round(100 - (base + (peak - base) * wave)));
+          if (p < 1) window.requestAnimationFrame(frame);
+        }
+        window.requestAnimationFrame(frame);
+      });
+    }
   }
 
   function initAppDemo() {
@@ -709,6 +811,16 @@
     const buttons = demo.querySelectorAll("[data-dashboard-range]");
     if (!leads || !booked || !insight || !command || !bars.length || !buttons.length) return;
 
+    function show(data) {
+      countTo(leads, data.leads);
+      countTo(booked, data.booked);
+      insight.textContent = data.insight;
+      command.textContent = data.command;
+      bars.forEach((bar, index) => {
+        bar.style.setProperty("--h", data.bars[index] || data.bars[data.bars.length - 1]);
+      });
+    }
+
     buttons.forEach((button) => {
       button.addEventListener("click", () => {
         const data = DASH_DEMOS[button.getAttribute("data-dashboard-range")];
@@ -718,14 +830,16 @@
           btn.classList.toggle("is-active", on);
           btn.setAttribute("aria-pressed", String(on));
         });
-        leads.textContent = data.leads;
-        booked.textContent = data.booked;
-        insight.textContent = data.insight;
-        command.textContent = data.command;
-        bars.forEach((bar, index) => {
-          bar.style.setProperty("--h", data.bars[index] || data.bars[data.bars.length - 1]);
-        });
+        show(data);
       });
+    });
+
+    // Grow the bars and count the numbers up the first time it is seen.
+    onFirstView(demo, () => {
+      demo.classList.add("is-live");
+      leads.textContent = "0";
+      booked.textContent = "0";
+      show(DASH_DEMOS.week);
     });
   }
 
@@ -733,19 +847,76 @@
     const demo = document.querySelector("[data-concierge-demo]");
     if (!demo) return;
 
-    const user = demo.querySelector("[data-concierge-user]");
-    const answer = demo.querySelector("[data-concierge-answer]");
+    const chat = demo.querySelector("[data-concierge-chat]");
+    const cardEl = demo.querySelector("[data-concierge-card]");
     const buttons = demo.querySelectorAll("[data-concierge-prompt]");
-    if (!user || !answer || !buttons.length) return;
+    if (!chat || !buttons.length) return;
+
+    const greetingEl = chat.querySelector(".bot");
+    const greeting = greetingEl
+      ? greetingEl.textContent
+      : "Hi, I can help with pricing, booking, or planning a project.";
+
+    let timers = [];
+    function clearTimers() {
+      timers.forEach((id) => window.clearTimeout(id));
+      timers = [];
+    }
+    function add(cls, text) {
+      const p = document.createElement("p");
+      p.className = cls + " is-entering";
+      p.textContent = text;
+      chat.appendChild(p);
+      return p;
+    }
+    function addTyping() {
+      const p = document.createElement("p");
+      p.className = "bot concierge-demo__typing is-entering";
+      p.innerHTML = "<span></span><span></span><span></span>";
+      chat.appendChild(p);
+      return p;
+    }
+
+    function play(key) {
+      const data = CONCIERGE_DEMOS[key];
+      if (!data) return;
+      clearTimers();
+      chat.innerHTML = "";
+      add("bot", greeting);
+      buttons.forEach((b) => {
+        const on = b.getAttribute("data-concierge-prompt") === key;
+        b.classList.toggle("is-active", on);
+        b.setAttribute("aria-pressed", String(on));
+      });
+
+      if (prefersReducedMotion()) {
+        add("user", data.user);
+        add("bot", data.answer);
+        if (cardEl) cardEl.textContent = data.card;
+        return;
+      }
+
+      timers.push(window.setTimeout(() => add("user", data.user), 260));
+      let typingEl = null;
+      timers.push(
+        window.setTimeout(() => {
+          typingEl = addTyping();
+        }, 720)
+      );
+      timers.push(
+        window.setTimeout(() => {
+          if (typingEl) typingEl.remove();
+          add("bot", data.answer);
+          if (cardEl) cardEl.textContent = data.card;
+        }, 1500)
+      );
+    }
 
     buttons.forEach((button) => {
-      button.addEventListener("click", () => {
-        const data = CONCIERGE_DEMOS[button.getAttribute("data-concierge-prompt")];
-        if (!data) return;
-        user.textContent = data.user;
-        answer.textContent = data.answer;
-      });
+      button.addEventListener("click", () => play(button.getAttribute("data-concierge-prompt")));
     });
+
+    onFirstView(demo, () => play("website"));
   }
 
   function initWorkflowDemo() {
@@ -759,27 +930,58 @@
 
     let timers = [];
     function clearTimers() {
-      timers.forEach((timer) => window.clearTimeout(timer));
+      timers.forEach((id) => window.clearTimeout(id));
       timers = [];
     }
 
-    run.addEventListener("click", () => {
+    function runWorkflow() {
       clearTimers();
       run.disabled = true;
       steps.forEach((step) => step.classList.remove("is-active"));
       nodes.forEach((node) => node.classList.remove("is-active"));
 
       steps.forEach((step, index) => {
-        const timer = window.setTimeout(() => {
+        const id = window.setTimeout(() => {
           steps.forEach((item) => item.classList.remove("is-active"));
           nodes.forEach((node) => node.classList.remove("is-active"));
           step.classList.add("is-active");
           if (nodes[index]) nodes[index].classList.add("is-active");
           if (index === steps.length - 1) run.disabled = false;
-        }, index * 520);
-        timers.push(timer);
+        }, index * 560);
+        timers.push(id);
       });
+    }
+
+    run.addEventListener("click", runWorkflow);
+    onFirstView(demo, () => {
+      if (!prefersReducedMotion()) runWorkflow();
     });
+  }
+
+  function initDemoNav() {
+    const nav = document.querySelector("[data-demo-nav]");
+    if (!nav) return;
+    const links = Array.from(nav.querySelectorAll("[data-demo-link]"));
+    const map = new Map();
+    links.forEach((link) => {
+      const id = (link.getAttribute("href") || "").slice(1);
+      const section = id && document.getElementById(id);
+      if (section) map.set(section, link);
+    });
+    if (!map.size || !("IntersectionObserver" in window)) return;
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          links.forEach((l) => l.classList.remove("is-current"));
+          const link = map.get(entry.target);
+          if (link) link.classList.add("is-current");
+        });
+      },
+      { rootMargin: "-45% 0px -50% 0px", threshold: 0 }
+    );
+    map.forEach((link, section) => io.observe(section));
   }
 
   function initProductDemos() {
@@ -788,6 +990,7 @@
     initDashboardDemo();
     initConciergeDemo();
     initWorkflowDemo();
+    initDemoNav();
   }
 
   /* ---- Init ------------------------------------------------------------ */

@@ -2484,7 +2484,7 @@ ol {
 }
 
 .redesign-demo {
-  --reveal: 12%;
+  --reveal: 50%;
   padding: clamp(1rem, 3vw, 1.25rem);
 }
 
@@ -2522,6 +2522,8 @@ ol {
 .redesign-demo__stage {
   position: relative;
   min-height: clamp(21rem, 44vw, 30rem);
+  cursor: ew-resize;
+  touch-action: pan-y;
 }
 
 /* A clear seam + handle at the reveal line, so it reads as a before/after
@@ -3262,6 +3264,7 @@ ol {
   background-image: var(--grad-accent);
   border-radius: var(--radius-sm) var(--radius-sm) 4px 4px;
   box-shadow: 0 10px 22px -14px rgba(47, 107, 255, 0.7);
+  transform-origin: bottom;
   transition: height var(--dur-slow) var(--ease);
 }
 
@@ -3306,6 +3309,8 @@ ol {
 .concierge-demo__chat {
   display: grid;
   gap: 0.7rem;
+  min-height: 11rem;
+  align-content: start;
   margin-bottom: 0.9rem;
 }
 
@@ -3610,6 +3615,229 @@ ol {
   .workflow-demo__map::after {
     display: none;
   }
+}
+
+/* -------------------------------------------------------------------------
+   18c. Demos page polish (full-width lanes, sticky scroll-spy, drag handle)
+   ------------------------------------------------------------------------- */
+
+/* Each demo gets room to clear the sticky header + sub-nav when linked to. */
+.demo-lane {
+  scroll-margin-top: 7.5rem;
+}
+
+/* Alternate the wide layout so demos zig-zag down the page. */
+@media (min-width: 900px) {
+  .demo-product--flip {
+    grid-template-columns: minmax(24rem, 1.18fr) minmax(0, 0.82fr);
+  }
+
+  .demo-product--flip .demo-product__copy {
+    order: 2;
+  }
+}
+
+/* Sticky scroll-spy sub-nav under the header. */
+.demo-nav {
+  position: sticky;
+  top: 4.4rem;
+  z-index: 80;
+  background: var(--c-header-bg);
+  backdrop-filter: saturate(180%) blur(14px);
+  border-bottom: 1px solid var(--c-border);
+}
+
+.demo-nav__track {
+  display: flex;
+  gap: 0.35rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-block: 0.6rem;
+}
+
+.demo-nav__track::-webkit-scrollbar {
+  display: none;
+}
+
+.demo-nav__track a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: none;
+  padding: 0.5rem 0.9rem;
+  color: var(--c-text-muted);
+  text-decoration: none;
+  white-space: nowrap;
+  font-size: var(--fs-300);
+  font-weight: 600;
+  border-radius: var(--radius-pill);
+  transition:
+    color var(--dur) var(--ease),
+    background-color var(--dur) var(--ease);
+}
+
+.demo-nav__track a span {
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-200);
+  font-weight: 700;
+  color: var(--c-text-faint);
+  transition: color var(--dur) var(--ease);
+}
+
+.demo-nav__track a:hover {
+  color: var(--c-text);
+  background: var(--c-surface-2);
+}
+
+.demo-nav__track a.is-current {
+  color: #fff;
+  background-image: var(--grad-accent);
+  box-shadow: var(--shadow-accent);
+}
+
+.demo-nav__track a.is-current span {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Redesign Lab: a real drag-to-compare seam with a grab handle + labels. */
+.redesign-demo__tag {
+  position: absolute;
+  top: 0.8rem;
+  z-index: 5;
+  padding: 0.25rem 0.6rem;
+  font-size: var(--fs-200);
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  border-radius: var(--radius-pill);
+  pointer-events: none;
+}
+
+.redesign-demo__tag--before {
+  left: 0.8rem;
+  color: #374151;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid #d1d5db;
+}
+
+.redesign-demo__tag--after {
+  right: 0.8rem;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  backdrop-filter: blur(10px);
+}
+
+.redesign-demo__divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--reveal);
+  z-index: 6;
+  width: 2px;
+  margin-left: -1px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow:
+    0 0 0 1px rgba(15, 23, 42, 0.08),
+    0 0 22px rgba(47, 107, 255, 0.55);
+  pointer-events: none;
+}
+
+.redesign-demo__grip {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  color: #fff;
+  background-image: var(--grad-accent);
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: var(--shadow-lg);
+  transform: translate(-50%, -50%);
+}
+
+.redesign-demo__grip svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+/* A gentle breathing hint so the handle reads as draggable. */
+@media (prefers-reduced-motion: no-preference) {
+  .redesign-demo:not(.is-dragged) .redesign-demo__grip {
+    animation: grip-hint 2.4s var(--ease) 4;
+  }
+}
+
+@keyframes grip-hint {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    box-shadow: var(--shadow-lg);
+  }
+
+  50% {
+    transform: translate(-50%, -50%) scale(1.08);
+    box-shadow:
+      var(--shadow-lg),
+      0 0 0 8px rgba(47, 107, 255, 0.16);
+  }
+}
+
+/* Concierge: typing indicator + animated message entrance + chip label. */
+.concierge-demo__chips {
+  align-items: center;
+}
+
+.concierge-demo__chips-label {
+  margin-right: 0.2rem;
+  color: var(--c-text-faint);
+  font-size: var(--fs-200);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.concierge-demo__chat p.is-entering {
+  animation: lead-in 0.4s var(--ease) both;
+}
+
+.concierge-demo__typing {
+  display: inline-flex;
+  gap: 0.25rem;
+  align-items: center;
+  padding: 0.75rem 0.9rem !important;
+  width: fit-content;
+}
+
+.concierge-demo__typing span {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: var(--c-text-faint);
+  animation: typing 1.2s ease-in-out infinite;
+}
+
+.concierge-demo__typing span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.concierge-demo__typing span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+/* Dashboard bars grow in the first time the panel is seen. */
+.dash-demo:not(.is-live) .dash-demo__bars i {
+  transform: scaleY(0.04);
+}
+
+.dash-demo.is-live .dash-demo__bars i {
+  transform: scaleY(1);
+  transition:
+    transform var(--dur-slow) var(--ease),
+    height var(--dur-slow) var(--ease);
 }
 
 /* -------------------------------------------------------------------------

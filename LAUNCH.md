@@ -51,6 +51,9 @@ with one command — no editing code.
 | `widget-starter` | AI Assistant — Starter | $49 / month | recurring |
 | `widget-growth` | AI Assistant — Growth | $99 / month | recurring |
 | `widget-pro` | AI Assistant — Pro | $149 / month | recurring |
+| `care-essential` | Website Care — Essential | $99 / month | recurring |
+| `care-growth` | Website Care — Growth | $199 / month | recurring |
+| `care-pro` | Website Care — Pro | $299 / month | recurring |
 
 Paste them all (drop the ones you're not ready for):
 

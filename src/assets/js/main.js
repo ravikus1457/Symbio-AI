@@ -518,6 +518,87 @@
     });
   }
 
+  /* ---- 11. Instant teardown (teardown.html) --------------------------- */
+  // Posts a URL to the deployed scan Worker and renders the findings live.
+  // If no endpoint is configured (data-scan-api empty), falls back to the human
+  // free-scan form. Guarded — no-op on every other page.
+  function initTeardown() {
+    const form = document.querySelector("[data-teardown-form]");
+    if (!form) return;
+
+    const api = (form.getAttribute("data-scan-api") || "").replace(/\/+$/, "");
+    const statusEl = form.querySelector("[data-teardown-status]");
+    const submitBtn = form.querySelector("[data-teardown-submit]");
+    const results = document.querySelector("[data-teardown-results]");
+    const list = document.querySelector("[data-teardown-list]");
+    const titleEl = document.querySelector("[data-teardown-title]");
+
+    function setStatus(kind, msg) {
+      if (!statusEl) return;
+      statusEl.className = "form__status form__status--" + kind;
+      statusEl.textContent = msg;
+    }
+
+    function renderResults(data) {
+      if (!results || !list) return;
+      list.textContent = "";
+      (data.findings || []).forEach((f) => {
+        const card = document.createElement("article");
+        card.className = "card";
+        const h = document.createElement("h3");
+        h.className = "card__title";
+        h.textContent = f.title;
+        const p = document.createElement("p");
+        p.className = "card__text";
+        p.textContent = "Fix: " + f.fix;
+        card.appendChild(h);
+        card.appendChild(p);
+        list.appendChild(card);
+      });
+      if (titleEl) {
+        titleEl.textContent = data.reachable
+          ? "Top fixes — site score " + data.score + "/100"
+          : "We couldn’t reach that site — here’s where we’d start";
+      }
+      results.hidden = false;
+      results.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+      const urlInput = form.querySelector('[name="url"]');
+      const url = urlInput ? urlInput.value.trim() : "";
+
+      // No backend configured yet → hand off to the human free-scan form.
+      if (!api) {
+        window.location.href = "scan.html";
+        return;
+      }
+
+      setStatus("pending", "Scanning your site…");
+      if (submitBtn) submitBtn.disabled = true;
+      try {
+        const res = await fetch(api + "/api/scan", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url }),
+        });
+        const data = await res.json();
+        if (!res.ok || !data || !data.ok) throw new Error((data && data.error) || "scan failed");
+        renderResults(data);
+        setStatus("success", "Done — here’s what we found.");
+      } catch (e) {
+        setStatus("error", "Couldn’t scan that automatically — try the free scan form below.");
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+      }
+    });
+  }
+
   /* ---- Init ------------------------------------------------------------ */
   function init() {
     initTheme();
@@ -529,6 +610,7 @@
     initWidgetLeadBridge();
     initCardMotion();
     initBuyButtons();
+    initTeardown();
     // Tell the pre-paint safety net that we ran, so it won't unhide reveals.
     window.__symbioReady = true;
   }

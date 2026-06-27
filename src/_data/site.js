@@ -9,6 +9,10 @@ export default {
   // Production origin (no trailing slash). Used for absolute canonical URLs,
   // og:url, sitemap entries, and JSON-LD @id values. Set to the live domain.
   url: "https://symbioai.dev",
+  // Deployed instant-teardown Worker base URL (infra/worker/). Empty → the
+  // teardown page falls back to the normal free-scan form. e.g.
+  // "https://symbio-scan.<you>.workers.dev"
+  scanApi: "",
   tagline: "We catch and convert leads in real time.",
   // Broader positioning — used as the hero subhead and where we describe the
   // full offer (websites + apps + systems), not just lead capture.
@@ -175,6 +179,58 @@ export default {
         "Priority support",
         "Custom answer flows",
         "Lead delivery to your CRM",
+      ],
+      checkoutUrl: "",
+      featured: false,
+    },
+  ],
+
+  // ── Website care plans (recurring retainer: care.html) ──────────────────
+  // Pure-margin monthly revenue — every build client should convert to one.
+  // Same Stripe pattern (subscription Payment Links); set via:
+  //   npm run set-stripe -- care-growth=https://buy.stripe.com/...
+  carePlans: [
+    {
+      key: "care-essential",
+      name: "Essential",
+      price: "$99",
+      cadence: "/mo",
+      blurb: "We keep your site fast, secure, online, and up to date — so you never think about it.",
+      features: [
+        "Managed hosting + SSL",
+        "Uptime & security monitoring",
+        "Software/plugin updates",
+        "Up to 30 min of content edits / month",
+      ],
+      checkoutUrl: "",
+      featured: false,
+    },
+    {
+      key: "care-growth",
+      name: "Growth",
+      price: "$199",
+      cadence: "/mo",
+      blurb: "Everything in Essential, plus monthly improvements and a plain-English report.",
+      features: [
+        "Everything in Essential",
+        "Up to 2 hrs of changes / month",
+        "Monthly analytics + insights report",
+        "Priority turnaround",
+      ],
+      checkoutUrl: "",
+      featured: true,
+    },
+    {
+      key: "care-pro",
+      name: "Pro",
+      price: "$299",
+      cadence: "/mo",
+      blurb: "Ongoing conversion work — we keep improving the site to win more leads.",
+      features: [
+        "Everything in Growth",
+        "Up to 4 hrs of changes / month",
+        "Ongoing conversion & A/B tweaks",
+        "A direct line to the builders",
       ],
       checkoutUrl: "",
       featured: false,

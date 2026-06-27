@@ -24,3 +24,6 @@ tools/out/
 tools/hermes/out/
 tools/hermes/ledger.json
 tools/hermes/REPORT.md
+
+# Cloudflare Worker local state
+infra/worker/.wrangler/

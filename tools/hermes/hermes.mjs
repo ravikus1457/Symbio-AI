@@ -27,11 +27,12 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   loadConfig, loadProspects, processProspect, runPool, toCsv,
-  businessOf, firstNameOf, normalizeUrl, addressIsPlaceholder, DEFAULT_UA,
+  businessOf, firstNameOf, normalizeUrl, addressIsPlaceholder, renderTemplate, DEFAULT_UA,
 } from "../lib/outreach-core.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const VARIANTS_PATH = path.join(HERE, "variants.json");
+const SEQUENCES_PATH = path.join(HERE, "sequences.json");
 const LEDGER_PATH = path.join(HERE, "ledger.json");
 const REPORT_PATH = path.join(HERE, "REPORT.md");
 const OUT_DIR = path.join(HERE, "out");
@@ -92,6 +93,18 @@ async function loadVariants() {
   } catch {
     return { cfg: DEFAULT_VARIANTS, malformed: true };
   }
+}
+
+const DEFAULT_SEQUENCE = {
+  steps: [
+    { id: "instant", delayDays: 0, subjectTemplate: "Thanks {first} — here's what happens next", bodyTemplate: "Hi {first},\n\nThanks for reaching out about {biz} — got it. A real person will reply within one business day.\n\nWant to see options now? {bookLink}" },
+    { id: "followup-1", delayDays: 2, subjectTemplate: "did you still want that scan, {first}?", bodyTemplate: "Hi {first},\n\nCircling back on {biz} — want the short teardown? Reply 'yes' and I'll send it, no obligation. {bookLink}" },
+  ],
+};
+
+async function loadSequence() {
+  const s = await readJson(SEQUENCES_PATH, null);
+  return s && Array.isArray(s.steps) && s.steps.length ? s : DEFAULT_SEQUENCE;
 }
 
 /* ---- the bandit ------------------------------------------------------ */
@@ -327,10 +340,75 @@ async function cmdReport() {
   console.log(`Report written: ${REPORT_PATH}`);
 }
 
+// Speed-to-lead: render the lifecycle sequence (instant reply + timed follow-ups)
+// for each INBOUND lead. Output loads into your email tool as an automated
+// sequence — it then sends on the delays, so every lead is worked the moment it
+// lands, with no manual typing. Honors unsubscribes, dedupes, gates on address.
+async function cmdNurture(flags) {
+  const inPath = flags.in || "tools/prospects.sample.csv";
+  const limit = flags.limit ? parseInt(flags.limit, 10) : Infinity;
+  const cfg = await loadConfig(CONFIG_PATH);
+  const blocked = addressIsPlaceholder(cfg);
+  if (blocked) console.warn("\n⚠️  Address not set — rendering BLOCKED placeholders only (CAN-SPAM). Set it in " + CONFIG_PATH + ".\n");
+
+  const seq = await loadSequence();
+  const ledger = await readJson(LEDGER_PATH, []);
+  const unsub = new Set(ledger.filter((r) => r.unsub).map((r) => (r.email || "").toLowerCase()));
+  const leads = await loadProspects(inPath, limit);
+  if (!leads.length) {
+    console.error(`Hermes nurture: no leads in ${inPath}`);
+    exit(1);
+  }
+
+  const footer = `\n\n— ${cfg.fromName}, ${cfg.company}\n${cfg.websiteUrl}\n\n${cfg.physicalAddress}\n${cfg.unsubscribeLine}`;
+  const seen = new Set();
+  let dup = 0, suppressed = 0;
+  const records = [];
+  for (const lead of leads) {
+    const em = (lead.email || "").trim().toLowerCase();
+    if (em && seen.has(em)) { dup += 1; continue; }
+    if (em) seen.add(em);
+    if (em && unsub.has(em)) { suppressed += 1; continue; }
+
+    const ctx = {
+      first: firstNameOf(lead) === "there" ? "there" : firstNameOf(lead),
+      biz: businessOf(lead),
+      need: lead.need || "your project",
+      fromName: cfg.fromName, company: cfg.company, websiteUrl: cfg.websiteUrl,
+      scanLink: `${cfg.websiteUrl}/scan.html`, bookLink: `${cfg.websiteUrl}/buy.html`,
+    };
+    const rec = { email: lead.email || "", first_name: ctx.first === "there" ? "" : ctx.first, company: ctx.biz };
+    seq.steps.forEach((s, i) => {
+      rec[`step${i + 1}_after_days`] = s.delayDays;
+      rec[`step${i + 1}_subject`] = blocked ? "" : renderTemplate(s.subjectTemplate, ctx);
+      rec[`step${i + 1}_body`] = blocked
+        ? "[BLOCKED] Set a real physical address in tools/outreach.config.json before sending (CAN-SPAM)."
+        : renderTemplate(s.bodyTemplate, ctx) + footer;
+    });
+    rec.status = blocked ? "blocked-no-address" : lead.email ? "ready" : "no-email";
+    records.push(rec);
+  }
+
+  const stepCols = seq.steps.flatMap((_, i) => [`step${i + 1}_after_days`, `step${i + 1}_subject`, `step${i + 1}_body`]);
+  const cols = ["email", "first_name", "company", ...stepCols, "status"];
+  await mkdir(OUT_DIR, { recursive: true });
+  const outCsv = path.join(OUT_DIR, "nurture.csv");
+  await writeFile(outCsv, toCsv(records, cols), "utf8");
+  await writeFile(path.join(OUT_DIR, "nurture.json"), JSON.stringify(records, null, 2), "utf8");
+
+  console.log(`Hermes nurture — ${records.length} lead(s), ${seq.steps.length}-step sequence` +
+    (dup ? `, ${dup} dup skipped` : "") + (suppressed ? `, ${suppressed} unsubscribed suppressed` : "") + ".");
+  console.log(`CSV: ${outCsv}`);
+  console.log(blocked
+    ? "⚠️  Output is BLOCKED placeholders — set your address, then re-run."
+    : "Load these as an automated sequence in Smartlead/Instantly (it sends on the step delays = speed-to-lead).");
+}
+
 async function main() {
   const { cmd, flags } = parseArgs(argv.slice(2));
   switch (cmd) {
     case "outreach": return cmdOutreach(flags);
+    case "nurture": return cmdNurture(flags);
     case "log": return cmdLog(flags);
     case "learn": await cmdLearn(); return;
     case "report": return cmdReport();
@@ -341,6 +419,7 @@ async function main() {
       console.log(`Hermes — Symbio AI growth engine
 
   node tools/hermes/hermes.mjs outreach --in leads.csv   Scan + write A/B emails (bandit-assigned)
+  node tools/hermes/hermes.mjs nurture --in leads.csv    Render the speed-to-lead follow-up sequence
   node tools/hermes/hermes.mjs log --email e@x.com --replied   Record an outcome
   node tools/hermes/hermes.mjs learn                     Update variant win-rates
   node tools/hermes/hermes.mjs report                    Write the funnel dashboard

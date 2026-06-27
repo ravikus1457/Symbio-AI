@@ -11,6 +11,7 @@
  * Keys (from site.js):
  *   packages    : speed-fix · website-7-days · booking-system · ai-assistant
  *   widget plans : widget-starter · widget-growth · widget-pro
+ *   care plans   : care-essential · care-growth · care-pro
  *
  * Pass key= (empty) to clear a link back to the graceful fallback.
  * After running: `npm run build` and redeploy dist/.
@@ -29,7 +30,7 @@ const pairs = argv.slice(2).map((a) => {
 
 if (!pairs.length) {
   console.error("Usage: node tools/set-stripe.mjs <key>=<https-url> [<key>=<url> ...]");
-  console.error("Keys: speed-fix, website-7-days, booking-system, ai-assistant, widget-starter, widget-growth, widget-pro");
+  console.error("Keys: speed-fix, website-7-days, booking-system, ai-assistant, widget-starter, widget-growth, widget-pro, care-essential, care-growth, care-pro");
   exit(1);
 }
 

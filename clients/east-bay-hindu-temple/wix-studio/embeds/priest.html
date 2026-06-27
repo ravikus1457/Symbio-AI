@@ -1,0 +1,1923 @@
+<!doctype html>
+<!--
+  East Bay Hindu Temple — "priest" section embed for Wix Studio.
+  Wix Studio → Add (+) → Embed Code → "Embed HTML" → paste this entire file.
+  Full width; scrollbars OFF; suggested height ~760px (adjust per breakpoint).
+  Head priest — add Pandit ji's photo; confirm name before publishing.
+  Self-contained — only Google Fonts load externally (HTTPS).
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Mukta:wght@400;500;600;700&family=Tiro+Devanagari+Hindi:ital@0;1&display=swap" rel="stylesheet" />
+    <style>
+/* =========================================================================
+   East Bay Hindu Temple — Design System
+   A modern, accessible redesign that keeps a traditional devotional feel.
+   Palette is built around the two colours the head priest asked to lead with:
+   temple red (maroon/sindoor) and gold, warmed by saffron and cream.
+
+   Sections:
+     1.  Design tokens (colour, type, spacing)
+     2.  Reset & base
+     3.  Accessibility helpers
+     4.  Layout primitives (container, section, grid)
+     5.  Ornament (mandala, lotus divider, om, diya)
+     6.  Typography helpers (eyebrow, titles, Sanskrit)
+     7.  Buttons
+     8.  Top bar & header / navigation
+     9.  Hero
+     10. Welcome / about
+     11. Deity niches (darshan)
+     12. Timings (aarti & darshan)
+     13. Sevas & poojas
+     14. Festivals
+     15. Head priest
+     16. Seva / donation band
+     17. Visit & contact
+     18. Footer
+     19. Reveal-on-scroll & motion
+     20. Reduced motion
+   ========================================================================= */
+
+/* -------------------------------------------------------------------------
+   1. Design tokens
+   ------------------------------------------------------------------------- */
+:root {
+  /* Temple red — the lead colour */
+  --red: #8a1220;
+  --red-deep: #5e0a13;
+  --red-soft: #a8323f;
+
+  /* Gold — the second lead colour */
+  --gold: #c89b3c;
+  --gold-bright: #f1cf7a;
+  --gold-deep: #9a7322;
+
+  /* Saffron / marigold warmth */
+  --saffron: #e8861e;
+  --marigold: #f4a623;
+
+  /* Cream surfaces & warm ink */
+  --cream: #fdf6e8;
+  --cream-2: #f7ead0;
+  --cream-3: #f1dcb6;
+  --ink: #33160f;
+  --ink-soft: #6a4536;
+  --ink-faint: #9a7868;
+  --line: rgba(122, 60, 30, 0.16);
+  --line-strong: rgba(122, 60, 30, 0.3);
+
+  --on-red: #fdeccd;
+  --on-red-soft: rgba(253, 236, 205, 0.74);
+
+  /* Gradients */
+  --grad-red: linear-gradient(135deg, #7c0f1c 0%, #5e0a13 55%, #3f060d 100%);
+  --grad-gold: linear-gradient(135deg, #f1cf7a 0%, #c89b3c 50%, #9a7322 100%);
+  --grad-saffron: linear-gradient(135deg, #f4a623, #e8861e 60%, #c25e12);
+  --grad-cream: linear-gradient(180deg, #fdf6e8 0%, #f7ead0 100%);
+
+  /* Shadows (warm) */
+  --shadow-sm: 0 1px 2px rgba(70, 20, 10, 0.08), 0 2px 6px rgba(70, 20, 10, 0.06);
+  --shadow-md: 0 16px 36px -20px rgba(70, 20, 10, 0.4);
+  --shadow-lg: 0 36px 70px -32px rgba(70, 20, 10, 0.5);
+  --shadow-gold: 0 14px 30px -14px rgba(154, 115, 34, 0.55);
+
+  /* Type */
+  --font-display: "Cormorant Garamond", "Marcellus", Georgia, "Times New Roman", serif;
+  --font-body: "Mukta", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-deva: "Tiro Devanagari Hindi", "Mukta", serif;
+
+  --fs-200: 0.8125rem;
+  --fs-300: 0.9375rem;
+  --fs-400: 1.0625rem;
+  --fs-500: 1.1875rem;
+  --fs-600: clamp(1.25rem, 1.6vw, 1.45rem);
+  --fs-700: clamp(1.6rem, 3vw, 2.1rem);
+  --fs-800: clamp(2.1rem, 4.4vw, 3.1rem);
+  --fs-900: clamp(2.8rem, 6.5vw, 4.8rem);
+
+  --lh-tight: 1.06;
+  --lh-snug: 1.3;
+  --lh-base: 1.72;
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4.5rem;
+  --space-9: 6.5rem;
+
+  /* Radii */
+  --radius-sm: 10px;
+  --radius: 16px;
+  --radius-lg: 24px;
+  --radius-pill: 999px;
+
+  /* Structure */
+  --container: 1180px;
+  --container-narrow: 760px;
+  --gutter: clamp(1.1rem, 4vw, 2rem);
+
+  /* Motion */
+  --ease: cubic-bezier(0.22, 0.7, 0.25, 1);
+  --dur-fast: 0.16s;
+  --dur: 0.28s;
+  --dur-slow: 0.6s;
+
+  --z-header: 100;
+  --z-skip: 300;
+
+  color-scheme: light;
+}
+
+/* -------------------------------------------------------------------------
+   2. Reset & base
+   ------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: 88px;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--fs-400);
+  line-height: var(--lh-base);
+  color: var(--ink);
+  background-color: var(--cream);
+  background-image:
+    radial-gradient(900px 480px at 100% -10%, rgba(244, 166, 35, 0.1), transparent 60%),
+    radial-gradient(720px 420px at -10% 20%, rgba(200, 155, 60, 0.1), transparent 55%);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizelegibility;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: var(--lh-snug);
+  margin: 0;
+  color: var(--ink);
+  letter-spacing: 0.01em;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--red);
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease);
+}
+
+a:hover {
+  color: var(--red-soft);
+}
+
+img,
+svg {
+  max-width: 100%;
+  display: block;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+:focus-visible {
+  outline: 3px solid var(--saffron);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* -------------------------------------------------------------------------
+   3. Accessibility helpers
+   ------------------------------------------------------------------------- */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: absolute;
+  left: 50%;
+  top: -100px;
+  transform: translateX(-50%);
+  z-index: var(--z-skip);
+  background: var(--red-deep);
+  color: var(--on-red);
+  padding: 0.6rem 1.1rem;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  transition: top var(--dur) var(--ease);
+}
+
+.skip-link:focus {
+  top: 12px;
+  color: var(--on-red);
+}
+
+/* -------------------------------------------------------------------------
+   4. Layout primitives
+   ------------------------------------------------------------------------- */
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.container--narrow {
+  max-width: var(--container-narrow);
+}
+
+.section {
+  padding-block: var(--space-9);
+}
+
+.section--tight {
+  padding-block: var(--space-8);
+}
+
+.section--red {
+  background: var(--grad-red);
+  color: var(--on-red);
+}
+
+.section--red h2,
+.section--red h3 {
+  color: #fff;
+}
+
+.section--cream {
+  background: var(--grad-cream);
+}
+
+.center {
+  text-align: center;
+}
+
+.grid {
+  display: grid;
+  gap: var(--space-5);
+}
+
+@media (min-width: 720px) {
+  .grid--2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .grid--3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.grid--auto {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.section__head {
+  max-width: 640px;
+  margin-inline: auto;
+  margin-bottom: var(--space-7);
+}
+
+.mt-5 {
+  margin-top: var(--space-5);
+}
+.mt-6 {
+  margin-top: var(--space-6);
+}
+.mt-7 {
+  margin-top: var(--space-7);
+}
+
+/* -------------------------------------------------------------------------
+   5. Ornament — mandala, lotus divider, om, diya flame
+   ------------------------------------------------------------------------- */
+.ornament {
+  color: var(--gold);
+  opacity: 0.9;
+}
+
+/* Lotus divider sits between sections as a small centred flourish. */
+.divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-block: var(--space-6);
+  color: var(--gold-deep);
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  height: 1px;
+  width: min(120px, 22vw);
+  background: linear-gradient(90deg, transparent, var(--gold));
+}
+
+.divider::after {
+  background: linear-gradient(90deg, var(--gold), transparent);
+}
+
+.divider__lotus {
+  width: 34px;
+  height: 34px;
+  flex: none;
+}
+
+/* A slim, repeating gold "torana" border for the top of the page. */
+.temple-border {
+  height: 8px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      var(--gold-deep) 0,
+      var(--gold-bright) 10px,
+      var(--gold-deep) 20px
+    );
+  background-size: 20px 100%;
+}
+
+/* The diya flame in the hero — a warm, gently flickering glow. */
+.diya {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto var(--space-4);
+}
+
+.diya__flame {
+  transform-origin: 50% 100%;
+  animation: flicker 2.6s ease-in-out infinite;
+  filter: drop-shadow(0 0 14px rgba(244, 166, 35, 0.8));
+}
+
+@keyframes flicker {
+  0%,
+  100% {
+    transform: scale(1) rotate(-1deg);
+    opacity: 1;
+  }
+  40% {
+    transform: scale(1.06, 0.96) rotate(1.5deg);
+    opacity: 0.92;
+  }
+  70% {
+    transform: scale(0.97, 1.04) rotate(-1.5deg);
+    opacity: 0.97;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   6. Typography helpers
+   ------------------------------------------------------------------------- */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-body);
+  font-size: var(--fs-200);
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+}
+
+.eyebrow::before {
+  content: "❖";
+  color: var(--saffron);
+  letter-spacing: 0;
+}
+
+.section--red .eyebrow {
+  color: var(--gold-bright);
+}
+
+.title {
+  font-size: var(--fs-800);
+}
+
+.title--lg {
+  font-size: var(--fs-900);
+  line-height: var(--lh-tight);
+}
+
+.lead {
+  font-size: var(--fs-500);
+  color: var(--ink-soft);
+  margin-top: var(--space-4);
+  line-height: var(--lh-base);
+}
+
+.section--red .lead {
+  color: var(--on-red-soft);
+}
+
+/* Devanagari accents — Sanskrit shlokas, deity names in script. */
+.deva {
+  font-family: var(--font-deva);
+  font-weight: 500;
+}
+
+.shloka {
+  font-family: var(--font-deva);
+  font-size: clamp(1.05rem, 2.2vw, 1.4rem);
+  color: var(--gold-bright);
+  letter-spacing: 0.01em;
+  line-height: 1.8;
+}
+
+.shloka__en {
+  display: block;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--fs-400);
+  color: var(--on-red-soft);
+  margin-top: var(--space-2);
+}
+
+/* -------------------------------------------------------------------------
+   7. Buttons
+   ------------------------------------------------------------------------- */
+.btn {
+  --btn-bg: var(--red);
+  --btn-ink: var(--on-red);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: var(--fs-300);
+  letter-spacing: 0.01em;
+  padding: 0.85rem 1.5rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  background: var(--btn-bg);
+  color: var(--btn-ink);
+  cursor: pointer;
+  transition:
+    transform var(--dur-fast) var(--ease),
+    box-shadow var(--dur) var(--ease),
+    background var(--dur) var(--ease);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  color: var(--btn-ink);
+  box-shadow: var(--shadow-md);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn--primary {
+  --btn-bg: var(--grad-saffron);
+  --btn-ink: #3a1402;
+  box-shadow: var(--shadow-gold);
+}
+
+.btn--gold {
+  --btn-bg: var(--grad-gold);
+  --btn-ink: #3a2603;
+  box-shadow: var(--shadow-gold);
+}
+
+.btn--ghost {
+  --btn-bg: transparent;
+  --btn-ink: var(--red);
+  border-color: var(--line-strong);
+}
+
+.btn--ghost:hover {
+  border-color: var(--red);
+}
+
+.btn--on-red {
+  --btn-bg: transparent;
+  --btn-ink: var(--on-red);
+  border-color: rgba(241, 207, 122, 0.5);
+}
+
+.btn--on-red:hover {
+  --btn-bg: rgba(241, 207, 122, 0.14);
+  --btn-ink: #fff;
+}
+
+.btn--lg {
+  padding: 1rem 1.9rem;
+  font-size: var(--fs-400);
+}
+
+.btn--sm {
+  padding: 0.6rem 1.1rem;
+  font-size: var(--fs-200);
+}
+
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.btn-row--center {
+  justify-content: center;
+}
+
+/* -------------------------------------------------------------------------
+   8. Top bar & header / navigation
+   ------------------------------------------------------------------------- */
+.topbar {
+  background: var(--red-deep);
+  color: var(--on-red);
+  font-size: var(--fs-200);
+}
+
+.topbar__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-block: 0.5rem;
+}
+
+.topbar a {
+  color: var(--gold-bright);
+  font-weight: 600;
+}
+
+.topbar a:hover {
+  color: #fff;
+}
+
+.topbar__group {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.1rem;
+  flex-wrap: wrap;
+}
+
+.status-dot {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-weight: 600;
+}
+
+.status-dot::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #9a7868;
+  box-shadow: 0 0 0 0 rgba(120, 200, 120, 0.6);
+}
+
+.status-dot.is-open::before {
+  background: #6fd07f;
+  animation: pulse 2.4s infinite;
+}
+
+.status-dot.is-closed::before {
+  background: #e88;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(111, 208, 127, 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(111, 208, 127, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(111, 208, 127, 0);
+  }
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  background: rgba(253, 246, 232, 0.85);
+  backdrop-filter: saturate(140%) blur(12px);
+  border-bottom: 1px solid var(--line);
+  transition: box-shadow var(--dur) var(--ease);
+}
+
+.site-header.is-stuck {
+  box-shadow: var(--shadow-md);
+}
+
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-block: 0.7rem;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  color: var(--ink);
+}
+
+.brand:hover {
+  color: var(--ink);
+}
+
+.brand__mark {
+  width: 46px;
+  height: 46px;
+  flex: none;
+}
+
+.brand__text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.05;
+}
+
+.brand__name {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--red);
+}
+
+.brand__sub {
+  font-family: var(--font-deva);
+  font-size: 0.78rem;
+  color: var(--gold-deep);
+  letter-spacing: 0.04em;
+}
+
+.site-nav__list {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.site-nav__link {
+  display: inline-block;
+  padding: 0.5rem 0.85rem;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  font-size: var(--fs-300);
+  color: var(--ink-soft);
+}
+
+.site-nav__link:hover,
+.site-nav__link[aria-current="page"] {
+  color: var(--red);
+  background: rgba(200, 155, 60, 0.16);
+}
+
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.nav-toggle {
+  display: none;
+  width: 46px;
+  height: 46px;
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  background: var(--cream);
+  cursor: pointer;
+  color: var(--red);
+}
+
+.nav-toggle__bars,
+.nav-toggle__bars::before,
+.nav-toggle__bars::after {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: currentcolor;
+  margin-inline: auto;
+  position: relative;
+  transition: transform var(--dur) var(--ease);
+}
+
+.nav-toggle__bars::before,
+.nav-toggle__bars::after {
+  content: "";
+  position: absolute;
+  left: 0;
+}
+
+.nav-toggle__bars::before {
+  top: -6px;
+}
+.nav-toggle__bars::after {
+  top: 6px;
+}
+
+@media (max-width: 900px) {
+  .nav-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .header-cta {
+    display: none;
+  }
+
+  .site-nav {
+    position: fixed;
+    inset: 0 0 0 auto;
+    width: min(320px, 84vw);
+    background: var(--cream);
+    border-left: 1px solid var(--line);
+    box-shadow: var(--shadow-lg);
+    padding: 5rem 1.5rem 2rem;
+    transform: translateX(100%);
+    transition: transform var(--dur) var(--ease);
+    overflow-y: auto;
+  }
+
+  .site-nav.is-open {
+    transform: translateX(0);
+  }
+
+  .site-nav__list {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.3rem;
+  }
+
+  .site-nav__link {
+    padding: 0.85rem 1rem;
+    font-size: var(--fs-400);
+  }
+
+  .site-nav__cta {
+    margin-top: var(--space-4);
+  }
+}
+
+/* -------------------------------------------------------------------------
+   9. Hero
+   ------------------------------------------------------------------------- */
+.hero {
+  position: relative;
+  background: var(--grad-red);
+  color: var(--on-red);
+  text-align: center;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.hero__mandala {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: min(900px, 130vw);
+  color: rgba(241, 207, 122, 0.14);
+  z-index: -1;
+  animation: spin 90s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.hero__glow {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(560px 360px at 50% 8%, rgba(244, 166, 35, 0.28), transparent 60%),
+    radial-gradient(700px 500px at 50% 120%, rgba(244, 166, 35, 0.16), transparent 60%);
+}
+
+.hero__inner {
+  padding-block: clamp(3.5rem, 8vw, 6.5rem);
+}
+
+.hero__shloka {
+  margin-bottom: var(--space-5);
+}
+
+.hero__title {
+  font-size: var(--fs-900);
+  line-height: var(--lh-tight);
+  color: #fff;
+  text-shadow: 0 2px 30px rgba(0, 0, 0, 0.3);
+}
+
+.hero__title .deva {
+  display: block;
+  font-size: 0.5em;
+  color: var(--gold-bright);
+  margin-bottom: 0.3rem;
+}
+
+.hero__tagline {
+  max-width: 640px;
+  margin: var(--space-5) auto 0;
+  font-size: var(--fs-500);
+  color: var(--on-red-soft);
+}
+
+.hero__cta {
+  margin-top: var(--space-7);
+  justify-content: center;
+}
+
+.hero__meta {
+  margin-top: var(--space-7);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3) var(--space-6);
+  font-size: var(--fs-300);
+  color: var(--on-red-soft);
+}
+
+.hero__meta strong {
+  color: var(--gold-bright);
+  font-weight: 700;
+}
+
+.hero__wave {
+  display: block;
+  width: 100%;
+  height: auto;
+  color: var(--cream);
+}
+
+/* -------------------------------------------------------------------------
+   10. Welcome / about
+   ------------------------------------------------------------------------- */
+.welcome {
+  display: grid;
+  gap: var(--space-7);
+  align-items: center;
+}
+
+@media (min-width: 880px) {
+  .welcome {
+    grid-template-columns: 1fr 0.9fr;
+  }
+}
+
+.welcome__media {
+  position: relative;
+}
+
+.framed {
+  position: relative;
+  border-radius: var(--radius-lg);
+  padding: 12px;
+  background: var(--grad-gold);
+  box-shadow: var(--shadow-lg);
+}
+
+.framed__inner {
+  border-radius: calc(var(--radius-lg) - 8px);
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  background:
+    radial-gradient(circle at 50% 35%, rgba(244, 166, 35, 0.25), transparent 60%), var(--grad-red);
+  display: grid;
+  place-items: center;
+}
+
+.framed__inner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* The graceful placeholder shown until a real photo is dropped in. */
+.photo-slot {
+  text-align: center;
+  color: var(--on-red-soft);
+  padding: var(--space-6);
+}
+
+.photo-slot__om {
+  font-family: var(--font-deva);
+  font-size: 3.4rem;
+  color: var(--gold-bright);
+  line-height: 1;
+}
+
+.photo-slot__label {
+  display: block;
+  margin-top: var(--space-3);
+  font-size: var(--fs-200);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.stat-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  margin-top: var(--space-6);
+}
+
+.stat {
+  flex: 1 1 140px;
+}
+
+.stat__num {
+  font-family: var(--font-display);
+  font-size: var(--fs-800);
+  color: var(--red);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.stat__label {
+  font-size: var(--fs-300);
+  color: var(--ink-soft);
+  margin-top: 0.25rem;
+}
+
+/* -------------------------------------------------------------------------
+   11. Deity niches (darshan)
+   ------------------------------------------------------------------------- */
+.niche {
+  background: var(--cream);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease);
+}
+
+.niche:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* The arched "gopuram" frame that holds the murti photo. */
+.niche__arch {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(244, 166, 35, 0.3), transparent 62%), var(--grad-red);
+  display: grid;
+  place-items: center;
+  border-bottom: 4px solid var(--gold);
+  overflow: hidden;
+}
+
+.niche__arch::before {
+  /* Ornate gold inner outline following an arch silhouette. */
+  content: "";
+  position: absolute;
+  inset: 14px;
+  border: 2px solid rgba(241, 207, 122, 0.55);
+  border-radius: 50% 50% 8px 8px / 38% 38% 8px 8px;
+  pointer-events: none;
+}
+
+.niche__arch img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.niche__placeholder {
+  text-align: center;
+  color: var(--on-red-soft);
+  z-index: 1;
+}
+
+.niche__placeholder .photo-slot__om {
+  font-size: 2.8rem;
+}
+
+.niche__body {
+  padding: var(--space-4) var(--space-5) var(--space-5);
+  text-align: center;
+}
+
+.niche__name {
+  font-size: var(--fs-600);
+  color: var(--red);
+}
+
+.niche__deva {
+  font-family: var(--font-deva);
+  color: var(--gold-deep);
+  font-size: 1.05rem;
+  margin-top: 0.15rem;
+}
+
+.niche__note {
+  font-size: var(--fs-300);
+  color: var(--ink-soft);
+  margin-top: var(--space-2);
+}
+
+/* -------------------------------------------------------------------------
+   12. Timings (aarti & darshan)
+   ------------------------------------------------------------------------- */
+.timings {
+  display: grid;
+  gap: var(--space-6);
+}
+
+@media (min-width: 880px) {
+  .timings {
+    grid-template-columns: 1.1fr 0.9fr;
+  }
+}
+
+.card-soft {
+  background: rgba(253, 246, 232, 0.08);
+  border: 1px solid rgba(241, 207, 122, 0.28);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+}
+
+.section--cream .card-soft,
+.timetable {
+  background: var(--cream);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.timetable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.timetable caption {
+  background: var(--grad-red);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: var(--fs-600);
+  padding: var(--space-4);
+  font-weight: 600;
+}
+
+.timetable th,
+.timetable td {
+  text-align: left;
+  padding: 0.85rem 1.2rem;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--fs-300);
+}
+
+.timetable th {
+  color: var(--ink-soft);
+  font-weight: 600;
+  width: 45%;
+}
+
+.timetable td {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.timetable tr.is-today {
+  background: rgba(244, 166, 35, 0.16);
+}
+
+.timetable tr.is-today th::after {
+  content: "Today";
+  margin-left: 0.5rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--saffron);
+  padding: 0.1rem 0.45rem;
+  border-radius: var(--radius-pill);
+  vertical-align: middle;
+}
+
+.timetable td.is-closed {
+  color: var(--ink-faint);
+  font-weight: 500;
+}
+
+.aarti-list li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: 0.7rem 0;
+  border-bottom: 1px dashed rgba(241, 207, 122, 0.4);
+}
+
+.aarti-list li:last-child {
+  border-bottom: 0;
+}
+
+.aarti-list .aarti__name {
+  font-weight: 600;
+  color: #fff;
+}
+
+.aarti-list .aarti__time {
+  font-family: var(--font-display);
+  font-size: var(--fs-500);
+  color: var(--gold-bright);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* -------------------------------------------------------------------------
+   13. Sevas & poojas
+   ------------------------------------------------------------------------- */
+.card {
+  position: relative;
+  background: var(--cream);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease),
+    border-color var(--dur) var(--ease);
+  height: 100%;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--gold);
+}
+
+.card__icon {
+  display: inline-grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 14px;
+  background: var(--grad-saffron);
+  color: #fff;
+  margin-bottom: var(--space-4);
+  box-shadow: var(--shadow-gold);
+}
+
+.card__icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+.card__title {
+  font-size: var(--fs-600);
+  color: var(--red);
+}
+
+.card__text {
+  margin-top: var(--space-3);
+  color: var(--ink-soft);
+  font-size: var(--fs-300);
+}
+
+/* -------------------------------------------------------------------------
+   14. Festivals
+   ------------------------------------------------------------------------- */
+.festival {
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+  background: var(--cream);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--saffron);
+  border-radius: var(--radius);
+  padding: var(--space-4) var(--space-5);
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease);
+}
+
+.festival:hover {
+  transform: translateX(4px);
+  box-shadow: var(--shadow-md);
+}
+
+.festival__date {
+  flex: none;
+  width: 78px;
+  text-align: center;
+  font-family: var(--font-display);
+  line-height: 1;
+  color: var(--red);
+}
+
+.festival__day {
+  display: block;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.festival__mon {
+  display: block;
+  font-size: var(--fs-200);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+  font-family: var(--font-body);
+  font-weight: 700;
+  margin-top: 0.2rem;
+}
+
+.festival__name {
+  font-size: var(--fs-500);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.festival__deva {
+  font-family: var(--font-deva);
+  color: var(--gold-deep);
+  font-size: 0.95rem;
+}
+
+.festival__desc {
+  font-size: var(--fs-300);
+  color: var(--ink-soft);
+  margin-top: 0.15rem;
+}
+
+.festival--next {
+  border-left-color: var(--gold);
+  box-shadow: var(--shadow-gold);
+}
+
+.festival__badge {
+  display: inline-block;
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #3a1402;
+  background: var(--grad-gold);
+  padding: 0.15rem 0.55rem;
+  border-radius: var(--radius-pill);
+  margin-left: 0.5rem;
+  vertical-align: middle;
+}
+
+.countdown {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--red);
+  white-space: nowrap;
+}
+
+/* -------------------------------------------------------------------------
+   15. Head priest
+   ------------------------------------------------------------------------- */
+.priest {
+  display: grid;
+  gap: var(--space-7);
+  align-items: center;
+}
+
+@media (min-width: 880px) {
+  .priest {
+    grid-template-columns: 0.8fr 1.1fr;
+  }
+}
+
+.priest__media .framed__inner {
+  aspect-ratio: 4 / 5;
+}
+
+.priest__name {
+  font-size: var(--fs-700);
+  color: var(--red);
+}
+
+.priest__role {
+  font-family: var(--font-body);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--gold-deep);
+  text-transform: uppercase;
+  font-size: var(--fs-200);
+  margin-top: 0.25rem;
+}
+
+.priest__quote {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--fs-600);
+  color: var(--ink);
+  margin-top: var(--space-5);
+  padding-left: var(--space-5);
+  border-left: 3px solid var(--gold);
+}
+
+/* -------------------------------------------------------------------------
+   16. Seva / donation band
+   ------------------------------------------------------------------------- */
+.seva-band {
+  position: relative;
+  background: var(--grad-red);
+  color: var(--on-red);
+  border-radius: var(--radius-lg);
+  padding: clamp(2.2rem, 5vw, 3.6rem);
+  text-align: center;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+.seva-band__title {
+  font-size: var(--fs-800);
+  color: #fff;
+}
+
+.seva-band__text {
+  max-width: 560px;
+  margin: var(--space-4) auto var(--space-6);
+  color: var(--on-red-soft);
+}
+
+/* -------------------------------------------------------------------------
+   17. Visit & contact
+   ------------------------------------------------------------------------- */
+.visit {
+  display: grid;
+  gap: var(--space-6);
+}
+
+@media (min-width: 880px) {
+  .visit {
+    grid-template-columns: 0.9fr 1.1fr;
+  }
+}
+
+.contact-list li {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.contact-list li:last-child {
+  border-bottom: 0;
+}
+
+.contact-list__icon {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: rgba(200, 155, 60, 0.16);
+  color: var(--red);
+}
+
+.contact-list__icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.contact-list dt {
+  font-size: var(--fs-200);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+  font-weight: 700;
+}
+
+.contact-list dd {
+  margin: 0.2rem 0 0;
+  font-size: var(--fs-400);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.contact-list dd a {
+  color: var(--ink);
+}
+
+.contact-list dd a:hover {
+  color: var(--red);
+}
+
+.map-frame {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-md);
+  min-height: 340px;
+  height: 100%;
+}
+
+.map-frame iframe {
+  width: 100%;
+  height: 100%;
+  min-height: 340px;
+  border: 0;
+  display: block;
+}
+
+/* -------------------------------------------------------------------------
+   18. Footer
+   ------------------------------------------------------------------------- */
+.site-footer {
+  background: var(--red-deep);
+  color: var(--on-red-soft);
+  padding-top: var(--space-8);
+}
+
+.site-footer a {
+  color: var(--on-red-soft);
+}
+
+.site-footer a:hover {
+  color: var(--gold-bright);
+}
+
+.site-footer__inner {
+  display: grid;
+  gap: var(--space-7);
+  grid-template-columns: 1fr;
+  padding-bottom: var(--space-7);
+}
+
+@media (min-width: 720px) {
+  .site-footer__inner {
+    grid-template-columns: 1.4fr 1fr 1fr;
+  }
+}
+
+.site-footer__brand .brand__name {
+  color: var(--gold-bright);
+}
+
+.site-footer__brand .brand__sub {
+  color: var(--on-red-soft);
+}
+
+.site-footer__blurb {
+  margin-top: var(--space-4);
+  max-width: 36ch;
+  font-size: var(--fs-300);
+}
+
+.site-footer__heading {
+  font-family: var(--font-body);
+  font-size: var(--fs-200);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold-bright);
+  margin-bottom: var(--space-4);
+}
+
+.site-footer__list li {
+  margin-bottom: 0.6rem;
+  font-size: var(--fs-300);
+}
+
+.site-footer__bottom {
+  border-top: 1px solid rgba(241, 207, 122, 0.2);
+  padding-block: var(--space-5);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--fs-200);
+}
+
+.site-footer__credit a {
+  color: var(--gold-bright);
+  font-weight: 700;
+}
+
+/* -------------------------------------------------------------------------
+   19. Reveal-on-scroll & motion
+   ------------------------------------------------------------------------- */
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity var(--dur-slow) var(--ease),
+    transform var(--dur-slow) var(--ease);
+}
+
+.js [data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+[data-reveal-delay="1"] {
+  transition-delay: 0.08s;
+}
+[data-reveal-delay="2"] {
+  transition-delay: 0.16s;
+}
+[data-reveal-delay="3"] {
+  transition-delay: 0.24s;
+}
+[data-reveal-delay="4"] {
+  transition-delay: 0.32s;
+}
+[data-reveal-delay="5"] {
+  transition-delay: 0.4s;
+}
+
+.back-to-top {
+  position: fixed;
+  right: clamp(1rem, 3vw, 2rem);
+  bottom: clamp(1rem, 3vw, 2rem);
+  width: 50px;
+  height: 50px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--grad-saffron);
+  color: #fff;
+  border: 0;
+  cursor: pointer;
+  box-shadow: var(--shadow-gold);
+  opacity: 0;
+  transform: translateY(16px) scale(0.9);
+  pointer-events: none;
+  transition:
+    opacity var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+  z-index: 90;
+}
+
+.back-to-top.is-shown {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+/* -------------------------------------------------------------------------
+   20. Reduced motion
+   ------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .js [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+    </style>
+  </head>
+  <body class="page">
+<section class="section" id="priest" aria-labelledby="priest-title">
+        <div class="container">
+          <div class="priest">
+            <div class="priest__media" data-reveal>
+              <div class="framed">
+                <div class="framed__inner">
+                  <!-- TODO: add the head priest's photograph here.
+                       Drop the provided photo at assets/img/priest-panditji.jpg
+                       and replace the placeholder below with:
+                       <img src="assets/img/priest-panditji.jpg" alt="Pandit ji, head priest of East Bay Hindu Temple" /> -->
+                  <div class="photo-slot">
+                    <span class="photo-slot__om deva">ॐ</span>
+                    <span class="photo-slot__label">Pandit ji's photo</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div data-reveal data-reveal-delay="1">
+              <span class="eyebrow">Our Priest · पुजारी</span>
+              <!-- NOTE: confirm the priest's exact name & spelling before publishing. -->
+              <h2 class="priest__name" id="priest-title">Pandit Rakesh Bhargav ji</h2>
+              <p class="priest__role">Head Priest · East Bay Hindu Temple</p>
+              <p class="lead">
+                Our head priest leads the daily worship of the temple and performs poojas and
+                sanskaars for families across the East Bay. Trained in the Vedic tradition, he
+                guides devotees through every ceremony with patience, devotion, and a deep knowledge
+                of the scriptures.
+              </p>
+              <blockquote class="priest__quote">
+                “Our temple is a home for every family. Come as you are — the lamp is lit, and the
+                Lord is waiting.”
+              </blockquote>
+              <div class="btn-row mt-6">
+                <a class="btn btn--primary btn--lg" href="tel:+19258120581">Speak with Pandit ji</a>
+                <a class="btn btn--ghost btn--lg" href="#sevas">Book a Pooja</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    <script>
+/* =========================================================================
+   East Bay Hindu Temple — site behaviour
+   Plain, dependency-free JavaScript. Every feature is guarded by element
+   checks, so the file is safe even as sections are added or removed.
+
+   Sections:
+     1. Helpers
+     2. Mobile menu
+     3. Sticky-header shadow
+     4. Reveal-on-scroll
+     5. "Open now" status from the real opening hours
+     6. Next festival + live countdown
+     7. Back-to-top button
+   The opening hours and festival list below are the single source of truth
+   for the live bits of the page — edit these and the UI follows.
+   ========================================================================= */
+(function () {
+  "use strict";
+
+  /* ---- 1. Helpers ------------------------------------------------------ */
+  function prefersReducedMotion() {
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }
+
+  /* Opening hours keyed by JS day index (0 = Sunday … 6 = Saturday).
+     null = closed. Times are 24h [openHour, closeHour]. Source: temple's
+     published hours — update here if they change. */
+  var HOURS = {
+    0: [10, 16], // Sunday
+    1: [10, 16], // Monday
+    2: [10, 20], // Tuesday
+    3: null, // Wednesday — closed
+    4: null, // Thursday — closed
+    5: [10, 16], // Friday
+    6: [10, 16], // Saturday
+  };
+
+  /* Upcoming festivals. Dates are [year, monthIndex(0-11), day]. Keep this
+     list in date order; the script highlights the next one automatically.
+     Always confirm exact dates with the temple — they can shift by a day. */
+  var FESTIVALS = [
+    { id: "shivaratri", date: [2026, 1, 15] },
+    { id: "holi", date: [2026, 2, 3] },
+    { id: "ramnavami", date: [2026, 2, 26] },
+    { id: "hanuman", date: [2026, 3, 2] },
+    { id: "janmashtami", date: [2026, 8, 4] },
+    { id: "ganesh", date: [2026, 8, 14] },
+    { id: "navratri", date: [2026, 9, 11] },
+    { id: "diwali", date: [2026, 10, 8] },
+  ];
+
+  function fmtTime(hour24) {
+    var period = hour24 >= 12 ? "PM" : "AM";
+    var h = hour24 % 12;
+    if (h === 0) h = 12;
+    return h + " " + period;
+  }
+
+  /* ---- 2. Mobile menu -------------------------------------------------- */
+  function initMenu() {
+    var toggle = document.querySelector("[data-nav-toggle]");
+    var menu = document.querySelector("[data-nav-menu]");
+    if (!toggle || !menu) return;
+
+    function setOpen(open) {
+      toggle.setAttribute("aria-expanded", String(open));
+      toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+      menu.classList.toggle("is-open", open);
+    }
+
+    toggle.addEventListener("click", function () {
+      setOpen(toggle.getAttribute("aria-expanded") !== "true");
+    });
+
+    menu.addEventListener("click", function (event) {
+      if (event.target.closest("a")) setOpen(false);
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") setOpen(false);
+    });
+
+    document.addEventListener("click", function (event) {
+      if (
+        toggle.getAttribute("aria-expanded") === "true" &&
+        !event.target.closest("[data-nav-menu]") &&
+        !event.target.closest("[data-nav-toggle]")
+      ) {
+        setOpen(false);
+      }
+    });
+
+    window.matchMedia("(min-width: 901px)").addEventListener("change", function (event) {
+      if (event.matches) setOpen(false);
+    });
+  }
+
+  /* ---- 3. Sticky-header shadow ---------------------------------------- */
+  function initHeaderShadow() {
+    var header = document.querySelector("[data-header]");
+    if (!header) return;
+    var onScroll = function () {
+      header.classList.toggle("is-stuck", window.scrollY > 8);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+  }
+
+  /* ---- 4. Reveal-on-scroll -------------------------------------------- */
+  function initReveals() {
+    var els = document.querySelectorAll("[data-reveal]");
+    if (!els.length) return;
+
+    if (!("IntersectionObserver" in window) || prefersReducedMotion()) {
+      els.forEach(function (el) {
+        el.classList.add("is-visible");
+      });
+      return;
+    }
+
+    var observer = new IntersectionObserver(
+      function (entries, obs) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            obs.unobserve(entry.target);
+          }
+        });
+      },
+      { rootMargin: "0px 0px -10% 0px", threshold: 0.12 }
+    );
+
+    els.forEach(function (el) {
+      observer.observe(el);
+    });
+  }
+
+  /* ---- 5. "Open now" status ------------------------------------------- */
+  function initOpenStatus() {
+    var els = document.querySelectorAll("[data-open-status]");
+    if (!els.length) return;
+
+    var now = new Date();
+    var day = now.getDay();
+    var hour = now.getHours() + now.getMinutes() / 60;
+    var today = HOURS[day];
+    var isOpen = today && hour >= today[0] && hour < today[1];
+
+    var label;
+    if (isOpen) {
+      label = "Open now · until " + fmtTime(today[1]);
+    } else if (today && hour < today[0]) {
+      label = "Opens today at " + fmtTime(today[0]);
+    } else {
+      // Find the next day that has hours.
+      var nextLabel = "Closed now";
+      for (var i = 1; i <= 7; i += 1) {
+        var d = (day + i) % 7;
+        if (HOURS[d]) {
+          var names = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+          nextLabel = "Closed now · opens " + names[d] + " " + fmtTime(HOURS[d][0]);
+          break;
+        }
+      }
+      label = nextLabel;
+    }
+
+    els.forEach(function (el) {
+      el.textContent = label;
+      el.classList.toggle("is-open", Boolean(isOpen));
+      el.classList.toggle("is-closed", !isOpen);
+    });
+
+    // Highlight today's row in any timetable.
+    var todayRow = document.querySelector('[data-day="' + day + '"]');
+    if (todayRow) todayRow.classList.add("is-today");
+  }
+
+  /* ---- 6. Next festival + countdown ----------------------------------- */
+  function initFestivals() {
+    var today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    var next = null;
+    for (var i = 0; i < FESTIVALS.length; i += 1) {
+      var f = FESTIVALS[i];
+      var d = new Date(f.date[0], f.date[1], f.date[2]);
+      if (d >= today) {
+        next = { id: f.id, date: d };
+        break;
+      }
+    }
+    if (!next) return;
+
+    var card = document.querySelector('[data-festival="' + next.id + '"]');
+    if (card) {
+      card.classList.add("festival--next");
+      var badgeHost = card.querySelector("[data-festival-badge]");
+      if (badgeHost) badgeHost.innerHTML = '<span class="festival__badge">Next celebration</span>';
+    }
+
+    var out = document.querySelector("[data-festival-countdown]");
+    if (out) {
+      var ms = next.date - today;
+      var days = Math.round(ms / 86400000);
+      var nameEl = card ? card.querySelector(".festival__name") : null;
+      var name = nameEl ? nameEl.textContent.trim() : "our next festival";
+      out.textContent =
+        days === 0
+          ? name + " is being celebrated today — everyone is welcome."
+          : days +
+            (days === 1 ? " day" : " days") +
+            " until " +
+            name +
+            ". Join us for darshan and prasad.";
+    }
+  }
+
+  /* ---- 7. Back-to-top -------------------------------------------------- */
+  function initBackToTop() {
+    var btn = document.querySelector("[data-back-to-top]");
+    if (!btn) return;
+
+    var onScroll = function () {
+      btn.classList.toggle("is-shown", window.scrollY > 600);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    btn.addEventListener("click", function () {
+      window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? "auto" : "smooth" });
+    });
+  }
+
+  /* ---- Init ------------------------------------------------------------ */
+  function init() {
+    initMenu();
+    initHeaderShadow();
+    initReveals();
+    initOpenStatus();
+    initFestivals();
+    initBackToTop();
+    document.getElementById("year") &&
+      (document.getElementById("year").textContent = String(new Date().getFullYear()));
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+
+    </script>
+  </body>
+</html>

@@ -18,7 +18,8 @@
     />
     <style>
       * { box-sizing: border-box; }
-      html, body { margin: 0; height: 100%; }
+      /* Red base so the banner never shows a white gap if the embed is mis-sized. */
+      html, body { margin: 0; height: 100%; background: #5e0a13; }
       .band {
         height: 100%; min-height: 130px; display: flex; align-items: center; justify-content: center;
         gap: clamp(1rem, 4vw, 3rem); flex-wrap: wrap; text-align: center; padding: 1.2rem;

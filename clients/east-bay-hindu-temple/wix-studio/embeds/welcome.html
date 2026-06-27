@@ -1870,6 +1870,11 @@ ul {
     if (!next) return;
 
     var card = document.querySelector('[data-festival="' + next.id + '"]');
+    // Read the festival name BEFORE injecting the badge — the badge lives inside
+    // .festival__name, so reading after would fold "Next celebration" into the name.
+    var nameEl = card ? card.querySelector(".festival__name") : null;
+    var name = nameEl ? nameEl.textContent.trim() : "our next festival";
+
     if (card) {
       card.classList.add("festival--next");
       var badgeHost = card.querySelector("[data-festival-badge]");
@@ -1880,8 +1885,6 @@ ul {
     if (out) {
       var ms = next.date - today;
       var days = Math.round(ms / 86400000);
-      var nameEl = card ? card.querySelector(".festival__name") : null;
-      var name = nameEl ? nameEl.textContent.trim() : "our next festival";
       out.textContent =
         days === 0
           ? name + " is being celebrated today — everyone is welcome."

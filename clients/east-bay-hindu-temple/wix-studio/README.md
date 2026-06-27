@@ -18,14 +18,38 @@ wix-studio/
 ├── README.md                       ← this playbook
 ├── wix-custom.css                  ← paste into Wix Studio's global CSS panel
 └── embeds/
-    ├── hero.html                   ← paste into an "Embed HTML" element
+    ├── full-site.html              ← the WHOLE site as one paste-in embed
+    ├── hero.html                   ← per-section embeds (paste individually) ↓
+    ├── welcome.html
+    ├── deities.html
     ├── timings.html                ← live "open now" + today-highlight + aarti
-    └── festival-countdown.html     ← auto countdown to the next festival
+    ├── sevas.html
+    ├── festivals.html              ← full grid with live "next celebration" badge
+    ├── festival-countdown.html     ← slim auto countdown banner (optional)
+    ├── priest.html
+    ├── donation.html
+    ├── visit.html                  ← includes the live Google Map
+    └── footer.html
 ```
 
-> The full, finished reference site is one folder up (`../index.html`). Keep it
-> open beside Wix Studio as your visual target — every section, colour, and word
-> is there to copy.
+> The full, finished reference site is one folder up (`../index.html`), and a
+> portable single-file build is at `../preview.html` — open it in any browser to
+> see exactly what you're building toward (every section, colour, and word).
+
+## Two ways to paste it in
+
+You picked **both** packagings, so you have a choice per the situation:
+
+- **Fastest — one paste:** drop `embeds/full-site.html` into a single Wix Studio
+  "Embed HTML" element and the entire page appears at once. Great for a quick
+  launch or a one-page site. Trade-off: the whole page lives in one iframe, which
+  is weaker for SEO and responsive fine-tuning.
+- **Best quality — per section:** use the individual section embeds (and/or build
+  the simple sections natively per Steps 1–4 below). Each section is its own Wix
+  element you can place, resize, and reorder, and search engines see real page
+  content. **Recommended for the public launch.**
+
+Either way, the steps below get the palette, fonts, and custom CSS right first.
 
 ---
 
@@ -92,26 +116,37 @@ grid/stack), using the reference site for copy and order:
 6. **Visit** — contact details + a Wix **Google Maps** element set to
    `595 School Street, Pittsburg, CA 94565`.
 
-## Step 5 — Drop in the three embeds
+## Step 5 — Drop in the embeds
 
-For the pieces that are live or visually elaborate, use
-**Add (+) → Embed Code → Embed HTML** and paste the matching file:
+Every section is available as a self-contained embed, so you can build the whole
+page by pasting (no hand-rebuild needed). Use **Add (+) → Embed Code → Embed
+HTML** and paste the matching file. For one-paste, use `full-site.html` instead.
 
-| Embed | File | Suggested height |
+| Embed | File | Suggested height (desktop) |
 | --- | --- | --- |
-| Hero | `embeds/hero.html` | ~640px desktop / ~720px mobile |
-| Timings (live) | `embeds/timings.html` | ~620px desktop / ~1040px mobile |
-| Festival countdown | `embeds/festival-countdown.html` | ~150px |
+| **Whole site (one paste)** | `embeds/full-site.html` | fit content |
+| Hero | `embeds/hero.html` | ~640px (~720 mobile) |
+| Welcome | `embeds/welcome.html` | ~760px |
+| Our Deities | `embeds/deities.html` | ~1180px |
+| Timings (live) | `embeds/timings.html` | ~620px (~1040 mobile) |
+| Poojas & Sevas | `embeds/sevas.html` | ~1180px |
+| Festivals (grid) | `embeds/festivals.html` | ~1080px |
+| Festival countdown (banner) | `embeds/festival-countdown.html` | ~150px |
+| Our Priest | `embeds/priest.html` | ~760px |
+| Support / Daan | `embeds/donation.html` | ~460px |
+| Visit + Map | `embeds/visit.html` | ~780px |
+| Footer | `embeds/footer.html` | ~520px |
 
 Notes:
-- Set the embed to **full width**, turn **scrollbars off**, and set the height
-  per breakpoint.
-- The embeds are self-contained (only Google Fonts load externally) and use
-  **HTTPS**, which Wix requires.
-- Edit the hero's two button links to point at your pages/anchors. Edit the
-  hours in `timings.html` and the festival list in `festival-countdown.html`
-  whenever they change — each has a clearly commented data block at the top of
-  its `<script>`.
+- Set each embed to **full width**, turn **scrollbars off**, and set the height
+  per breakpoint (heights above are starting points — nudge to fit).
+- The embeds are self-contained (only Google Fonts, and the Google Map in
+  `visit.html`, load externally) and use **HTTPS**, which Wix requires.
+- **Edit the links/data** inside each embed: the hero/visit/donation buttons,
+  the hours in `timings.html`, and the festival lists in `festivals.html` /
+  `festival-countdown.html` — each has a clearly commented data block. (The
+  donation button ships pointing at a placeholder; set it to the temple's real
+  giving URL.)
 - Prefer native over iframe where it's easy: if you'd rather build the timetable
   as a native Wix table, you can — the embed just saves you the live "open now"
   logic. (That logic can also be done with **Velo**: add the table natively, then

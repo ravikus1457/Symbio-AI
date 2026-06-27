@@ -13,6 +13,8 @@ no framework — it's plain HTML, CSS, and JavaScript. You can open
 ```
 east-bay-hindu-temple/
 ├── index.html               ← the whole site (one page, anchored sections)
+├── preview.html             ← portable single-file build (all CSS/JS inlined) —
+│                               open this in any browser to preview/share
 ├── assets/
 │   ├── css/temple.css        ← the design system (colours, type, layout)
 │   ├── js/temple.js          ← live bits: open-now status, festival countdown,
@@ -20,8 +22,15 @@ east-bay-hindu-temple/
 │   └── img/
 │       ├── logo-temple.svg   ← temple mark / favicon
 │       └── README.md         ← how to add deity & priest photos
+├── wix-studio/              ← Wix Studio migration kit (palette, CSS, embeds)
+│   ├── README.md             ← step-by-step build playbook
+│   ├── wix-custom.css        ← paste into Wix Studio's global CSS panel
+│   └── embeds/               ← full-site.html + one embed per section
 └── README.md                 ← this file
 ```
+
+> `preview.html` and `index.html` are byte-for-byte the same site — `preview.html`
+> just inlines the CSS/JS so it's a single portable file to hand to the priest.
 
 ## What's on the page
 

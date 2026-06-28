@@ -64,3 +64,26 @@ teardown. The site fires every lead event at `/api/lead`, which messages your Te
 That's it. Every scan/chat/teardown now pings your Telegram with the name, business, contact, and
 what they need. (Requires `scanApi` set in `src/_data/site.js` so the site knows where to send —
 the same Worker URL you already use for the teardown.)
+
+### Easier chat-id setup (the bot tells you): `/start`
+
+Skip the `getUpdates` step — let the bot hand you the chat id. After deploying, register the
+webhook once (pick any secret string):
+
+```bash
+npx wrangler secret put TELEGRAM_WEBHOOK_SECRET   # any random string
+curl "https://api.telegram.org/bot<TOKEN>/setWebhook?url=https://symbio-scan.<you>.workers.dev/api/telegram&secret_token=<the-same-secret>"
+```
+
+Now message your bot (or the group) **`/start`** — it replies with **this chat's ID**. Paste that
+into the `TELEGRAM_CHAT_ID` secret, redeploy, and you're live.
+
+### Reply alerts (when a prospect replies to outreach)
+
+`POST /api/reply` sends a `💬 Reply from …` Telegram message. Two ways to feed it:
+
+- **Automatic:** in Smartlead/Instantly, point the **reply webhook** at
+  `https://symbio-scan.<you>.workers.dev/api/reply` (map fields `company`, `email`, `subject`,
+  `message`).
+- **Via Hermes:** `hermes log --email x@biz.com --replied` pings `/api/reply` automatically when
+  `scanApi` is set — so logging a reply also buzzes your phone.

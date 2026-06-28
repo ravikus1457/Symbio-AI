@@ -264,6 +264,23 @@ async function cmdLog(flags) {
   if (flags.unsub) entry.unsub = true;
   entry.updatedAt = new Date().toISOString();
   await writeJson(LEDGER_PATH, ledger);
+
+  // Real-time Telegram ping for replies/bookings, via the Worker (if scanApi set).
+  if (flags.replied || flags.booked) {
+    try {
+      const { site } = await loadSiteData();
+      const api = (site.scanApi || "").replace(/\/+$/, "");
+      if (api) {
+        await fetch(api + "/api/reply", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ kind: flags.booked ? "Booking" : "Reply", company: entry.company || "", email: entry.email, variant: entry.variantId || "" }),
+        }).catch(() => {});
+      }
+    } catch (e) {
+      /* notification is best-effort */
+    }
+  }
   console.log(`Logged ${flags.email}: replied=${entry.replied} booked=${entry.booked} unsub=${entry.unsub} (variant:${entry.variantId || "?"})`);
 }
 

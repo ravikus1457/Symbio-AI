@@ -61,6 +61,20 @@ async function handleScan(req, env) {
   );
 }
 
+// Low-level Telegram send to a specific chat.
+async function tgSend(env, chatId, text) {
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: chatId, text, disable_web_page_preview: true }),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
 // Instant team notification to Telegram (free). Set TELEGRAM_BOT_TOKEN +
 // TELEGRAM_CHAT_ID to enable. Fires on every scan / chat lead / teardown.
 async function sendTelegram(env, lead) {
@@ -77,16 +91,44 @@ async function sendTelegram(env, lead) {
     (c(lead.problem) || c(lead.detail)) && `📝 ${c(lead.problem) || c(lead.detail)}`,
     c(lead.sourceUrl) && `📍 ${c(lead.sourceUrl)}`,
   ].filter(Boolean);
-  try {
-    const res = await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ chat_id: env.TELEGRAM_CHAT_ID, text: lines.join("\n"), disable_web_page_preview: true }),
-    });
-    return res.ok;
-  } catch {
-    return false;
+  return tgSend(env, env.TELEGRAM_CHAT_ID, lines.join("\n"));
+}
+
+// Telegram webhook — replies to /start with the chat id (so setup is one tap)
+// and acknowledges any message. Point Telegram's webhook at /api/telegram.
+async function handleTelegram(req, env) {
+  if (env.TELEGRAM_WEBHOOK_SECRET && req.headers.get("X-Telegram-Bot-Api-Secret-Token") !== env.TELEGRAM_WEBHOOK_SECRET) {
+    return json({ ok: false }, 401, env);
   }
+  const update = await readJson(req);
+  const msg = update.message || update.edited_message || update.channel_post;
+  const chatId = msg && msg.chat && msg.chat.id;
+  const text = ((msg && msg.text) || "").trim();
+  if (env.TELEGRAM_BOT_TOKEN && chatId != null) {
+    const reply = text.startsWith("/start")
+      ? `✅ Symbio AI bot connected!\n\nThis chat's ID is:  ${chatId}\n\nSet it as the TELEGRAM_CHAT_ID secret on your Worker and you'll get a ping here every time someone does a free scan, chats, or runs a teardown.`
+      : `👍 Got it. Lead alerts will arrive in this chat.\n(Chat ID: ${chatId})`;
+    await tgSend(env, chatId, reply);
+  }
+  return json({ ok: true }, 200, env); // Telegram expects a 200
+}
+
+// Reply notification — point your cold-email tool's reply webhook here, or
+// Hermes `log --replied` pings it, so prospect replies hit your Telegram too.
+async function handleReply(req, env) {
+  if (!env.TELEGRAM_BOT_TOKEN || !env.TELEGRAM_CHAT_ID) return json({ ok: true, telegram: false }, 200, env);
+  const r = await readJson(req);
+  const c = (s) => (s == null ? "" : String(s).trim());
+  const who = c(r.company) || c(r.from) || c(r.name) || c(r.email) || "a prospect";
+  const lines = [
+    `💬 ${c(r.kind) || "Reply"} from ${who}`,
+    c(r.email) && `✉️ ${c(r.email)}`,
+    c(r.subject) && `✏️ ${c(r.subject)}`,
+    c(r.message) && `📝 ${c(r.message).slice(0, 400)}`,
+    c(r.variant) && `🎯 variant: ${c(r.variant)}`,
+  ].filter(Boolean);
+  const ok = await tgSend(env, env.TELEGRAM_CHAT_ID, lines.join("\n"));
+  return json({ ok: true, telegram: ok }, 200, env);
 }
 
 async function handleLead(req, env) {
@@ -134,6 +176,8 @@ export default {
     if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders(env) });
     if (req.method === "POST" && pathname === "/api/scan") return handleScan(req, env);
     if (req.method === "POST" && pathname === "/api/lead") return handleLead(req, env);
-    return json({ ok: false, error: "Not found. Use POST /api/scan or /api/lead." }, 404, env);
+    if (req.method === "POST" && pathname === "/api/reply") return handleReply(req, env);
+    if (req.method === "POST" && pathname === "/api/telegram") return handleTelegram(req, env);
+    return json({ ok: false, error: "Not found. POST /api/scan, /api/lead, /api/reply, or /api/telegram." }, 404, env);
   },
 };

@@ -109,6 +109,9 @@
     {% endif %}
     {% if site.analyticsScript %}<script defer src="{{ site.analyticsScript }}"></script>{% endif %}
 
+    {# Worker base URL for fire-and-forget lead notifications (Telegram). #}
+    <script>window.__symbioScanApi = {{ site.scanApi | dump | safe }};</script>
+
     <link rel="stylesheet" href="assets/css/styles.css" />
     <script src="assets/js/main.js" defer></script>
   </head>

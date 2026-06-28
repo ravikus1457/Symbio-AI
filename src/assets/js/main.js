@@ -54,6 +54,25 @@
     }
   }
 
+  // Fire-and-forget lead notification to the Worker (instant Telegram ping +
+  // optional auto-reply). Safe no-op when no Worker URL is configured.
+  function notifyLead(payload, type) {
+    try {
+      const api = (window.__symbioScanApi || "").replace(/\/+$/, "");
+      if (!api) return;
+      fetch(api + "/api/lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(Object.assign({ type: type || "Lead" }, payload || {})),
+        keepalive: true,
+      }).catch(function () {
+        /* notifications must never block or error the page */
+      });
+    } catch (e) {
+      /* ignore */
+    }
+  }
+
   /* ---- 2. Theme toggle ------------------------------------------------- */
   const THEME_KEY = "symbio-theme";
 
@@ -457,6 +476,7 @@
             "Thanks! Your scan request is in — we’ll reply within one business day."
           );
           track("Lead", { source: "scan-form" });
+          notifyLead(payload, "Free scan");
           form.reset();
           if (sourceUrlInput) sourceUrlInput.value = window.location.href;
         } else {
@@ -496,6 +516,7 @@
       const lead = event.detail;
       if (!lead) return;
       track("WidgetLead");
+      notifyLead(mapWidgetLead(lead), "Chat lead");
       submitScan(mapWidgetLead(lead)).catch(() => {
         /* best-effort; nothing else to do on the marketing pages */
       });
@@ -618,6 +639,7 @@
         if (!res.ok || !data || !data.ok) throw new Error((data && data.error) || "scan failed");
         renderResults(data);
         track("Teardown", { reachable: !!data.reachable });
+        notifyLead({ url: url }, "Instant teardown");
         setStatus("success", "Done — here’s what we found.");
       } catch (e) {
         setStatus("error", "Couldn’t scan that automatically — try the free scan form below.");

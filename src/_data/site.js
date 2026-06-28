@@ -19,6 +19,14 @@ export default {
   // escape hatch for any other analytics <script> URL. Both empty → no tracking.
   analyticsDomain: "",
   analyticsScript: "",
+  // Retargeting pixels (off until set) — build audiences for cheap paid ads
+  // later. main.js forwards conversion events to them. IDs from Meta Events
+  // Manager (e.g. "1234567890") and Google Ads/Analytics (e.g. "AW-123" / "G-123").
+  metaPixelId: "",
+  googleAdsId: "",
+  // Direct "leave a review" link for your Google Business Profile — used by
+  // `hermes review`. In GBP: "Get more reviews" → copy link.
+  googleReviewUrl: "",
   tagline: "We catch and convert leads in real time.",
   // Broader positioning — used as the hero subhead and where we describe the
   // full offer (websites + apps + systems), not just lead capture.

@@ -38,6 +38,16 @@
       /* analytics must never break the page */
     }
     try {
+      if (window.fbq) window.fbq("trackCustom", name, props || {});
+    } catch (e) {
+      /* Meta pixel optional */
+    }
+    try {
+      if (window.gtag) window.gtag("event", name, props || {});
+    } catch (e) {
+      /* Google tag optional */
+    }
+    try {
       window.dispatchEvent(new CustomEvent("symbio:track", { detail: { name: name, props: props || {} } }));
     } catch (e) {
       /* CustomEvent unsupported — ignore */

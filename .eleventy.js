@@ -22,6 +22,12 @@ export default function (eleventyConfig) {
   // Current year, available to every template (footer copyright, etc.).
   eleventyConfig.addGlobalData("buildYear", () => String(new Date().getFullYear()));
 
+  // ISO-8601 timestamp for sitemap <lastmod> (Google reads lastmod, ignores
+  // priority/changefreq). Accepts a Date or anything `new Date()` can parse.
+  eleventyConfig.addFilter("isoDate", (d) =>
+    (d instanceof Date ? d : new Date(d || Date.now())).toISOString()
+  );
+
   return {
     dir: {
       input: "src",

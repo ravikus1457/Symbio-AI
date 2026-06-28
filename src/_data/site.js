@@ -6,6 +6,27 @@
 export default {
   name: "Symbio AI",
   shortName: "Symbio",
+  // Production origin (no trailing slash). Used for absolute canonical URLs,
+  // og:url, sitemap entries, and JSON-LD @id values. Set to the live domain.
+  url: "https://symbioai.dev",
+  // Deployed instant-teardown Worker base URL (infra/worker/). Empty → the
+  // teardown page falls back to the normal free-scan form. e.g.
+  // "https://symbio-scan.<you>.workers.dev"
+  scanApi: "https://symbio-scan.symbioai.workers.dev",
+  // Privacy-friendly analytics (cookieless). Set analyticsDomain to your domain
+  // to enable Plausible (free trial / self-host) — conversion events (Lead,
+  // Teardown, CheckoutClick, …) fire automatically. analyticsScript is a generic
+  // escape hatch for any other analytics <script> URL. Both empty → no tracking.
+  analyticsDomain: "",
+  analyticsScript: "",
+  // Retargeting pixels (off until set) — build audiences for cheap paid ads
+  // later. main.js forwards conversion events to them. IDs from Meta Events
+  // Manager (e.g. "1234567890") and Google Ads/Analytics (e.g. "AW-123" / "G-123").
+  metaPixelId: "",
+  googleAdsId: "",
+  // Direct "leave a review" link for your Google Business Profile — used by
+  // `hermes review`. In GBP: "Get more reviews" → copy link.
+  googleReviewUrl: "",
   tagline: "We catch and convert leads in real time.",
   // Broader positioning — used as the hero subhead and where we describe the
   // full offer (websites + apps + systems), not just lead capture.
@@ -23,6 +44,8 @@ export default {
     { key: "about", label: "About", url: "about.html" },
     { key: "services", label: "Services", url: "services.html" },
     { key: "pricing", label: "Pricing", url: "pricing.html" },
+    { key: "packages", label: "Packages", url: "buy.html" },
+    { key: "grow", label: "Industries", url: "grow.html" },
     { key: "portfolio", label: "Portfolio", url: "portfolio.html" },
     { key: "reviews", label: "Reviews", url: "reviews.html" },
   ],
@@ -55,6 +78,178 @@ export default {
     github: "https://mmajeed7864.github.io/",
     demo: "chatbot-demo.html",
   },
+
+  // ── Productized packages (the "buy without a call" page: buy.html) ──────
+  // Fixed-price offers people can purchase directly. Each `checkoutUrl` should
+  // be a Stripe Payment Link (Dashboard → Payment Links → create one per
+  // package, paste the https://buy.stripe.com/... URL here). While a link is
+  // empty, the button gracefully falls back to the intake form below the cards
+  // — so there is never a dead button, and you can launch the page before
+  // Stripe is wired up. See tools/README.md → "Wiring up checkout".
+  packages: [
+    {
+      key: "speed-fix",
+      name: "Site speed & mobile fix",
+      price: "$499",
+      cadence: "one-time",
+      blurb: "The easy first yes. We make your existing site fast and flawless on phones.",
+      features: [
+        "Mobile + speed audit, then the fixes",
+        "Core Web Vitals & image cleanup",
+        "Done in days, not weeks",
+      ],
+      checkoutUrl: "",
+      featured: false,
+    },
+    {
+      key: "website-7-days",
+      name: "Website in 7 days",
+      price: "$1,500",
+      cadence: "flat",
+      blurb: "A fast, modern site that earns trust and turns visitors into enquiries.",
+      features: [
+        "Up to 5 pages, conversion-first",
+        "Lead capture + the AI assistant wired in",
+        "Live in a week — flat price, no surprises",
+      ],
+      checkoutUrl: "",
+      featured: true,
+    },
+    {
+      key: "booking-system",
+      name: "Booking + lead system",
+      price: "$1,200",
+      cadence: "one-time",
+      blurb: "Turn enquiries into booked time, with reminders that cut no-shows.",
+      features: [
+        "Online booking wired to your calendar",
+        "Lead capture flow — nothing dropped",
+        "Automatic reminders & follow-ups",
+      ],
+      checkoutUrl: "",
+      featured: false,
+    },
+    {
+      key: "ai-assistant",
+      name: "AI assistant install",
+      price: "$900",
+      cadence: "setup + monthly",
+      blurb: "Our always-on assistant on your site — answers, captures leads, books.",
+      features: [
+        "One-time $900 setup & styling",
+        "From $99/mo — hosting, AI & lead delivery",
+        "Every lead reaches a real person on your team",
+      ],
+      checkoutUrl: "",
+      featured: false,
+    },
+  ],
+
+  // ── AI assistant monthly plans (the recurring-revenue lane: widget.html) ─
+  // Same Stripe pattern as packages, but these are SUBSCRIPTION Payment Links.
+  // Paste a link into each checkoutUrl, or run:
+  //   npm run set-stripe -- widget-growth=https://buy.stripe.com/...
+  // Empty links fall back to the free scan, so there are never dead buttons.
+  widgetSetup: "$900 one-time setup",
+  widgetPlans: [
+    {
+      key: "widget-starter",
+      name: "Starter",
+      price: "$49",
+      cadence: "/mo",
+      blurb: "The always-on assistant on one site — answering questions and catching leads.",
+      features: [
+        "AI chat on one website",
+        "Lead capture → your inbox",
+        "Styled to your brand",
+        "Email support",
+      ],
+      checkoutUrl: "",
+      featured: false,
+    },
+    {
+      key: "widget-growth",
+      name: "Growth",
+      price: "$99",
+      cadence: "/mo",
+      blurb: "More volume, booking hand-off, and monthly tuning as you grow.",
+      features: [
+        "Everything in Starter",
+        "Higher monthly conversation limit",
+        "Booking / calendar hand-off",
+        "Monthly tuning & tweaks",
+      ],
+      checkoutUrl: "",
+      featured: true,
+    },
+    {
+      key: "widget-pro",
+      name: "Pro",
+      price: "$149",
+      cadence: "/mo",
+      blurb: "For busier sites that want priority support and custom answer flows.",
+      features: [
+        "Everything in Growth",
+        "Priority support",
+        "Custom answer flows",
+        "Lead delivery to your CRM",
+      ],
+      checkoutUrl: "",
+      featured: false,
+    },
+  ],
+
+  // ── Website care plans (recurring retainer: care.html) ──────────────────
+  // Pure-margin monthly revenue — every build client should convert to one.
+  // Same Stripe pattern (subscription Payment Links); set via:
+  //   npm run set-stripe -- care-growth=https://buy.stripe.com/...
+  carePlans: [
+    {
+      key: "care-essential",
+      name: "Essential",
+      price: "$99",
+      cadence: "/mo",
+      blurb: "We keep your site fast, secure, online, and up to date — so you never think about it.",
+      features: [
+        "Managed hosting + SSL",
+        "Uptime & security monitoring",
+        "Software/plugin updates",
+        "Up to 30 min of content edits / month",
+      ],
+      checkoutUrl: "",
+      featured: false,
+    },
+    {
+      key: "care-growth",
+      name: "Growth",
+      price: "$199",
+      cadence: "/mo",
+      blurb: "Everything in Essential, plus monthly improvements and a plain-English report.",
+      features: [
+        "Everything in Essential",
+        "Up to 2 hrs of changes / month",
+        "Monthly analytics + insights report",
+        "Priority turnaround",
+      ],
+      checkoutUrl: "",
+      featured: true,
+    },
+    {
+      key: "care-pro",
+      name: "Pro",
+      price: "$299",
+      cadence: "/mo",
+      blurb: "Ongoing conversion work — we keep improving the site to win more leads.",
+      features: [
+        "Everything in Growth",
+        "Up to 4 hrs of changes / month",
+        "Ongoing conversion & A/B tweaks",
+        "A direct line to the builders",
+      ],
+      checkoutUrl: "",
+      featured: false,
+    },
+  ],
 
   footerCredit: "Built by Mohammed & Ravi.",
 };

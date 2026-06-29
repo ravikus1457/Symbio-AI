@@ -1,0 +1,6 @@
+# Generated reports — don't commit scan output.
+scan-*.html
+scan-*.pdf
+*.pdf
+__pycache__/
+*.pyc

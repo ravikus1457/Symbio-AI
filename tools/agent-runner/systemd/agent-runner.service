@@ -1,0 +1,26 @@
+# Symbio Agent Runner — long-running daemon (scheduler + telegram + heartbeat + webhook).
+# Install (on the Pi):
+#   sudo cp systemd/agent-runner.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now agent-runner
+#   systemctl status agent-runner ; journalctl -u agent-runner -f
+# Edit User= and the paths below to match your setup.
+
+[Unit]
+Description=Symbio Agent Runner
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/symbio/tools/agent-runner
+EnvironmentFile=/home/pi/symbio/tools/agent-runner/config.env
+ExecStart=/usr/bin/python3 /home/pi/symbio/tools/agent-runner/runner.py serve
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

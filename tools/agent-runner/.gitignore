@@ -1,0 +1,9 @@
+# Local runtime + secrets — never commit.
+config.env
+jobs.json
+runner.db
+runner.db-wal
+runner.db-shm
+backups/
+__pycache__/
+*.pyc

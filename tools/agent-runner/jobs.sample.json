@@ -1,0 +1,35 @@
+{
+  "_comment": "Copy to jobs.json and edit. A job = a command on a schedule. Schedule is 'every 30m' or 'cron: m h dom mon dow'. notify_on: always|failure|never. cwd is relative to the runner dir.",
+
+  "jobs": [
+    {
+      "name": "lead-engine",
+      "schedule": "cron: 0 8 * * 1-5",
+      "cmd": "python3 leadengine.py run",
+      "cwd": "../lead-engine",
+      "notify_on": "always",
+      "timeout": 900
+    },
+    {
+      "name": "daily-status",
+      "schedule": "cron: 30 8 * * *",
+      "cmd": "python3 runner.py status",
+      "cwd": ".",
+      "notify_on": "always"
+    },
+    {
+      "name": "backup",
+      "schedule": "cron: 0 3 * * *",
+      "cmd": "python3 runner.py backup",
+      "cwd": ".",
+      "notify_on": "failure"
+    }
+  ],
+
+  "telegram_routes": {
+    "report":  { "cmd": "python3 leadengine.py report", "cwd": "../lead-engine" },
+    "approve": { "cmd": "python3 leadengine.py approve", "cwd": "../lead-engine" },
+    "reject":  { "cmd": "python3 leadengine.py reject", "cwd": "../lead-engine" },
+    "scan":    { "cmd": "python3 freescan.py", "cwd": "../free-scan", "timeout": 60 }
+  }
+}

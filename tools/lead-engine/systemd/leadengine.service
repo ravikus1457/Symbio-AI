@@ -1,0 +1,21 @@
+# Symbio Lead Engine — one-shot run, fired by leadengine.timer.
+# Install (on the Pi):
+#   sudo cp systemd/leadengine.* /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now leadengine.timer
+# Adjust User= and the paths below to match your setup.
+
+[Unit]
+Description=Symbio Lead Engine — ingest, audit, draft, queue
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=pi
+WorkingDirectory=/home/pi/symbio/lead-engine
+EnvironmentFile=/home/pi/symbio/lead-engine/config.env
+ExecStart=/usr/bin/python3 /home/pi/symbio/lead-engine/leadengine.py run
+# Tighten the blast radius a little:
+NoNewPrivileges=true
+PrivateTmp=true

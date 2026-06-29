@@ -1,0 +1,13 @@
+# Fires the lead engine every weekday morning at 08:30 local time.
+# Pair with leadengine.service. Edit OnCalendar to taste.
+
+[Unit]
+Description=Run the Symbio Lead Engine on a schedule
+
+[Timer]
+OnCalendar=Mon..Fri 08:30
+Persistent=true
+RandomizedDelaySec=300
+
+[Install]
+WantedBy=timers.target

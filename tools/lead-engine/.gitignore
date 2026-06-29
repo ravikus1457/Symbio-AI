@@ -1,0 +1,9 @@
+# Local runtime artifacts — never commit leads, drafts, or secrets.
+config.env
+leads.db
+leads.db-wal
+leads.db-shm
+outbox/
+seeds/prospects.csv
+__pycache__/
+*.pyc

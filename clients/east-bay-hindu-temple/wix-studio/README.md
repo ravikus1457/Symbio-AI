@@ -1,5 +1,16 @@
 # Bringing the redesign into Wix Studio
 
+> ⚠️ **These embeds are the v1 (single-page) snapshot.** Since the Pandit's
+> review the site grew into a multi-page build — Home plus **Poojas & Prices**,
+> **Events**, and **Festival Calendar** — with updated hours (Tue until 8:30 PM),
+> the primary phone **(925) 812-0581**, "Established 2004", the full puja price
+> breakdown, donation funds, a temple shop, and expanded priest/astrology info.
+> The embeds below still reflect the **old single-page content and the old
+> temple number** and should be **regenerated from the current pages**
+> (`../index.html`, `../puja-services.html`, `../events.html`,
+> `../calendar.html`) before you paste them into Wix. The canonical, up-to-date
+> site is those four pages — treat this kit as a starting point, not the truth.
+
 You chose to keep the temple in the Wix family but move from classic Wix to
 **Wix Studio** — the right call. Wix Studio is Wix's professional editor and,
 unlike classic Wix, it gives you the three things this design needs:

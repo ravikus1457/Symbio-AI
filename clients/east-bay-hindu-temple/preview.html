@@ -1865,6 +1865,475 @@ ul {
   white-space: nowrap;
 }
 
+/* -------------------------------------------------------------------------
+   22. Page hero (sub-pages: Poojas, Events, Calendar)
+   ------------------------------------------------------------------------- */
+.page-hero {
+  position: relative;
+  background: var(--grad-red);
+  color: var(--on-red);
+  text-align: center;
+  padding: clamp(2.6rem, 6vw, 4.4rem) 0 clamp(2.4rem, 5vw, 3.6rem);
+  border-bottom: 4px solid var(--gold);
+  overflow: hidden;
+}
+
+.page-hero__inner {
+  position: relative;
+  z-index: 1;
+  max-width: 720px;
+  margin-inline: auto;
+}
+
+.page-hero .eyebrow {
+  color: var(--gold-bright);
+  justify-content: center;
+}
+
+.page-hero .eyebrow::before {
+  background: var(--gold);
+}
+
+.page-hero__title {
+  font-size: var(--fs-800);
+  color: #fff;
+  line-height: var(--lh-tight);
+}
+
+.page-hero__lead {
+  margin-top: var(--space-4);
+  color: var(--on-red-soft);
+  font-size: var(--fs-500);
+}
+
+.page-hero .hero__mandala {
+  color: var(--gold-bright);
+  opacity: 0.14;
+}
+
+/* Breadcrumb-ish "back home" link on sub-pages */
+.page-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: var(--fs-300);
+  font-weight: 600;
+  color: var(--gold-bright);
+}
+
+.page-back:hover {
+  color: #fff;
+}
+
+/* -------------------------------------------------------------------------
+   23. Pricing cards (puja breakdown)
+   ------------------------------------------------------------------------- */
+.price-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--cream);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease),
+    border-color var(--dur) var(--ease);
+}
+
+.price-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--gold);
+}
+
+.price-card__head {
+  padding: var(--space-5) var(--space-5) var(--space-4);
+  border-bottom: 1px solid var(--line);
+}
+
+.price-card__name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--fs-600);
+  color: var(--red);
+  line-height: var(--lh-snug);
+}
+
+.price-card__deva {
+  font-family: var(--font-deva);
+  color: var(--gold-deep);
+  font-size: 1rem;
+  margin-top: 0.1rem;
+}
+
+.price-card__desc {
+  flex: 1;
+  padding: var(--space-4) var(--space-5) 0;
+  font-size: var(--fs-300);
+  color: var(--ink-soft);
+}
+
+.price-breakdown {
+  padding: var(--space-4) var(--space-5) var(--space-5);
+}
+
+.price-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: 0.45rem 0;
+  font-size: var(--fs-300);
+  border-bottom: 1px dashed rgba(200, 155, 60, 0.4);
+}
+
+.price-line__label {
+  color: var(--ink-soft);
+}
+
+.price-line__val {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.price-line--total {
+  border-bottom: 0;
+  border-top: 2px solid var(--gold);
+  margin-top: 0.35rem;
+  padding-top: 0.7rem;
+}
+
+.price-line--total .price-line__label {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.price-line--total .price-line__val {
+  color: var(--red);
+  font-size: var(--fs-600);
+}
+
+.price-flat {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--red);
+  font-size: var(--fs-700);
+  line-height: 1;
+}
+
+.price-flat small {
+  display: block;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--fs-200);
+  letter-spacing: 0.02em;
+  color: var(--ink-soft);
+  margin-top: 0.35rem;
+}
+
+.price-badge {
+  display: inline-block;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #3a1402;
+  background: var(--grad-gold);
+  padding: 0.16rem 0.55rem;
+  border-radius: var(--radius-pill);
+  margin-top: 0.5rem;
+}
+
+/* -------------------------------------------------------------------------
+   24. Info note / callout (booking availability, supplies, etc.)
+   ------------------------------------------------------------------------- */
+.info-note {
+  background: rgba(200, 155, 60, 0.12);
+  border: 1px solid rgba(200, 155, 60, 0.35);
+  border-left: 4px solid var(--gold);
+  border-radius: var(--radius);
+  padding: var(--space-5) var(--space-6);
+}
+
+.info-note__title {
+  font-family: var(--font-display);
+  font-size: var(--fs-600);
+  color: var(--red);
+  margin-bottom: 0.35rem;
+}
+
+.info-note p {
+  color: var(--ink-soft);
+  font-size: var(--fs-300);
+}
+
+.info-note--red {
+  background: rgba(253, 246, 232, 0.08);
+  border-color: rgba(241, 207, 122, 0.28);
+  border-left-color: var(--gold);
+}
+
+.section--red .info-note__title {
+  color: var(--gold-bright);
+}
+
+.section--red .info-note p {
+  color: var(--on-red-soft);
+}
+
+/* -------------------------------------------------------------------------
+   25. Featured event band (weekly satsang) + event rows
+   ------------------------------------------------------------------------- */
+.event-feature {
+  position: relative;
+  display: grid;
+  gap: var(--space-5);
+  align-items: center;
+  background: var(--grad-red);
+  color: var(--on-red);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--gold);
+  padding: clamp(1.8rem, 4vw, 3rem);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+@media (min-width: 760px) {
+  .event-feature {
+    grid-template-columns: auto 1fr;
+    gap: var(--space-7);
+  }
+}
+
+.event-feature__when {
+  text-align: center;
+  flex: none;
+}
+
+.event-feature__day {
+  font-family: var(--font-display);
+  font-size: var(--fs-800);
+  font-weight: 700;
+  color: var(--gold-bright);
+  line-height: 1;
+}
+
+.event-feature__time {
+  display: block;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: var(--fs-300);
+  color: #fff;
+  margin-top: 0.4rem;
+}
+
+.event-feature__title {
+  font-size: var(--fs-700);
+  color: #fff;
+}
+
+.event-feature__deva {
+  font-family: var(--font-deva);
+  color: var(--gold-bright);
+  font-size: 1.1rem;
+  margin-top: 0.2rem;
+}
+
+.event-feature__text {
+  color: var(--on-red-soft);
+  margin-top: var(--space-3);
+  max-width: 52ch;
+}
+
+.event-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: var(--space-4);
+}
+
+.event-tag {
+  font-size: var(--fs-200);
+  font-weight: 700;
+  padding: 0.3rem 0.8rem;
+  border-radius: var(--radius-pill);
+  background: rgba(241, 207, 122, 0.16);
+  color: var(--gold-bright);
+  border: 1px solid rgba(241, 207, 122, 0.32);
+}
+
+/* -------------------------------------------------------------------------
+   26. Shop items (mini gift shop)
+   ------------------------------------------------------------------------- */
+.shop-item {
+  text-align: center;
+}
+
+.shop-item__art {
+  display: grid;
+  place-items: center;
+  width: 68px;
+  height: 68px;
+  margin: 0 auto var(--space-4);
+  border-radius: 18px;
+  background: var(--grad-gold);
+  color: var(--red-deep);
+  box-shadow: var(--shadow-gold);
+}
+
+.shop-item__art svg {
+  width: 34px;
+  height: 34px;
+}
+
+.card__tag {
+  display: inline-block;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--gold-deep);
+  background: rgba(200, 155, 60, 0.16);
+  padding: 0.16rem 0.55rem;
+  border-radius: var(--radius-pill);
+  margin-bottom: var(--space-3);
+}
+
+.card__meta {
+  margin-top: var(--space-4);
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--red);
+  font-size: var(--fs-500);
+}
+
+/* -------------------------------------------------------------------------
+   27. Social links
+   ------------------------------------------------------------------------- */
+.social-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: var(--space-4);
+}
+
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.95rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--line-strong);
+  background: var(--cream);
+  color: var(--ink);
+  font-weight: 600;
+  font-size: var(--fs-300);
+}
+
+.social-link svg {
+  width: 18px;
+  height: 18px;
+}
+
+.social-link:hover {
+  border-color: var(--gold);
+  color: var(--red);
+  background: rgba(200, 155, 60, 0.1);
+}
+
+.section--red .social-link,
+.seva-band .social-link {
+  background: rgba(253, 246, 232, 0.08);
+  border-color: rgba(241, 207, 122, 0.32);
+  color: var(--on-red);
+}
+
+.section--red .social-link:hover,
+.seva-band .social-link:hover {
+  color: #fff;
+  border-color: var(--gold-bright);
+}
+
+/* Footer social row */
+.site-footer .social-links {
+  margin-top: var(--space-5);
+}
+
+.site-footer .social-link {
+  background: rgba(253, 246, 232, 0.06);
+  border-color: rgba(241, 207, 122, 0.22);
+  color: var(--on-red-soft);
+}
+
+.site-footer .social-link:hover {
+  color: var(--gold-bright);
+  border-color: var(--gold-bright);
+}
+
+/* -------------------------------------------------------------------------
+   28. Hero slogan + established tag
+   ------------------------------------------------------------------------- */
+.hero__slogan {
+  margin-top: var(--space-5);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--fs-500);
+  color: var(--gold-deep);
+}
+
+.hero__est {
+  display: inline-block;
+  margin-top: var(--space-4);
+  font-size: var(--fs-200);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--gold-deep);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  padding: 0.3rem 0.9rem;
+}
+
+/* Two-column split used on Events / Calendar intros */
+.split {
+  display: grid;
+  gap: var(--space-6);
+}
+
+@media (min-width: 860px) {
+  .split--events {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   29. Chips (service tags on the priest feature)
+   ------------------------------------------------------------------------- */
+.audience {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.chip {
+  display: inline-block;
+  font-size: var(--fs-200);
+  font-weight: 600;
+  padding: 0.35rem 0.8rem;
+  border-radius: var(--radius-pill);
+  background: rgba(200, 155, 60, 0.14);
+  border: 1px solid var(--line-strong);
+  color: var(--ink-soft);
+}
+
 </style>
     <script>
       document.documentElement.classList.add("js");
@@ -1900,7 +2369,7 @@ ul {
   var HOURS = {
     0: [10, 16], // Sunday
     1: [10, 16], // Monday
-    2: [10, 20], // Tuesday
+    2: [10, 20.5], // Tuesday — until 8:30 PM (Hanuman Chalisa & Ramayana Path 6:30 PM)
     3: null, // Wednesday — closed
     4: null, // Thursday — closed
     5: [10, 16], // Friday
@@ -1908,17 +2377,35 @@ ul {
   };
 
   /* Upcoming festivals. Dates are [year, monthIndex(0-11), day]. Keep this
-     list in date order; the script highlights the next one automatically.
+     list in date order; the script highlights the next one automatically and
+     the home-page countdown uses `name` when a festival has no card on the
+     current page (e.g. the 2027 dates below only appear on calendar.html).
      Always confirm exact dates with the temple — they can shift by a day. */
   var FESTIVALS = [
-    { id: "shivaratri", date: [2026, 1, 15] },
-    { id: "holi", date: [2026, 2, 3] },
-    { id: "ramnavami", date: [2026, 2, 26] },
-    { id: "hanuman", date: [2026, 3, 2] },
-    { id: "janmashtami", date: [2026, 8, 4] },
-    { id: "ganesh", date: [2026, 8, 14] },
-    { id: "navratri", date: [2026, 9, 11] },
-    { id: "diwali", date: [2026, 10, 8] },
+    // 2026
+    { id: "shivaratri", name: "Maha Shivaratri", date: [2026, 1, 15] },
+    { id: "holi", name: "Holi", date: [2026, 2, 3] },
+    { id: "ramnavami", name: "Ram Navami", date: [2026, 2, 26] },
+    { id: "hanuman", name: "Hanuman Jayanti", date: [2026, 3, 2] },
+    { id: "janmashtami", name: "Krishna Janmashtami", date: [2026, 8, 4] },
+    { id: "ganesh", name: "Ganesh Chaturthi", date: [2026, 8, 14] },
+    { id: "navratri", name: "Sharad Navratri", date: [2026, 9, 11] },
+    { id: "diwali", name: "Diwali & Lakshmi Pooja", date: [2026, 10, 8] },
+    // 2027 (per the temple's 2027 festival calendar — see calendar.html)
+    { id: "makar-2027", name: "Makar Sankranti", date: [2027, 0, 14] },
+    { id: "shivaratri-2027", name: "Maha Shivaratri", date: [2027, 1, 11] },
+    { id: "holi-2027", name: "Holi", date: [2027, 1, 27] },
+    { id: "ramnavami-2027", name: "Ram Navami", date: [2027, 2, 28] },
+    { id: "navratri-chaitra-2027", name: "Chaitra Navratri", date: [2027, 3, 10] },
+    { id: "hanuman-2027", name: "Hanuman Jayanti", date: [2027, 3, 14] },
+    { id: "buddha-2027", name: "Buddha Purnima", date: [2027, 4, 25] },
+    { id: "guru-purnima-2027", name: "Guru Purnima", date: [2027, 6, 5] },
+    { id: "rakhi-2027", name: "Raksha Bandhan", date: [2027, 7, 16] },
+    { id: "janmashtami-2027", name: "Krishna Janmashtami", date: [2027, 8, 6] },
+    { id: "ganesh-2027", name: "Ganesh Chaturthi", date: [2027, 8, 11] },
+    { id: "navratri-2027", name: "Sharad Navratri", date: [2027, 9, 8] },
+    { id: "dussehra-2027", name: "Dussehra", date: [2027, 9, 17] },
+    { id: "diwali-2027", name: "Diwali & Lakshmi Pooja", date: [2027, 10, 4] },
   ];
 
   /* Donation methods. Fill these with the temple's REAL handles to activate each
@@ -1939,10 +2426,12 @@ ul {
   };
 
   function fmtTime(hour24) {
-    var period = hour24 >= 12 ? "PM" : "AM";
-    var h = hour24 % 12;
+    var whole = Math.floor(hour24);
+    var mins = Math.round((hour24 - whole) * 60);
+    var period = whole >= 12 ? "PM" : "AM";
+    var h = whole % 12;
     if (h === 0) h = 12;
-    return h + " " + period;
+    return h + (mins ? ":" + (mins < 10 ? "0" + mins : mins) : "") + " " + period;
   }
 
   /* ---- 2. Mobile menu -------------------------------------------------- */
@@ -2075,7 +2564,7 @@ ul {
       var f = FESTIVALS[i];
       var d = new Date(f.date[0], f.date[1], f.date[2]);
       if (d >= today) {
-        next = { id: f.id, date: d };
+        next = { id: f.id, name: f.name, date: d };
         break;
       }
     }
@@ -2084,8 +2573,9 @@ ul {
     var card = document.querySelector('[data-festival="' + next.id + '"]');
     // Read the festival name BEFORE injecting the badge — the badge lives inside
     // .festival__name, so reading after would fold "Next celebration" into the name.
+    // Fall back to the data name when the festival has no card on this page.
     var nameEl = card ? card.querySelector(".festival__name") : null;
-    var name = nameEl ? nameEl.textContent.trim() : "our next festival";
+    var name = nameEl ? nameEl.textContent.trim() : next.name || "our next festival";
 
     if (card) {
       card.classList.add("festival--next");
@@ -2377,13 +2867,17 @@ ul {
 
     <div class="temple-border" aria-hidden="true"></div>
 
+    <!-- NOTE: preview.html is a portable, single-file build of the HOME page
+         (CSS + JS inlined). The full multi-page site is index.html plus
+         puja-services.html, events.html, and calendar.html. Regenerate this
+         file after editing index.html/temple.css/temple.js. -->
     <!-- ===== Top bar ===================================================== -->
     <div class="topbar">
       <div class="container topbar__inner">
         <span class="status-dot" data-open-status>Checking hours…</span>
         <div class="topbar__group">
           <span aria-hidden="true">🪔 595 School St, Pittsburg, CA</span>
-          <a href="tel:+19252520551">Call: (925) 252-0551</a>
+          <a href="tel:+19258120581">Call &amp; Book: (925) 812-0581</a>
         </div>
       </div>
     </div>
@@ -2401,21 +2895,20 @@ ul {
 
         <nav class="site-nav" aria-label="Primary">
           <ul class="site-nav__list" id="primary-menu" data-nav-menu>
-            <li><a class="site-nav__link" href="#welcome">Welcome</a></li>
             <li><a class="site-nav__link" href="#deities">Deities</a></li>
             <li><a class="site-nav__link" href="#timings">Timings</a></li>
-            <li><a class="site-nav__link" href="#sevas">Sevas</a></li>
-            <li><a class="site-nav__link" href="#festivals">Festivals</a></li>
-            <li><a class="site-nav__link" href="#priest">Our Priest</a></li>
+            <li><a class="site-nav__link" href="puja-services.html">Poojas &amp; Prices</a></li>
+            <li><a class="site-nav__link" href="events.html">Events</a></li>
+            <li><a class="site-nav__link" href="calendar.html">Calendar</a></li>
             <li><a class="site-nav__link" href="#visit">Visit</a></li>
             <li class="site-nav__cta">
-              <a class="btn btn--primary btn--sm" href="#visit">Plan a Visit</a>
+              <a class="btn btn--primary btn--sm" href="tel:+19258120581">Call to Book</a>
             </li>
           </ul>
         </nav>
 
         <div class="site-header__actions">
-          <a class="btn btn--primary header-cta" href="#sevas">Book a Pooja</a>
+          <a class="btn btn--primary header-cta" href="puja-services.html">Book a Pooja</a>
           <button
             class="nav-toggle"
             type="button"
@@ -2473,6 +2966,8 @@ ul {
             doors are open, and every devotee is welcome for darshan, aarti, and prasad.
           </p>
 
+          <p class="hero__slogan">Serving Devotees · Spreading Peace · Changing Lives</p>
+
           <div class="btn-row hero__cta">
             <a class="btn btn--primary btn--lg" href="#visit">Plan Your Visit</a>
             <a class="btn btn--on-red btn--lg" href="#timings">Aarti &amp; Darshan Timings</a>
@@ -2483,6 +2978,8 @@ ul {
             <span>🛕 <strong>Poojas &amp; Sevas</strong> by appointment</span>
             <span>🎉 <strong>Festivals</strong> all year round</span>
           </div>
+
+          <p class="hero__est">Established 2004 · A non-profit temple</p>
         </div>
 
         <svg class="hero__wave" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
@@ -2741,7 +3238,7 @@ ul {
               <caption>Weekly Darshan Hours</caption>
               <tbody>
                 <tr data-day="1"><th scope="row">Monday</th><td>10:00 AM – 4:00 PM</td></tr>
-                <tr data-day="2"><th scope="row">Tuesday</th><td>10:00 AM – 8:00 PM</td></tr>
+                <tr data-day="2"><th scope="row">Tuesday</th><td>10:00 AM – 8:30 PM</td></tr>
                 <tr data-day="3"><th scope="row">Wednesday</th><td class="is-closed">Closed</td></tr>
                 <tr data-day="4"><th scope="row">Thursday</th><td class="is-closed">Closed</td></tr>
                 <tr data-day="5"><th scope="row">Friday</th><td>10:00 AM – 4:00 PM</td></tr>
@@ -2766,17 +3263,21 @@ ul {
                   <span class="aarti__time">Evening</span>
                 </li>
                 <li>
-                  <span class="aarti__name">Tuesday Hanuman Chalisa</span>
-                  <span class="aarti__time">Evening</span>
+                  <span class="aarti__name">Tuesday · Hanuman Chalisa &amp; Ramayana Path</span>
+                  <span class="aarti__time">6:30 PM</span>
                 </li>
               </ul>
               <p style="color: var(--on-red-soft); font-size: var(--fs-300); margin-top: 1rem">
+                🎉 Please note that <strong style="color: var(--gold-bright)">festival hours differ</strong>.
                 Exact aarti times are confirmed by the temple — please call
                 <a href="tel:+19258120581" style="color: var(--gold-bright); font-weight: 700"
                   >(925) 812-0581</a
                 >
                 to confirm before you travel.
               </p>
+              <div class="btn-row mt-6">
+                <a class="btn btn--gold" href="events.html">Weekly Satsang &amp; Events</a>
+              </div>
             </div>
           </div>
         </div>
@@ -2882,9 +3383,19 @@ ul {
             </article>
           </div>
 
+          <div class="info-note mt-7" data-reveal>
+            <div class="info-note__title">📅 Clear prices &amp; easy booking</div>
+            <p>
+              Every ceremony has a clear price, with an option to include all puja supplies. See the
+              full breakdown — poojas, havans, weddings, sanskaars, and astrology — on our Poojas
+              &amp; Prices page. Bookings are subject to Pandit ji's availability, so please call
+              ahead to confirm your date.
+            </p>
+          </div>
+
           <div class="btn-row btn-row--center mt-7" data-reveal>
-            <a class="btn btn--primary btn--lg" href="tel:+19258120581">Call to Book a Seva</a>
-            <a class="btn btn--ghost btn--lg" href="#visit">Visit the Temple</a>
+            <a class="btn btn--primary btn--lg" href="puja-services.html">See All Poojas &amp; Prices</a>
+            <a class="btn btn--ghost btn--lg" href="tel:+19258120581">Call to Book · (925) 812-0581</a>
           </div>
         </div>
       </section>
@@ -2977,8 +3488,42 @@ ul {
 
           <p class="center mt-6" style="color: var(--ink-faint); font-size: var(--fs-300)">
             Dates are based on the Hindu calendar and may shift by a day — confirmed dates and timings
-            are announced by the temple ahead of each festival.
+            are announced by the temple ahead of each festival. All dates &amp; tithi are as per San
+            Francisco time (PST/PDT).
           </p>
+
+          <div class="btn-row btn-row--center mt-6" data-reveal>
+            <a class="btn btn--primary" href="calendar.html">Full 2026 &amp; 2027 Calendar</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Weekly satsang / events teaser ========================= -->
+      <section class="section section--tight" aria-labelledby="events-title">
+        <div class="container">
+          <div class="event-feature" data-reveal>
+            <div class="event-feature__when">
+              <span class="event-feature__day deva">मंगलवार</span>
+              <span class="event-feature__time">Every Tuesday · 6:30 PM</span>
+            </div>
+            <div>
+              <h2 class="event-feature__title" id="events-title">Hanuman Chalisa &amp; Ramayana Path</h2>
+              <p class="event-feature__deva deva">हनुमान चालीसा एवं रामायण पाठ</p>
+              <p class="event-feature__text">
+                Bring your family every Tuesday evening for bhajan, kirtan, and aarti — sing the
+                glories of Lord Hanuman and enjoy the spiritual atmosphere. Prasad for all.
+              </p>
+              <div class="event-tags">
+                <span class="event-tag">🎵 Bhajan</span>
+                <span class="event-tag">🙏 Kirtan</span>
+                <span class="event-tag">🪔 Aarti</span>
+              </div>
+              <div class="btn-row mt-6">
+                <a class="btn btn--gold" href="events.html">See Events &amp; Programs</a>
+                <a class="btn btn--on-red" href="https://wa.me/19258120581?text=Namaste%2C%20I%27d%20like%20to%20join%20the%20East%20Bay%20Hindu%20Temple%20WhatsApp%20group." target="_blank" rel="noopener">Join our WhatsApp Group</a>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -3004,28 +3549,47 @@ ul {
             <div data-reveal data-reveal-delay="1">
               <span class="eyebrow">Our Priest · पुजारी</span>
               <h2 class="priest__name" id="priest-title">Pandit Rakesh Bhargav Ji</h2>
-              <p class="priest__role">Head Priest · East Bay Hindu Temple</p>
+              <p class="priest__role">Head Priest · Astrologer &amp; Palmist · Spiritual Healer</p>
               <p class="lead">
-                Our head priest leads the daily worship of the temple and performs poojas and
-                sanskaars for families across the East Bay. Trained in the Vedic tradition, he
-                guides devotees through every ceremony with patience, devotion, and a deep knowledge
-                of the scriptures.
+                Pandit Rakesh Bhargav ji leads the daily worship of the temple and performs poojas
+                and sanskaars for families across the East Bay. From a family of astrologers and
+                spiritual healers spanning seven generations, and serving devotees in California
+                since 2001, he guides everyone through each ceremony with patience, devotion, and a
+                deep knowledge of the Vedic scriptures.
               </p>
+
+              <p class="audience" style="margin-top: 1.4rem">
+                <span class="chip">Astrology</span>
+                <span class="chip">Palm Reading</span>
+                <span class="chip">Vastu Consultation</span>
+                <span class="chip">Spiritual Healing</span>
+                <span class="chip">Tantra &amp; Mantra</span>
+                <span class="chip">Puja &amp; Homa</span>
+                <span class="chip">Kundli Analysis</span>
+              </p>
+
               <blockquote class="priest__quote">
                 “Our temple is a home for every family. Come as you are — the lamp is lit, and the
                 Lord is waiting.”
               </blockquote>
+
               <div class="btn-row mt-6">
                 <a class="btn btn--primary btn--lg" href="tel:+19258120581">Speak with Pandit ji</a>
-                <a class="btn btn--ghost btn--lg" href="#sevas">Book a Pooja</a>
+                <a class="btn btn--ghost btn--lg" href="puja-services.html">Poojas &amp; Astrology Prices</a>
+              </div>
+
+              <div class="social-links">
+                <a class="social-link" href="https://www.panditbhargavji.com" target="_blank" rel="noopener">panditbhargavji.com ↗</a>
+                <a class="social-link" href="https://www.facebook.com/pittsburgeastbayhindutemple/" target="_blank" rel="noopener">Facebook</a>
+                <a class="social-link" href="https://www.instagram.com/eastbayhindutemple/" target="_blank" rel="noopener">Instagram</a>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- ===== Seva / donation band ==================================== -->
-      <section class="section section--tight">
+      <!-- ===== Seva / donation ======================================== -->
+      <section class="section section--tight" id="daan" aria-labelledby="daan-title">
         <div class="container">
           <div class="seva-band" data-reveal>
             <svg class="hero__mandala" viewBox="0 0 200 200" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="0.6" style="opacity: 0.12">
@@ -3034,7 +3598,7 @@ ul {
               <circle cx="100" cy="100" r="44" />
             </svg>
             <span class="eyebrow">Daan · दान</span>
-            <h2 class="seva-band__title">Support Your Temple</h2>
+            <h2 class="seva-band__title" id="daan-title">Support Your Temple</h2>
             <p class="seva-band__text">
               East Bay Hindu Temple runs entirely on the generosity of devotees. Your seva keeps the
               lamp lit, the doors open, and our festivals alive for the next generation. Every
@@ -3042,7 +3606,67 @@ ul {
             </p>
             <div class="btn-row btn-row--center">
               <button class="btn btn--gold btn--lg" type="button" data-donate-open>Make a Donation</button>
-              <a class="btn btn--on-red btn--lg" href="tel:+19252520551">Call the Temple</a>
+              <a class="btn btn--on-red btn--lg" href="tel:+19258120581">Call the Temple</a>
+            </div>
+          </div>
+
+          <!-- Ways to give — the funds a donation can support -->
+          <div class="section__head center mt-8" data-reveal>
+            <span class="eyebrow">Ways to give</span>
+            <h3 class="title" style="font-size: var(--fs-700)">Where your donation goes</h3>
+            <p class="lead">Choose the cause closest to your heart — or give generally and we'll direct it where it's needed most.</p>
+          </div>
+          <div class="grid grid--auto">
+            <article class="card" data-reveal>
+              <span class="card__tag">Fund</span>
+              <h3 class="card__title">General Donation</h3>
+              <p class="card__text">Support the temple's day-to-day operations and daily worship.</p>
+            </article>
+            <article class="card" data-reveal data-reveal-delay="1">
+              <span class="card__tag">Fund</span>
+              <h3 class="card__title">Temple Development</h3>
+              <p class="card__text">Contribute toward maintenance, renovation, and future projects.</p>
+            </article>
+            <article class="card" data-reveal data-reveal-delay="2">
+              <span class="card__tag">Fund</span>
+              <h3 class="card__title">Education &amp; Youth Programs</h3>
+              <p class="card__text">Help us inspire and educate the next generation.</p>
+            </article>
+            <article class="card" data-reveal data-reveal-delay="3">
+              <span class="card__tag">Fund</span>
+              <h3 class="card__title">Cultural &amp; Religious Events</h3>
+              <p class="card__text">Support festivals, celebrations, and community programs.</p>
+            </article>
+            <article class="card" data-reveal data-reveal-delay="4">
+              <span class="card__tag">Fund</span>
+              <h3 class="card__title">Annadanam · Food Seva</h3>
+              <p class="card__text">Feed the community and support those in need. <span class="deva">अन्नदान</span></p>
+            </article>
+          </div>
+
+          <!-- Monthly giving + sponsor an event -->
+          <div class="split split--events mt-7">
+            <div class="info-note" data-reveal>
+              <div class="info-note__title">🔁 Become a monthly supporter</div>
+              <p>
+                Give a little every month — even <strong>$10/month</strong> as a darshan
+                contribution — and provide the temple with steady support all year. Tap below to set
+                up a recurring seva, or call us to arrange it.
+              </p>
+              <div class="btn-row mt-6">
+                <button class="btn btn--primary" type="button" data-donate-open>Set Up Monthly Seva</button>
+              </div>
+            </div>
+            <div class="info-note" data-reveal data-reveal-delay="1">
+              <div class="info-note__title">🎉 Sponsor an event</div>
+              <p>
+                Sponsor a festival, an aarti, or an annadanam in your family's name — a beautiful way
+                to give back. Sponsorships start from <strong>$251</strong>; call to choose an event
+                and amount.
+              </p>
+              <div class="btn-row mt-6">
+                <a class="btn btn--primary" href="tel:+19258120581">Sponsor an Event</a>
+              </div>
             </div>
           </div>
 
@@ -3073,6 +3697,74 @@ ul {
                 </p>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Temple shop ============================================ -->
+      <section class="section section--tight" id="shop" aria-labelledby="shop-title">
+        <div class="container">
+          <div class="section__head center" data-reveal>
+            <span class="eyebrow">Temple Shop · भंडार</span>
+            <h2 class="title" id="shop-title">Temple Gift Shop</h2>
+            <p class="lead">
+              Malas, small murtis, and everything you need for your home mandir — available at the
+              temple. Ask Pandit ji or call to reserve an item.
+            </p>
+          </div>
+
+          <div class="grid grid--auto">
+            <article class="card shop-item" data-reveal>
+              <span class="shop-item__art" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                  <circle cx="12" cy="12" r="7.5" /><circle cx="12" cy="4" r="1.4" fill="currentColor" stroke="none" />
+                  <circle cx="12" cy="20" r="1.4" fill="currentColor" stroke="none" /><circle cx="4" cy="12" r="1.4" fill="currentColor" stroke="none" />
+                  <circle cx="20" cy="12" r="1.4" fill="currentColor" stroke="none" />
+                </svg>
+              </span>
+              <h3 class="card__title">Malas &amp; Rudraksha</h3>
+              <p class="card__text">Prayer beads and rudraksha malas for japa and daily worship.</p>
+            </article>
+
+            <article class="card shop-item" data-reveal data-reveal-delay="1">
+              <span class="shop-item__art" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                  <path d="M12 3l2 4 4 .5-3 3 .8 4.2L12 16l-3.8 1.7L9 13l-3-3 4-.5z" stroke-linejoin="round" />
+                </svg>
+              </span>
+              <h3 class="card__title">Small Murtis</h3>
+              <p class="card__text">Beautiful murtis of your ishta devata for your home mandir.</p>
+            </article>
+
+            <article class="card shop-item" data-reveal data-reveal-delay="2">
+              <span class="shop-item__art" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                  <path d="M6 20c0-4 2.7-7 6-7s6 3 6 7" stroke-linecap="round" />
+                  <path d="M12 6c1.5 0 2 1 2 2s-.7 3-2 3-2-2-2-3 .5-2 2-2Z" stroke-linejoin="round" />
+                </svg>
+              </span>
+              <h3 class="card__title">Puja Supplies</h3>
+              <p class="card__text">Diyas, agarbatti, kumkum, and complete samagri for every pooja.</p>
+            </article>
+
+            <article class="card shop-item" data-reveal data-reveal-delay="3">
+              <span class="shop-item__art" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                  <path d="M4 8h16l-1.5 11h-13z" stroke-linejoin="round" /><path d="M8 8a4 4 0 0 1 8 0" stroke-linecap="round" />
+                </svg>
+              </span>
+              <h3 class="card__title">Prasad &amp; Offerings</h3>
+              <p class="card__text">Prasad, garlands, and offerings to present to the deities.</p>
+            </article>
+          </div>
+
+          <div class="info-note mt-7" data-reveal>
+            <div class="info-note__title">🛍️ Available at the temple</div>
+            <p>
+              Our gift shop is stocked in-person at the temple. To reserve an item or ask what's
+              available, call <a href="tel:+19258120581" style="color: var(--red); font-weight: 700">(925) 812-0581</a>.
+              An online shop is coming soon.
+            </p>
           </div>
         </div>
       </section>
@@ -3120,8 +3812,8 @@ ul {
                   <div>
                     <dt>Phone</dt>
                     <dd>
-                      <a href="tel:+19252520551">(925) 252-0551</a> · Pandit ji
-                      <a href="tel:+19258120581">(925) 812-0581</a>
+                      Pandit ji · <a href="tel:+19258120581">(925) 812-0581</a><br />
+                      Seva &amp; volunteering · Rama ji <a href="tel:+19256954200">(925) 695-4200</a>
                     </dd>
                   </div>
                 </li>
@@ -3146,12 +3838,12 @@ ul {
                   <div>
                     <dt>Connect</dt>
                     <dd>
-                      <a
-                        href="https://www.facebook.com/pittsburgeastbayhindutemple/"
-                        target="_blank"
-                        rel="noopener"
-                        >Follow us on Facebook</a
-                      >
+                      <div class="social-links">
+                        <a class="social-link" href="https://www.facebook.com/pittsburgeastbayhindutemple/" target="_blank" rel="noopener">Facebook</a>
+                        <a class="social-link" href="https://www.instagram.com/eastbayhindutemple/" target="_blank" rel="noopener">Instagram</a>
+                        <a class="social-link" href="https://wa.me/19258120581?text=Namaste%2C%20I%27d%20like%20to%20join%20the%20East%20Bay%20Hindu%20Temple%20WhatsApp%20group." target="_blank" rel="noopener">WhatsApp</a>
+                        <a class="social-link" href="https://www.panditbhargavji.com" target="_blank" rel="noopener">panditbhargavji.com</a>
+                      </div>
                     </dd>
                   </div>
                 </li>
@@ -3193,20 +3885,24 @@ ul {
             </span>
           </a>
           <p class="site-footer__blurb">
-            A community temple in Pittsburg, California — daily darshan, aarti, poojas, and festivals
-            for all. <span class="deva">ॐ नमः शिवाय।</span>
+            Serving devotees · Spreading peace · Changing lives. A community temple in Pittsburg,
+            California — established 2004. <span class="deva">ॐ नमः शिवाय।</span>
           </p>
+          <div class="social-links">
+            <a class="social-link" href="https://www.facebook.com/pittsburgeastbayhindutemple/" target="_blank" rel="noopener">Facebook</a>
+            <a class="social-link" href="https://www.instagram.com/eastbayhindutemple/" target="_blank" rel="noopener">Instagram</a>
+          </div>
         </div>
 
         <nav class="site-footer__col" aria-label="Footer — explore">
           <h2 class="site-footer__heading">Explore</h2>
           <ul class="site-footer__list">
-            <li><a href="#welcome">Welcome</a></li>
             <li><a href="#deities">Our Deities</a></li>
             <li><a href="#timings">Timings</a></li>
-            <li><a href="#sevas">Poojas &amp; Sevas</a></li>
-            <li><a href="#festivals">Festivals</a></li>
-            <li><a href="#priest">Our Priest</a></li>
+            <li><a href="puja-services.html">Poojas &amp; Prices</a></li>
+            <li><a href="events.html">Events</a></li>
+            <li><a href="calendar.html">Festival Calendar</a></li>
+            <li><a href="#daan">Support the Temple</a></li>
           </ul>
         </nav>
 
@@ -3214,22 +3910,15 @@ ul {
           <h2 class="site-footer__heading">Visit &amp; Contact</h2>
           <ul class="site-footer__list">
             <li>595 School Street<br />Pittsburg, CA 94565</li>
-            <li><a href="tel:+19252520551">(925) 252-0551</a></li>
             <li><a href="tel:+19258120581">Pandit ji · (925) 812-0581</a></li>
-            <li>
-              <a
-                href="https://www.facebook.com/pittsburgeastbayhindutemple/"
-                target="_blank"
-                rel="noopener"
-                >Facebook ↗</a
-              >
-            </li>
+            <li><a href="tel:+19256954200">Seva &amp; volunteering · (925) 695-4200</a></li>
+            <li><a href="https://www.panditbhargavji.com" target="_blank" rel="noopener">panditbhargavji.com ↗</a></li>
           </ul>
         </div>
       </div>
 
       <div class="container site-footer__bottom">
-        <p>&copy; <span id="year">2026</span> East Bay Hindu Temple. A non-profit place of worship.</p>
+        <p>&copy; <span id="year">2026</span> East Bay Hindu Temple · Established 2004 · A non-profit place of worship.</p>
         <p class="site-footer__credit">
           Website by <a href="https://symbioai.example" rel="noopener">Symbio AI</a>
         </p>

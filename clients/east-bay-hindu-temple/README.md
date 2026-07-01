@@ -12,9 +12,13 @@ no framework — it's plain HTML, CSS, and JavaScript. You can open
 
 ```
 east-bay-hindu-temple/
-├── index.html               ← the whole site (one page, anchored sections)
-├── preview.html             ← portable single-file build (all CSS/JS inlined) —
-│                               open this in any browser to preview/share
+├── index.html               ← home page (hero, welcome, deities, timings, sevas,
+│                               festivals, weekly satsang, priest, daan, shop, visit)
+├── puja-services.html       ← full pooja & seva price breakdown + astrology
+├── events.html              ← upcoming events, weekly satsang, programs, WhatsApp
+├── calendar.html            ← 2026 & 2027 festival calendar (live countdown)
+├── preview.html             ← portable single-file build of the HOME page (CSS/JS
+│                               inlined). Regenerate after editing index/css/js.
 ├── assets/
 │   ├── css/temple.css        ← the design system (colours, type, layout)
 │   ├── js/temple.js          ← live bits: open-now status, festival countdown,
@@ -29,25 +33,44 @@ east-bay-hindu-temple/
 └── README.md                 ← this file
 ```
 
-> `preview.html` and `index.html` are byte-for-byte the same site — `preview.html`
-> just inlines the CSS/JS so it's a single portable file to hand to the priest.
+> `preview.html` is a portable single-file build of the **home page** (CSS/JS
+> inlined). The full site is now multi-page — see the four `.html` files above.
+> Regenerate `preview.html` after editing `index.html`, `temple.css`, or
+> `temple.js` (see "Regenerating preview.html" below).
 
-## What's on the page
+## What's on the site (multi-page)
 
-A single, smooth-scrolling page with these sections:
+**Home (`index.html`)** — a smooth-scrolling page with:
 
-1. **Hero** — temple name in English + Hindi, a Sanskrit shloka, a lit diya, and
-   clear calls to action.
+1. **Hero** — temple name in English + Hindi, a Sanskrit shloka, a lit diya, the
+   temple slogan ("Serving Devotees · Spreading Peace · Changing Lives"), and
+   "Established 2004".
 2. **Welcome** — who the temple is and who it serves.
 3. **Our Deities** — ornate gold-arched niches for each murti (photo-ready).
-4. **Timings** — weekly darshan hours (today's row highlights automatically) and
-   daily aarti.
-5. **Poojas & Sevas** — the ceremonies the priest performs, at temple and at home.
-6. **Festivals** — the year's major celebrations, with a live countdown to the
-   next one.
-7. **Our Priest** — a feature on the head priest (photo-ready).
-8. **Support / Daan** — a donation call to action.
-9. **Visit** — address, phone, live "open now" status, and an embedded map.
+4. **Timings** — weekly darshan hours (today's row highlights automatically; Tue
+   until 8:30 PM), daily aarti, and the Tuesday 6:30 PM satsang.
+5. **Poojas & Sevas** — the ceremonies the priest performs, linking to full prices.
+6. **Festivals** — the year's major celebrations, with a live countdown, linking
+   to the full calendar.
+7. **Weekly Satsang** — the Tuesday Hanuman Chalisa & Ramayana Path, with a
+   WhatsApp group join.
+8. **Our Priest** — Pandit Rakesh Bhargav ji, including astrology/palmistry
+   credentials and links (photo-ready).
+9. **Support / Daan** — donation CTA, the five giving funds, monthly giving, and
+   "sponsor an event".
+10. **Temple Shop** — malas, small murtis, and puja supplies.
+11. **Visit** — address, phone, live "open now" status, socials, and a map.
+
+**Poojas & Prices (`puja-services.html`)** — every ceremony with its price, an
+English description, and a clear Pandit Dakshina / Temple / Supplies breakdown,
+plus astrology (kundli, palm reading) and a booking-availability note.
+
+**Events (`events.html`)** — the weekly satsang, programs for all ages (music,
+Hindi, youth, bhajan/kirtan, annadanam), festival info, WhatsApp join, and
+volunteering.
+
+**Festival Calendar (`calendar.html`)** — the full 2026 and 2027 festivals with a
+live countdown to the next celebration.
 
 ## Live, no-maintenance touches
 
@@ -64,24 +87,61 @@ follows.
 
 ## Things to confirm / fill in before going live
 
-Search `index.html` for `TODO` and `NOTE` comments. The key ones:
+These come straight from the Pandit's meeting notes. Search the `.html` files for
+`TODO`/`NOTE` comments too.
 
-- [ ] **Priest's name & spelling** — currently "Pandit Rakesh Bhargav ji" from
-      public listings; please confirm.
-- [ ] **Add the priest's photo** (`assets/img/priest-panditji.jpg`).
-- [ ] **Deity & temple photos** — each deity niche currently shows an original
-      gold emblem (bow & arrow, trishul, lotus, gada, the elephant form, flute &
-      feather). Drop in the temple's own murti photos to replace them when ready
-      (see `assets/img/README.md`).
-- [ ] **Confirm aarti times** and any festival dates.
-- [ ] **Donation details** — the "Make a Donation" button opens a working popup
-      (Zelle / PayPal / Venmo / mail-a-check + suggested amounts). Fill in the
-      temple's real handles in the `DONATION` block at the top of
-      `assets/js/temple.js`, then set `setupNotice:false`.
+**Still needed from the Pandit (he's sending these):**
 
-The address `595 School Street, Pittsburg, CA 94565`, phone numbers, hours, and
-the Facebook link are taken from the temple's public listings — please give them
-a final check.
+- [ ] **A new photo of Pandit ji** (`assets/img/priest-panditji.jpg`).
+- [ ] **Photos of all the murtis** — each deity niche currently shows an original
+      gold emblem; drop in the temple's own murti photos when ready (see
+      `assets/img/README.md`). A temple/altar photo can go in the Welcome frame.
+- [ ] **Event photos** — pull recent event photos from the temple's Facebook to
+      feature on `events.html`.
+
+**Handles & links to confirm (placeholders are in place):**
+
+- [ ] **Real payment handles** — the donation popup is wired for Zelle / PayPal /
+      Venmo / mail-a-check. Fill in the temple's real handles in the `DONATION`
+      block at the top of `assets/js/temple.js`, then set `setupNotice:false`.
+      (Recurring "monthly seva" and event sponsorship currently route through the
+      same popup / a phone call — add a real recurring link when you have one.)
+- [ ] **Instagram handle** — links currently point to
+      `instagram.com/eastbayhindutemple`; confirm the real handle (and Pandit
+      ji's own FB/IG if you want them linked too — `panditbhargavji.com` is live).
+- [ ] **WhatsApp group** — the "Join our WhatsApp Group" buttons open a chat with
+      the temple number to request the invite. Swap in the real group invite link
+      (`chat.whatsapp.com/...`) when you have it.
+
+**Confirm the facts (taken from the flyers / public listings):**
+
+- [ ] **Primary phone is now (925) 812-0581** everywhere (Pandit Rakesh Bhargav),
+      matching all the temple's flyers. The old `(925) 252-0551` was removed — add
+      it back if it's a separate, valid temple line. **(925) 695-4200 (Rama ji)**
+      is listed for seva/volunteering.
+- [ ] **Hours** — Tuesday now shows 10 AM–8:30 PM (per the hours poster); a note
+      says festival hours differ.
+- [ ] **Puja prices** — entered from the Pandit's notes; give them a final check.
+- [ ] **Confirm aarti times** and festival dates (2026 & 2027 are per the temple
+      calendar; dates follow the Hindu calendar, PST/PDT).
+
+## Regenerating preview.html
+
+`preview.html` inlines `temple.css` and `temple.js` into the home page. After
+editing `index.html`, `assets/css/temple.css`, or `assets/js/temple.js`, rebuild
+it from this folder:
+
+```sh
+node --input-type=module -e '
+import { readFileSync, writeFileSync } from "node:fs";
+let h = readFileSync("index.html","utf8");
+h = h.replace(/<link rel="stylesheet" href="assets\/css\/temple.css" \/>/,
+  "<style>\n"+readFileSync("assets/css/temple.css","utf8")+"\n</style>");
+h = h.replace(/<script src="assets\/js\/temple.js" defer><\/script>/,
+  "<script>\n"+readFileSync("assets/js/temple.js","utf8")+"\n</script>");
+writeFileSync("preview.html", h);
+'
+```
 
 ## Hosting — important note about Wix
 

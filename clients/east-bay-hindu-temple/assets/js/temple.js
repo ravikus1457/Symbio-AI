@@ -28,7 +28,7 @@
   var HOURS = {
     0: [10, 16], // Sunday
     1: [10, 16], // Monday
-    2: [10, 20], // Tuesday
+    2: [10, 20.5], // Tuesday — until 8:30 PM (Hanuman Chalisa & Ramayana Path 6:30 PM)
     3: null, // Wednesday — closed
     4: null, // Thursday — closed
     5: [10, 16], // Friday
@@ -36,17 +36,35 @@
   };
 
   /* Upcoming festivals. Dates are [year, monthIndex(0-11), day]. Keep this
-     list in date order; the script highlights the next one automatically.
+     list in date order; the script highlights the next one automatically and
+     the home-page countdown uses `name` when a festival has no card on the
+     current page (e.g. the 2027 dates below only appear on calendar.html).
      Always confirm exact dates with the temple — they can shift by a day. */
   var FESTIVALS = [
-    { id: "shivaratri", date: [2026, 1, 15] },
-    { id: "holi", date: [2026, 2, 3] },
-    { id: "ramnavami", date: [2026, 2, 26] },
-    { id: "hanuman", date: [2026, 3, 2] },
-    { id: "janmashtami", date: [2026, 8, 4] },
-    { id: "ganesh", date: [2026, 8, 14] },
-    { id: "navratri", date: [2026, 9, 11] },
-    { id: "diwali", date: [2026, 10, 8] },
+    // 2026
+    { id: "shivaratri", name: "Maha Shivaratri", date: [2026, 1, 15] },
+    { id: "holi", name: "Holi", date: [2026, 2, 3] },
+    { id: "ramnavami", name: "Ram Navami", date: [2026, 2, 26] },
+    { id: "hanuman", name: "Hanuman Jayanti", date: [2026, 3, 2] },
+    { id: "janmashtami", name: "Krishna Janmashtami", date: [2026, 8, 4] },
+    { id: "ganesh", name: "Ganesh Chaturthi", date: [2026, 8, 14] },
+    { id: "navratri", name: "Sharad Navratri", date: [2026, 9, 11] },
+    { id: "diwali", name: "Diwali & Lakshmi Pooja", date: [2026, 10, 8] },
+    // 2027 (per the temple's 2027 festival calendar — see calendar.html)
+    { id: "makar-2027", name: "Makar Sankranti", date: [2027, 0, 14] },
+    { id: "shivaratri-2027", name: "Maha Shivaratri", date: [2027, 1, 11] },
+    { id: "holi-2027", name: "Holi", date: [2027, 1, 27] },
+    { id: "ramnavami-2027", name: "Ram Navami", date: [2027, 2, 28] },
+    { id: "navratri-chaitra-2027", name: "Chaitra Navratri", date: [2027, 3, 10] },
+    { id: "hanuman-2027", name: "Hanuman Jayanti", date: [2027, 3, 14] },
+    { id: "buddha-2027", name: "Buddha Purnima", date: [2027, 4, 25] },
+    { id: "guru-purnima-2027", name: "Guru Purnima", date: [2027, 6, 5] },
+    { id: "rakhi-2027", name: "Raksha Bandhan", date: [2027, 7, 16] },
+    { id: "janmashtami-2027", name: "Krishna Janmashtami", date: [2027, 8, 6] },
+    { id: "ganesh-2027", name: "Ganesh Chaturthi", date: [2027, 8, 11] },
+    { id: "navratri-2027", name: "Sharad Navratri", date: [2027, 9, 8] },
+    { id: "dussehra-2027", name: "Dussehra", date: [2027, 9, 17] },
+    { id: "diwali-2027", name: "Diwali & Lakshmi Pooja", date: [2027, 10, 4] },
   ];
 
   /* Donation methods. Fill these with the temple's REAL handles to activate each
@@ -67,10 +85,12 @@
   };
 
   function fmtTime(hour24) {
-    var period = hour24 >= 12 ? "PM" : "AM";
-    var h = hour24 % 12;
+    var whole = Math.floor(hour24);
+    var mins = Math.round((hour24 - whole) * 60);
+    var period = whole >= 12 ? "PM" : "AM";
+    var h = whole % 12;
     if (h === 0) h = 12;
-    return h + " " + period;
+    return h + (mins ? ":" + (mins < 10 ? "0" + mins : mins) : "") + " " + period;
   }
 
   /* ---- 2. Mobile menu -------------------------------------------------- */
@@ -203,7 +223,7 @@
       var f = FESTIVALS[i];
       var d = new Date(f.date[0], f.date[1], f.date[2]);
       if (d >= today) {
-        next = { id: f.id, date: d };
+        next = { id: f.id, name: f.name, date: d };
         break;
       }
     }
@@ -212,8 +232,9 @@
     var card = document.querySelector('[data-festival="' + next.id + '"]');
     // Read the festival name BEFORE injecting the badge — the badge lives inside
     // .festival__name, so reading after would fold "Next celebration" into the name.
+    // Fall back to the data name when the festival has no card on this page.
     var nameEl = card ? card.querySelector(".festival__name") : null;
-    var name = nameEl ? nameEl.textContent.trim() : "our next festival";
+    var name = nameEl ? nameEl.textContent.trim() : next.name || "our next festival";
 
     if (card) {
       card.classList.add("festival--next");

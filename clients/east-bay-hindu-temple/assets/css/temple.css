@@ -1832,3 +1832,472 @@ ul {
   padding: 0.4rem 0.8rem;
   white-space: nowrap;
 }
+
+/* -------------------------------------------------------------------------
+   22. Page hero (sub-pages: Poojas, Events, Calendar)
+   ------------------------------------------------------------------------- */
+.page-hero {
+  position: relative;
+  background: var(--grad-red);
+  color: var(--on-red);
+  text-align: center;
+  padding: clamp(2.6rem, 6vw, 4.4rem) 0 clamp(2.4rem, 5vw, 3.6rem);
+  border-bottom: 4px solid var(--gold);
+  overflow: hidden;
+}
+
+.page-hero__inner {
+  position: relative;
+  z-index: 1;
+  max-width: 720px;
+  margin-inline: auto;
+}
+
+.page-hero .eyebrow {
+  color: var(--gold-bright);
+  justify-content: center;
+}
+
+.page-hero .eyebrow::before {
+  background: var(--gold);
+}
+
+.page-hero__title {
+  font-size: var(--fs-800);
+  color: #fff;
+  line-height: var(--lh-tight);
+}
+
+.page-hero__lead {
+  margin-top: var(--space-4);
+  color: var(--on-red-soft);
+  font-size: var(--fs-500);
+}
+
+.page-hero .hero__mandala {
+  color: var(--gold-bright);
+  opacity: 0.14;
+}
+
+/* Breadcrumb-ish "back home" link on sub-pages */
+.page-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: var(--fs-300);
+  font-weight: 600;
+  color: var(--gold-bright);
+}
+
+.page-back:hover {
+  color: #fff;
+}
+
+/* -------------------------------------------------------------------------
+   23. Pricing cards (puja breakdown)
+   ------------------------------------------------------------------------- */
+.price-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--cream);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease),
+    border-color var(--dur) var(--ease);
+}
+
+.price-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--gold);
+}
+
+.price-card__head {
+  padding: var(--space-5) var(--space-5) var(--space-4);
+  border-bottom: 1px solid var(--line);
+}
+
+.price-card__name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--fs-600);
+  color: var(--red);
+  line-height: var(--lh-snug);
+}
+
+.price-card__deva {
+  font-family: var(--font-deva);
+  color: var(--gold-deep);
+  font-size: 1rem;
+  margin-top: 0.1rem;
+}
+
+.price-card__desc {
+  flex: 1;
+  padding: var(--space-4) var(--space-5) 0;
+  font-size: var(--fs-300);
+  color: var(--ink-soft);
+}
+
+.price-breakdown {
+  padding: var(--space-4) var(--space-5) var(--space-5);
+}
+
+.price-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: 0.45rem 0;
+  font-size: var(--fs-300);
+  border-bottom: 1px dashed rgba(200, 155, 60, 0.4);
+}
+
+.price-line__label {
+  color: var(--ink-soft);
+}
+
+.price-line__val {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.price-line--total {
+  border-bottom: 0;
+  border-top: 2px solid var(--gold);
+  margin-top: 0.35rem;
+  padding-top: 0.7rem;
+}
+
+.price-line--total .price-line__label {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.price-line--total .price-line__val {
+  color: var(--red);
+  font-size: var(--fs-600);
+}
+
+.price-flat {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--red);
+  font-size: var(--fs-700);
+  line-height: 1;
+}
+
+.price-flat small {
+  display: block;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--fs-200);
+  letter-spacing: 0.02em;
+  color: var(--ink-soft);
+  margin-top: 0.35rem;
+}
+
+.price-badge {
+  display: inline-block;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #3a1402;
+  background: var(--grad-gold);
+  padding: 0.16rem 0.55rem;
+  border-radius: var(--radius-pill);
+  margin-top: 0.5rem;
+}
+
+/* -------------------------------------------------------------------------
+   24. Info note / callout (booking availability, supplies, etc.)
+   ------------------------------------------------------------------------- */
+.info-note {
+  background: rgba(200, 155, 60, 0.12);
+  border: 1px solid rgba(200, 155, 60, 0.35);
+  border-left: 4px solid var(--gold);
+  border-radius: var(--radius);
+  padding: var(--space-5) var(--space-6);
+}
+
+.info-note__title {
+  font-family: var(--font-display);
+  font-size: var(--fs-600);
+  color: var(--red);
+  margin-bottom: 0.35rem;
+}
+
+.info-note p {
+  color: var(--ink-soft);
+  font-size: var(--fs-300);
+}
+
+.info-note--red {
+  background: rgba(253, 246, 232, 0.08);
+  border-color: rgba(241, 207, 122, 0.28);
+  border-left-color: var(--gold);
+}
+
+.section--red .info-note__title {
+  color: var(--gold-bright);
+}
+
+.section--red .info-note p {
+  color: var(--on-red-soft);
+}
+
+/* -------------------------------------------------------------------------
+   25. Featured event band (weekly satsang) + event rows
+   ------------------------------------------------------------------------- */
+.event-feature {
+  position: relative;
+  display: grid;
+  gap: var(--space-5);
+  align-items: center;
+  background: var(--grad-red);
+  color: var(--on-red);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--gold);
+  padding: clamp(1.8rem, 4vw, 3rem);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+@media (min-width: 760px) {
+  .event-feature {
+    grid-template-columns: auto 1fr;
+    gap: var(--space-7);
+  }
+}
+
+.event-feature__when {
+  text-align: center;
+  flex: none;
+}
+
+.event-feature__day {
+  font-family: var(--font-display);
+  font-size: var(--fs-800);
+  font-weight: 700;
+  color: var(--gold-bright);
+  line-height: 1;
+}
+
+.event-feature__time {
+  display: block;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: var(--fs-300);
+  color: #fff;
+  margin-top: 0.4rem;
+}
+
+.event-feature__title {
+  font-size: var(--fs-700);
+  color: #fff;
+}
+
+.event-feature__deva {
+  font-family: var(--font-deva);
+  color: var(--gold-bright);
+  font-size: 1.1rem;
+  margin-top: 0.2rem;
+}
+
+.event-feature__text {
+  color: var(--on-red-soft);
+  margin-top: var(--space-3);
+  max-width: 52ch;
+}
+
+.event-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: var(--space-4);
+}
+
+.event-tag {
+  font-size: var(--fs-200);
+  font-weight: 700;
+  padding: 0.3rem 0.8rem;
+  border-radius: var(--radius-pill);
+  background: rgba(241, 207, 122, 0.16);
+  color: var(--gold-bright);
+  border: 1px solid rgba(241, 207, 122, 0.32);
+}
+
+/* -------------------------------------------------------------------------
+   26. Shop items (mini gift shop)
+   ------------------------------------------------------------------------- */
+.shop-item {
+  text-align: center;
+}
+
+.shop-item__art {
+  display: grid;
+  place-items: center;
+  width: 68px;
+  height: 68px;
+  margin: 0 auto var(--space-4);
+  border-radius: 18px;
+  background: var(--grad-gold);
+  color: var(--red-deep);
+  box-shadow: var(--shadow-gold);
+}
+
+.shop-item__art svg {
+  width: 34px;
+  height: 34px;
+}
+
+.card__tag {
+  display: inline-block;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--gold-deep);
+  background: rgba(200, 155, 60, 0.16);
+  padding: 0.16rem 0.55rem;
+  border-radius: var(--radius-pill);
+  margin-bottom: var(--space-3);
+}
+
+.card__meta {
+  margin-top: var(--space-4);
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--red);
+  font-size: var(--fs-500);
+}
+
+/* -------------------------------------------------------------------------
+   27. Social links
+   ------------------------------------------------------------------------- */
+.social-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: var(--space-4);
+}
+
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.95rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--line-strong);
+  background: var(--cream);
+  color: var(--ink);
+  font-weight: 600;
+  font-size: var(--fs-300);
+}
+
+.social-link svg {
+  width: 18px;
+  height: 18px;
+}
+
+.social-link:hover {
+  border-color: var(--gold);
+  color: var(--red);
+  background: rgba(200, 155, 60, 0.1);
+}
+
+.section--red .social-link,
+.seva-band .social-link {
+  background: rgba(253, 246, 232, 0.08);
+  border-color: rgba(241, 207, 122, 0.32);
+  color: var(--on-red);
+}
+
+.section--red .social-link:hover,
+.seva-band .social-link:hover {
+  color: #fff;
+  border-color: var(--gold-bright);
+}
+
+/* Footer social row */
+.site-footer .social-links {
+  margin-top: var(--space-5);
+}
+
+.site-footer .social-link {
+  background: rgba(253, 246, 232, 0.06);
+  border-color: rgba(241, 207, 122, 0.22);
+  color: var(--on-red-soft);
+}
+
+.site-footer .social-link:hover {
+  color: var(--gold-bright);
+  border-color: var(--gold-bright);
+}
+
+/* -------------------------------------------------------------------------
+   28. Hero slogan + established tag
+   ------------------------------------------------------------------------- */
+.hero__slogan {
+  margin-top: var(--space-5);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--fs-500);
+  color: var(--gold-deep);
+}
+
+.hero__est {
+  display: inline-block;
+  margin-top: var(--space-4);
+  font-size: var(--fs-200);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--gold-deep);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  padding: 0.3rem 0.9rem;
+}
+
+/* Two-column split used on Events / Calendar intros */
+.split {
+  display: grid;
+  gap: var(--space-6);
+}
+
+@media (min-width: 860px) {
+  .split--events {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   29. Chips (service tags on the priest feature)
+   ------------------------------------------------------------------------- */
+.audience {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.chip {
+  display: inline-block;
+  font-size: var(--fs-200);
+  font-weight: 600;
+  padding: 0.35rem 0.8rem;
+  border-radius: var(--radius-pill);
+  background: rgba(200, 155, 60, 0.14);
+  border: 1px solid var(--line-strong);
+  color: var(--ink-soft);
+}

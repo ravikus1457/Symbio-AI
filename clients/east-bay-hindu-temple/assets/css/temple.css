@@ -1357,6 +1357,11 @@ ul {
   aspect-ratio: 4 / 5;
 }
 
+/* The welcome frame holds the wide temple exterior photo. */
+.welcome__media .framed__inner {
+  aspect-ratio: 3 / 2;
+}
+
 .priest__name {
   font-size: var(--fs-700);
   color: var(--red);

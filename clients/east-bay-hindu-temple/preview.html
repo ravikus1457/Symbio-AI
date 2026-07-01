@@ -1389,6 +1389,11 @@ ul {
   aspect-ratio: 4 / 5;
 }
 
+/* The welcome frame holds the wide temple exterior photo. */
+.welcome__media .framed__inner {
+  aspect-ratio: 3 / 2;
+}
+
 .priest__name {
   font-size: var(--fs-700);
   color: var(--red);
@@ -3327,9 +3332,7 @@ ul {
     <div class="temple-border" aria-hidden="true"></div>
 
     <!-- NOTE: preview.html is a single-file build of the HOME page (CSS + core JS
-         inlined; the assistant + images load as siblings). The full multi-page
-         site is index.html + puja-services/events/calendar. Regenerate after
-         editing index.html/temple.css/temple.js. -->
+         inlined; the assistant + images load as siblings). -->
     <!-- ===== Top bar ===================================================== -->
     <div class="topbar">
       <div class="container topbar__inner">
@@ -3487,10 +3490,13 @@ ul {
             <div class="welcome__media" data-reveal data-reveal-delay="1">
               <div class="framed">
                 <div class="framed__inner">
-                  <!-- TODO: replace with a real photo of the temple / main altar.
-                       Drop a file at assets/img/temple-altar.jpg and swap the
-                       placeholder below for:
-                       <img src="assets/img/temple-altar.jpg" alt="The main altar at East Bay Hindu Temple" /> -->
+                  <img
+                    class="framed__photo"
+                    src="assets/img/temple-welcome.jpg"
+                    alt="East Bay Hindu Temple on School Street, Pittsburg, California, at golden hour"
+                    loading="lazy"
+                    onerror="this.remove()"
+                  />
                   <div class="photo-slot">
                     <span class="photo-slot__om deva">ॐ</span>
                     <span class="photo-slot__label">Temple photo</span>

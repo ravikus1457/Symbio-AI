@@ -22,9 +22,13 @@ east-bay-hindu-temple/
 ├── assets/
 │   ├── css/temple.css        ← the design system (colours, type, layout)
 │   ├── js/temple.js          ← live bits: open-now status, festival countdown,
-│   │                            mobile menu, reveal-on-scroll
+│   │                            mobile menu, reveal-on-scroll, donation popup
+│   ├── js/temple-assistant.js ← the Temple Assistant chatbot (self-contained)
 │   └── img/
 │       ├── logo-temple.svg   ← temple mark / favicon
+│       ├── priest-panditji.jpg ← the head priest's photo
+│       ├── pay/              ← Venmo / PayPal / Zelle payment QR codes
+│       ├── flyers/           ← the temple's poster flyers (calendar, hours, …)
 │       └── README.md         ← how to add deity & priest photos
 ├── wix-studio/              ← Wix Studio migration kit (palette, CSS, embeds)
 │   ├── README.md             ← step-by-step build playbook
@@ -84,6 +88,17 @@ These update themselves — no one has to edit the page for them:
 The opening hours and festival dates live at the top of
 `assets/js/temple.js` (clearly commented) — edit them there and the whole page
 follows.
+
+### Temple Assistant (chatbot)
+
+A small floating "Ask us" assistant appears on every page (`assets/js/temple-assistant.js`).
+It answers common questions — hours & "open now", pooja prices, donations,
+festivals (including the next one and specific dates), events, the priest, the
+shop, and directions — entirely in the browser, with no server or API key. It's
+a knowledge-based helper (not a live person), and every answer points to the
+right page or the phone number. To update what it knows, edit the clearly
+labelled facts at the top of that file (phone, hours, festivals, prices); they
+mirror the rest of the site.
 
 ## Things to confirm / fill in before going live
 

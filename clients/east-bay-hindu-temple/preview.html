@@ -295,6 +295,14 @@ ul {
   color: #fff;
 }
 
+/* Cards keep their own light (cream) surface even inside a red section, so their
+   titles — which are <h3> — must stay dark for contrast. Without this, the rule
+   above washes them out to white on cream (e.g. the astrology price cards). */
+.section--red .price-card__name,
+.section--red .card__title {
+  color: var(--red);
+}
+
 .section--cream {
   background: var(--grad-cream);
 }

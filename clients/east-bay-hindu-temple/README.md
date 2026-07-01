@@ -113,8 +113,8 @@ These come straight from the Pandit's meeting notes. Search the `.html` files fo
       gold emblem; drop in the temple's own murti photos when ready (see
       `assets/img/README.md`).
 - [x] **Temple exterior in the Welcome frame** — `assets/img/temple-welcome.jpg`,
-      a golden-hour colour-grade of the temple's Google Street View photo. Swap in
-      a nicer temple/altar photo anytime (keep the same filename).
+      a sunset photograph of the temple (provided by the temple). Swap in a
+      different photo anytime by replacing that file (keep the same 3:2-ish crop).
 - [ ] **Event photos** — pull recent event photos from the temple's Facebook to
       feature on `events.html`.
 

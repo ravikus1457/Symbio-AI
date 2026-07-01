@@ -2301,3 +2301,43 @@ ul {
   border: 1px solid var(--line-strong);
   color: var(--ink-soft);
 }
+
+/* -------------------------------------------------------------------------
+   30. Donation — scannable payment QR codes
+   ------------------------------------------------------------------------- */
+.give-block {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.give-qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.9rem;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.give-qr__link {
+  display: block;
+  line-height: 0;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.give-qr__img {
+  width: 172px;
+  height: 172px;
+  object-fit: contain;
+  display: block;
+}
+
+.give-qr__cap {
+  font-size: var(--fs-200);
+  color: var(--ink-soft);
+  font-weight: 600;
+  text-align: center;
+}

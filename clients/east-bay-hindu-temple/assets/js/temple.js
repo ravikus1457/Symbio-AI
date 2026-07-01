@@ -82,6 +82,16 @@
     venmo: "EastBayHinduTemple",
     paypal: "REPLACE",
     mailingAddress: "East Bay Hindu Temple, 595 School Street, Pittsburg, CA 94565",
+
+    /* Scannable payment QR codes. Drop the temple's real QR images at the paths
+       below and they appear in the donation popup for one-tap scanning — this is
+       how most devotees will give, and it works for PayPal / Zelle even before
+       their handle/link is filled in above. Any file that isn't present is
+       hidden automatically, so leaving a path here is harmless. Set to "" to
+       omit a code entirely. */
+    venmoQr: "assets/img/pay/venmo-qr.png",
+    paypalQr: "assets/img/pay/paypal-qr.png",
+    zelleQr: "assets/img/pay/zelle-qr.png",
   };
 
   function fmtTime(hour24) {
@@ -273,11 +283,17 @@
       return v && v !== "REPLACE" && String(v).trim() !== "";
     }
 
-    if (
-      DONATION.setupNotice &&
-      setupEl &&
-      (!isSet(DONATION.venmo) || !isSet(DONATION.paypal) || !isSet(DONATION.zelle))
-    ) {
+    // Only nudge for setup when there is genuinely no way to give yet — i.e. no
+    // handle is set and no QR code is configured. A single working method (e.g.
+    // Venmo, or any scannable QR) is enough to hide the notice.
+    var canGive =
+      isSet(DONATION.venmo) ||
+      isSet(DONATION.paypal) ||
+      isSet(DONATION.zelle) ||
+      DONATION.venmoQr ||
+      DONATION.paypalQr ||
+      DONATION.zelleQr;
+    if (DONATION.setupNotice && setupEl && !canGive) {
       setupEl.hidden = false;
     }
 
@@ -328,6 +344,9 @@
     }
 
     function buildMethod(o) {
+      var block = document.createElement("div");
+      block.className = "give-block";
+
       var row = document.createElement("div");
       row.className = "give-method";
 
@@ -349,36 +368,73 @@
       main.appendChild(nm);
       main.appendChild(dt);
 
-      var act = document.createElement("div");
-      act.className = "give-method__action";
-      if (o.action.type === "link") {
-        var a = document.createElement("a");
-        a.className = "btn btn--primary";
-        a.href = o.action.href;
-        a.target = "_blank";
-        a.rel = "noopener";
-        a.textContent = o.action.label;
-        act.appendChild(a);
-      } else if (o.action.type === "copy") {
-        var cb = document.createElement("button");
-        cb.type = "button";
-        cb.className = "btn btn--ghost";
-        cb.textContent = o.action.label;
-        cb.addEventListener("click", function () {
-          copyText(o.action.value, cb);
-        });
-        act.appendChild(cb);
-      } else {
-        var span = document.createElement("span");
-        span.className = "give-method__disabled";
-        span.textContent = o.action.label;
-        act.appendChild(span);
-      }
-
       row.appendChild(icon);
       row.appendChild(main);
-      row.appendChild(act);
-      return row;
+
+      if (o.action) {
+        var act = document.createElement("div");
+        act.className = "give-method__action";
+        if (o.action.type === "link") {
+          var a = document.createElement("a");
+          a.className = "btn btn--primary";
+          a.href = o.action.href;
+          a.target = "_blank";
+          a.rel = "noopener";
+          a.textContent = o.action.label;
+          act.appendChild(a);
+        } else if (o.action.type === "copy") {
+          var cb = document.createElement("button");
+          cb.type = "button";
+          cb.className = "btn btn--ghost";
+          cb.textContent = o.action.label;
+          cb.addEventListener("click", function () {
+            copyText(o.action.value, cb);
+          });
+          act.appendChild(cb);
+        } else {
+          var span = document.createElement("span");
+          span.className = "give-method__disabled";
+          span.textContent = o.action.label;
+          act.appendChild(span);
+        }
+        row.appendChild(act);
+      }
+
+      block.appendChild(row);
+
+      // Optional scannable QR code. If the image is missing the whole panel is
+      // removed on error, so an unset/placeholder path never shows a broken img.
+      if (o.qr) {
+        var panel = document.createElement("div");
+        panel.className = "give-qr";
+        var link = document.createElement("a");
+        link.className = "give-qr__link";
+        link.href = o.qr;
+        link.target = "_blank";
+        link.rel = "noopener";
+        var img = document.createElement("img");
+        img.className = "give-qr__img";
+        img.src = o.qr;
+        img.alt = "QR code to pay with " + o.name;
+        img.loading = "lazy";
+        img.addEventListener("error", function () {
+          panel.remove();
+        });
+        // Only promise "scan below" once the code has actually loaded, so a
+        // missing/placeholder image never leaves a misleading instruction.
+        img.addEventListener("load", function () {
+          if (o.qrDetail) dt.textContent = o.qrDetail;
+        });
+        link.appendChild(img);
+        var cap = document.createElement("span");
+        cap.className = "give-qr__cap";
+        cap.textContent = "Scan with your phone to pay with " + o.name;
+        panel.appendChild(link);
+        panel.appendChild(cap);
+        block.appendChild(panel);
+      }
+
+      return block;
     }
 
     function renderMethods() {
@@ -392,7 +448,9 @@
           detail: isSet(DONATION.venmo) ? "@" + DONATION.venmo : "Coming soon — ask the temple",
           action: isSet(DONATION.venmo)
             ? { type: "link", href: venmoUrl(), label: "Open Venmo" }
-            : { type: "disabled", label: "Setup" },
+            : null,
+          qr: DONATION.venmoQr,
+          qrDetail: isSet(DONATION.venmo) ? null : "Scan the code below to give",
         })
       );
 
@@ -403,7 +461,9 @@
           detail: isSet(DONATION.paypal) ? "Secure online giving" : "Coming soon — ask the temple",
           action: isSet(DONATION.paypal)
             ? { type: "link", href: paypalUrl(), label: "Give with PayPal" }
-            : { type: "disabled", label: "Setup" },
+            : null,
+          qr: DONATION.paypalQr,
+          qrDetail: isSet(DONATION.paypal) ? null : "Scan the code below to give",
         })
       );
 
@@ -416,7 +476,9 @@
             : "Coming soon — ask the temple",
           action: isSet(DONATION.zelle)
             ? { type: "copy", value: DONATION.zelle, label: "Copy" }
-            : { type: "disabled", label: "Setup" },
+            : null,
+          qr: DONATION.zelleQr,
+          qrDetail: isSet(DONATION.zelle) ? null : "Scan the code below to give",
         })
       );
 

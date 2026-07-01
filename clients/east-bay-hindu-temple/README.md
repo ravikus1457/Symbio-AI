@@ -99,19 +99,23 @@ These come straight from the Pandit's meeting notes. Search the `.html` files fo
 - [ ] **Event photos** — pull recent event photos from the temple's Facebook to
       feature on `events.html`.
 
-**Handles & links to confirm (placeholders are in place):**
+**Payments — what's done and what's left:**
 
-- [ ] **Real payment handles** — the donation popup is wired for Zelle / PayPal /
-      Venmo / mail-a-check. Fill in the temple's real handles in the `DONATION`
-      block at the top of `assets/js/temple.js`, then set `setupNotice:false`.
-      (Recurring "monthly seva" and event sponsorship currently route through the
-      same popup / a phone call — add a real recurring link when you have one.)
+- [x] **Venmo is live** — `@EastBayHinduTemple` (from the temple's QR sheet). The
+      "Open Venmo" button works.
+- [x] **WhatsApp group is live** — the "Join our WhatsApp Group" buttons use the
+      real invite link (`chat.whatsapp.com/L7b2cV31LiNAMih8pO4E7F`).
+- [ ] **PayPal & Zelle QR codes** — the donation popup shows a scannable QR for
+      each method when the image is present. Drop the temple's codes at
+      `assets/img/pay/paypal-qr.png` and `assets/img/pay/zelle-qr.png` (paths are
+      already wired; see `assets/img/pay/README.md`). Optionally also fill the
+      `paypal`/`zelle` handles in the `DONATION` block of `assets/js/temple.js` to
+      enable the tappable buttons too. (Recurring "monthly seva" and event
+      sponsorship route through the popup / a phone call — add a real recurring
+      link when you have one.)
 - [ ] **Instagram handle** — links currently point to
       `instagram.com/eastbayhindutemple`; confirm the real handle (and Pandit
       ji's own FB/IG if you want them linked too — `panditbhargavji.com` is live).
-- [ ] **WhatsApp group** — the "Join our WhatsApp Group" buttons open a chat with
-      the temple number to request the invite. Swap in the real group invite link
-      (`chat.whatsapp.com/...`) when you have it.
 
 **Confirm the facts (taken from the flyers / public listings):**
 

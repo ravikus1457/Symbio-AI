@@ -2465,12 +2465,15 @@ ul {
                donate URL ("https://www.paypal.com/donate/?hosted_button_id=...")
      Leave a value as "REPLACE" (or empty) to show it as "coming soon". */
   var DONATION = {
-    setupNotice: true,
+    setupNotice: false,
     presets: [51, 101, 251, 501, 1100],
-    zelle: "REPLACE",
-    zelleName: "East Bay Hindu Temple",
+    // Zelle is registered to the temple's phone (see the temple's Zelle QR).
+    zelle: "(925) 812-0581",
+    zelleName: "Pandit Rakesh Bhargav Religious Services",
     venmo: "EastBayHinduTemple",
-    paypal: "REPLACE",
+    // PayPal is scan-only: the temple's PayPal QR encodes an in-app code, not a
+    // web link, so there's no tappable button — the QR below is the way to give.
+    paypal: "",
     mailingAddress: "East Bay Hindu Temple, 595 School Street, Pittsburg, CA 94565",
 
     /* Scannable payment QR codes. Drop the temple's real QR images at the paths

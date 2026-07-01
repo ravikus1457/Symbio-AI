@@ -92,7 +92,8 @@ These come straight from the Pandit's meeting notes. Search the `.html` files fo
 
 **Still needed from the Pandit (he's sending these):**
 
-- [ ] **A new photo of Pandit ji** (`assets/img/priest-panditji.jpg`).
+- [x] **Pandit ji's photo** — added at `assets/img/priest-panditji.jpg` and shown
+      in the priest section.
 - [ ] **Photos of all the murtis** — each deity niche currently shows an original
       gold emblem; drop in the temple's own murti photos when ready (see
       `assets/img/README.md`). A temple/altar photo can go in the Welcome frame.
@@ -101,21 +102,22 @@ These come straight from the Pandit's meeting notes. Search the `.html` files fo
 
 **Payments — what's done and what's left:**
 
-- [x] **Venmo is live** — `@EastBayHinduTemple` (from the temple's QR sheet). The
-      "Open Venmo" button works.
+- [x] **Venmo is live** — `@EastBayHinduTemple`. "Open Venmo" button + scannable QR.
+- [x] **Zelle is live** — registered to `(925) 812-0581` ("Pandit Rakesh Bhargav
+      Religious Services"). "Copy" button + scannable QR.
+- [x] **PayPal is live (scan-only)** — the temple's PayPal QR encodes an in-app
+      code, not a web link, so PayPal shows a scannable QR with no tap button.
 - [x] **WhatsApp group is live** — the "Join our WhatsApp Group" buttons use the
       real invite link (`chat.whatsapp.com/L7b2cV31LiNAMih8pO4E7F`).
-- [ ] **PayPal & Zelle QR codes** — the donation popup shows a scannable QR for
-      each method when the image is present. Drop the temple's codes at
-      `assets/img/pay/paypal-qr.png` and `assets/img/pay/zelle-qr.png` (paths are
-      already wired; see `assets/img/pay/README.md`). Optionally also fill the
-      `paypal`/`zelle` handles in the `DONATION` block of `assets/js/temple.js` to
-      enable the tappable buttons too. (Recurring "monthly seva" and event
-      sponsorship route through the popup / a phone call — add a real recurring
-      link when you have one.)
-- [ ] **Instagram handle** — links currently point to
-      `instagram.com/eastbayhindutemple`; confirm the real handle (and Pandit
-      ji's own FB/IG if you want them linked too — `panditbhargavji.com` is live).
+- [x] **Instagram** — confirmed as `instagram.com/eastbayhindutemple`; linked
+      site-wide. (`panditbhargavji.com` is also live in the priest section.)
+- [ ] **Recurring "monthly seva" and event sponsorship** route through the popup /
+      a phone call — add a real recurring link if/when one exists.
+
+> The three payment QR images live in `assets/img/pay/` (`venmo-qr.png`,
+> `paypal-qr.png`, `zelle-qr.png`). Replace them if the temple's payment accounts
+> ever change, and update the matching handles in the `DONATION` block of
+> `assets/js/temple.js`.
 
 **Confirm the facts (taken from the flyers / public listings):**
 

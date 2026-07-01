@@ -2350,3 +2350,64 @@ ul {
   font-weight: 600;
   text-align: center;
 }
+
+/* -------------------------------------------------------------------------
+   31. Flyer / poster gallery
+   ------------------------------------------------------------------------- */
+.poster-wall {
+  column-width: 250px;
+  column-gap: var(--space-5);
+}
+
+.poster {
+  display: inline-block;
+  width: 100%;
+  margin-bottom: var(--space-5);
+  break-inside: avoid;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--cream);
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease),
+    border-color var(--dur) var(--ease);
+}
+
+.poster:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--gold);
+}
+
+.poster img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.poster__cap {
+  padding: 0.7rem 0.9rem;
+  font-size: var(--fs-200);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ink-soft);
+  text-align: center;
+}
+
+/* A single featured poster (e.g. the calendar page's official poster) */
+.poster-feature {
+  max-width: 620px;
+  margin-inline: auto;
+}
+
+.poster-feature .framed__inner {
+  aspect-ratio: auto;
+  display: block;
+}
+
+.poster-feature .framed__inner img {
+  position: static;
+  height: auto;
+}

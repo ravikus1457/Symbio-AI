@@ -506,6 +506,7 @@ ul {
   font-weight: 700;
   font-size: var(--fs-300);
   letter-spacing: 0.01em;
+  white-space: nowrap;
   padding: 0.85rem 1.5rem;
   border: 1px solid transparent;
   border-radius: var(--radius-pill);
@@ -725,6 +726,15 @@ ul {
   font-weight: 600;
   font-size: var(--fs-300);
   color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+/* On desktop the "Book a Pooja" header button is the single call-to-action, so
+   the in-nav CTA pill only appears in the mobile slide-out menu. */
+@media (min-width: 901px) {
+  .site-nav__cta {
+    display: none;
+  }
 }
 
 .site-nav__link:hover,
@@ -3331,8 +3341,7 @@ ul {
 
     <div class="temple-border" aria-hidden="true"></div>
 
-    <!-- NOTE: preview.html is a single-file build of the HOME page (CSS + core JS
-         inlined; the assistant + images load as siblings). -->
+    <!-- NOTE: preview.html is a single-file build of the HOME page. -->
     <!-- ===== Top bar ===================================================== -->
     <div class="topbar">
       <div class="container topbar__inner">
@@ -3492,8 +3501,8 @@ ul {
                 <div class="framed__inner">
                   <img
                     class="framed__photo"
-                    src="assets/img/temple-welcome.jpg"
-                    alt="East Bay Hindu Temple on School Street, Pittsburg, California, at golden hour"
+                    src="assets/img/temple-welcome.jpg?v=2"
+                    alt="East Bay Hindu Temple on School Street, Pittsburg, California, at sunset"
                     loading="lazy"
                     onerror="this.remove()"
                   />

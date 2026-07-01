@@ -474,6 +474,7 @@ ul {
   font-weight: 700;
   font-size: var(--fs-300);
   letter-spacing: 0.01em;
+  white-space: nowrap;
   padding: 0.85rem 1.5rem;
   border: 1px solid transparent;
   border-radius: var(--radius-pill);
@@ -693,6 +694,15 @@ ul {
   font-weight: 600;
   font-size: var(--fs-300);
   color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+/* On desktop the "Book a Pooja" header button is the single call-to-action, so
+   the in-nav CTA pill only appears in the mobile slide-out menu. */
+@media (min-width: 901px) {
+  .site-nav__cta {
+    display: none;
+  }
 }
 
 .site-nav__link:hover,

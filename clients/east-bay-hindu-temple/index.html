@@ -703,10 +703,16 @@
             <div class="priest__media" data-reveal>
               <div class="framed">
                 <div class="framed__inner">
-                  <!-- TODO: add the head priest's photograph here.
-                       Drop the provided photo at assets/img/priest-panditji.jpg
-                       and replace the placeholder below with:
-                       <img src="assets/img/priest-panditji.jpg" alt="Pandit ji, head priest of East Bay Hindu Temple" /> -->
+                  <!-- The head priest's photo. Drop the provided image in at
+                       assets/img/priest-panditji.jpg and it appears here; until
+                       then this falls back to the placeholder below. -->
+                  <img
+                    class="framed__photo"
+                    src="assets/img/priest-panditji.jpg"
+                    alt="Pandit Rakesh Bhargav ji, head priest of East Bay Hindu Temple"
+                    onerror="this.remove()"
+                    style="object-position: 72% top"
+                  />
                   <div class="photo-slot">
                     <span class="photo-slot__om deva">ॐ</span>
                     <span class="photo-slot__label">Pandit ji's photo</span>

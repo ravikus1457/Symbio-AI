@@ -22,7 +22,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Mr+Dafoe&family=Space+Grotesk:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
@@ -64,6 +64,7 @@
           <a href="#studio">Design studio</a>
           <a href="#work">Our work</a>
           <a href="#services">Services</a>
+          <a href="#ambient">Ambient kits</a>
           <a href="#kits">DIY kits</a>
           <a href="#reviews">Reviews</a>
         </nav>
@@ -296,51 +297,156 @@
             </p>
           </div>
 
-          <!--
-            IMAGE SLOTS — Sergio has approved using shop photos/reels.
-            To drop in a real photo: put the file in ./images/ and replace the
-            <div class="tile__media ..."></div> below with:
-              <img class="tile__media" src="images/your-file.jpg"
-                   alt="Short description of the build" loading="lazy" />
-            Keep the alt text (required) and keep images ~1200px wide for crispness.
-          -->
+          <!-- Real shop photos (approved by Sergio) live in ./images/ — see images/README.txt
+               to add more. Every photo opens in the lightbox (wired in app.js). -->
           <div class="gallery">
             <article class="tile tile--tall">
-              <div class="tile__media tile__media--starlight"></div>
+              <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
+                <img
+                  class="tile__media"
+                  src="images/starlight-roof-purple.jpg"
+                  alt="Purple starlight headliner glowing above the front seats of a Mercedes C-Class"
+                  loading="lazy"
+                  width="1400"
+                  height="1867"
+                />
+              </button>
               <div class="tile__body">
                 <span class="tag">Most requested</span>
-                <h3>Gold starlight headliner</h3>
-                <p>Warm fiber map with custom density and an optional shooting-star sweep.</p>
+                <h3>Starlight headliner</h3>
+                <p>Hundreds of individually set fiber stars — density, color, and pattern all custom.</p>
                 <a class="tile__link" href="https://www.instagram.com/bayareaautocustomz/" target="_blank" rel="noopener">View on Instagram</a>
               </div>
             </article>
             <article class="tile">
-              <div class="tile__media tile__media--ambient"></div>
+              <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
+                <img
+                  class="tile__media"
+                  src="images/starlight-white-ice.jpg"
+                  alt="Ice-white starlight headliner over black leather seats in a Mercedes"
+                  loading="lazy"
+                  width="1400"
+                  height="1867"
+                />
+              </button>
               <div class="tile__body">
                 <span class="tag">Night cabin</span>
-                <h3>Ambient interior lighting</h3>
-                <p>Door, dash, and footwell glow with clean color control.</p>
+                <h3>Ice-white starlight</h3>
+                <p>A colder, cleaner star field — subtle by day, unreal at night.</p>
                 <a class="tile__link" href="https://www.tiktok.com/@bayareaautocustomz" target="_blank" rel="noopener">Watch on TikTok</a>
               </div>
             </article>
             <article class="tile">
-              <div class="tile__media tile__media--doors"></div>
+              <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
+                <img
+                  class="tile__media"
+                  src="images/ambient-door-speaker.jpg"
+                  alt="Blue ambient lighting tracing the door panel and glowing speaker grille in a Corvette"
+                  loading="lazy"
+                  width="1400"
+                  height="1867"
+                />
+              </button>
               <div class="tile__body">
-                <span class="tag">Head-turner</span>
-                <h3>Butterfly doors</h3>
-                <p>Vertical door conversions done clean and reliable.</p>
-                <a class="tile__link" href="https://www.instagram.com/bayareaautocustomz/" target="_blank" rel="noopener">See builds</a>
+                <span class="tag">Ambient glow</span>
+                <h3>Ambient interior lighting</h3>
+                <p>Door, dash, and footwell glow with clean color control.</p>
+                <a class="tile__link" href="#ambient">See the ambient kits</a>
               </div>
             </article>
             <article class="tile">
-              <div class="tile__media tile__media--fiber"></div>
+              <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
+                <img
+                  class="tile__media"
+                  src="images/starlight-mercedes-wide.jpg"
+                  alt="White Mercedes with doors open, starlight headliner lit and logo puddle lights on the shop floor"
+                  loading="lazy"
+                  width="1600"
+                  height="1200"
+                />
+              </button>
               <div class="tile__body">
-                <span class="tag">Detail</span>
-                <h3>Clean fiber &amp; wiring</h3>
-                <p>The hidden work that separates a real install from a kit.</p>
-                <a class="tile__link" href="https://www.instagram.com/bayareaautocustomz/" target="_blank" rel="noopener">More detail shots</a>
+                <span class="tag">Full build</span>
+                <h3>Doors-open reveal</h3>
+                <p>Starlight roof, ambient trim, and puddle lights — the whole package.</p>
+                <a class="tile__link" href="https://www.instagram.com/bayareaautocustomz/" target="_blank" rel="noopener">See builds</a>
               </div>
             </article>
+          </div>
+
+          <div class="shots">
+            <figure class="shot">
+              <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
+                <img
+                  src="images/starlight-mercedes-cabin.jpg"
+                  alt="Starlight roof over the rear cabin of a Mercedes C-Class"
+                  loading="lazy"
+                  width="1400"
+                  height="1867"
+                />
+              </button>
+              <figcaption>Rear-cabin star coverage</figcaption>
+            </figure>
+            <figure class="shot">
+              <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
+                <img
+                  src="images/starlight-console-white.jpg"
+                  alt="Lit center console trim with a starlight headliner above in a Mercedes"
+                  loading="lazy"
+                  width="1400"
+                  height="1867"
+                />
+              </button>
+              <figcaption>Console glow + starlight</figcaption>
+            </figure>
+            <figure class="shot">
+              <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
+                <img
+                  src="images/starlight-roof-console.jpg"
+                  alt="Starlight headliner and illuminated dash trim seen from the open driver door"
+                  loading="lazy"
+                  width="1400"
+                  height="1050"
+                />
+              </button>
+              <figcaption>From the driver&rsquo;s door</figcaption>
+            </figure>
+            <figure class="shot">
+              <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
+                <img
+                  src="images/starlight-roof-doors.jpg"
+                  alt="Star fibers wrapping the roof and pillars of a Mercedes cabin"
+                  loading="lazy"
+                  width="1400"
+                  height="1867"
+                />
+              </button>
+              <figcaption>Roof-to-pillar coverage</figcaption>
+            </figure>
+            <figure class="shot">
+              <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
+                <img
+                  src="images/starlight-headliner-violet.jpg"
+                  alt="Violet starlight headliner across the full cabin of a Mercedes"
+                  loading="lazy"
+                  width="1400"
+                  height="1867"
+                />
+              </button>
+              <figcaption>Violet star field</figcaption>
+            </figure>
+            <figure class="shot">
+              <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
+                <img
+                  src="images/ambient-door-corvette.jpg"
+                  alt="Blue ambient light line running along a Corvette door panel with red stitching"
+                  loading="lazy"
+                  width="1400"
+                  height="1867"
+                />
+              </button>
+              <figcaption>Corvette door accent</figcaption>
+            </figure>
           </div>
 
           <div class="social-row">
@@ -396,6 +502,85 @@
               <p>Vertical / butterfly door conversions, installed clean and reliable.</p>
               <strong>Custom quote</strong>
             </article>
+          </div>
+        </section>
+
+        <!-- ==================== AMBIENT LIGHTING KITS ==================== -->
+        <!-- Sergio's RGB sign artwork, rebuilt as live neon (crisper than a photo
+             and it animates). Swap in the real sign PNGs from ./images/ if he
+             prefers the originals — see images/README.txt. -->
+        <section class="section ambient-section" id="ambient">
+          <div class="section__intro">
+            <span class="eyebrow eyebrow--rgb">Ambient lighting kits</span>
+            <h2>Light the whole cabin, your way.</h2>
+            <p>
+              The same ambient system behind the builds above — doors, dash, footwells, and trim
+              wrapped in color you control from your phone. Installed clean by us, or shipped as a
+              kit if you&rsquo;d rather wire it yourself.
+            </p>
+          </div>
+
+          <div class="ambient">
+            <div class="ambient__sign">
+              <p class="neon-script">
+                <span class="neon-script__word neon-script__word--gold">Bay</span>
+                <span class="neon-script__word neon-script__word--pink">Area</span>
+                <span class="neon-script__word neon-script__word--blue">Auto</span>
+                <span class="neon-script__word neon-script__word--green">Customz</span>
+              </p>
+              <ul class="neon-list">
+                <li class="neon-list__item neon-list__item--pink">
+                  <strong>16M colors</strong>
+                  <span>every shade, tunable zone by zone</span>
+                </li>
+                <li class="neon-list__item neon-list__item--gold">
+                  <strong>200+ modes &amp; more</strong>
+                  <span>solid, fade, chase, breathe — you name it</span>
+                </li>
+                <li class="neon-list__item neon-list__item--green">
+                  <strong>Music sync</strong>
+                  <span>the cabin moves with whatever you play</span>
+                </li>
+                <li class="neon-list__item neon-list__item--blue">
+                  <strong>Wireless controlled customization</strong>
+                  <span>app + remote, no reaching for switches</span>
+                </li>
+              </ul>
+              <div class="ambient__actions">
+                <button class="btn btn--gold" type="button" data-kit="RGB ambient lighting kit">Add to my quote</button>
+                <a class="btn btn--ghost" href="#book">Book a pro install</a>
+              </div>
+              <p class="ambient__handle">
+                <a href="https://www.instagram.com/bayareaautocustomz/" target="_blank" rel="noopener">@bayareaautocustomz</a>
+              </p>
+            </div>
+
+            <div class="ambient__shots">
+              <figure class="shot">
+                <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
+                  <img
+                    src="images/ambient-door-speaker.jpg"
+                    alt="Blue ambient light outlining a Corvette door panel and lighting up the speaker grille"
+                    loading="lazy"
+                    width="1400"
+                    height="1867"
+                  />
+                </button>
+                <figcaption>Ambient kit installed — Corvette door &amp; speaker glow</figcaption>
+              </figure>
+              <figure class="shot">
+                <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
+                  <img
+                    src="images/starlight-console-white.jpg"
+                    alt="Ambient console and dash glow paired with a starlight roof in a Mercedes"
+                    loading="lazy"
+                    width="1400"
+                    height="1867"
+                  />
+                </button>
+                <figcaption>Pairs with a starlight roof for the full night-cabin look</figcaption>
+              </figure>
+            </div>
           </div>
         </section>
 

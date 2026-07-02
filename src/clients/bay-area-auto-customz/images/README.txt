@@ -1,28 +1,37 @@
-BAY AREA AUTO CUSTOMZ — REAL PHOTOS / REELS GO HERE
-====================================================
+BAY AREA AUTO CUSTOMZ — REAL PHOTOS / REELS
+============================================
 
-Sergio has approved using shop photos and social clips. Drop the approved
-files into this folder, then wire them into the "Our work" gallery in
-index.html.
+Sergio's approved shop photos live here and are wired into the site:
 
-1) Add image files here, e.g.:
-     images/starlight-bmw.jpg
-     images/ambient-doors.jpg
-     images/butterfly-doors.jpg
-     images/fiber-detail.jpg
-   (JPG or WebP, ~1200px wide is plenty. Keep each under ~400KB if you can.)
+  Featured "Our work" tiles (index.html #work):
+    starlight-roof-purple.jpg        purple starlight, Mercedes C-Class
+    starlight-white-ice.jpg          ice-white starlight
+    ambient-door-speaker.jpg         Corvette door + speaker glow (also in #ambient)
+    starlight-mercedes-wide.jpg      doors-open reveal, white Mercedes
 
-2) In index.html, inside the #work section, replace a placeholder visual:
-     <div class="tile__media tile__media--starlight"></div>
-   with a real image (KEEP the alt text — it is required):
-     <img class="tile__media" src="images/starlight-bmw.jpg"
-          alt="Gold starlight headliner installed in a BMW" loading="lazy" />
+  "Our work" shots grid:
+    starlight-mercedes-cabin.jpg     rear-cabin star coverage
+    starlight-console-white.jpg      console glow + starlight (also in #ambient)
+    starlight-roof-console.jpg       from the driver's door
+    starlight-roof-doors.jpg         roof-to-pillar coverage
+    starlight-headliner-violet.jpg   violet star field
+    ambient-door-corvette.jpg        Corvette door accent
 
-3) For Instagram / TikTok video reels, either:
-   - link the tile to the post (already done — the "View on Instagram"/
-     "Watch on TikTok" buttons point at the profiles; swap in the exact
-     post URL for a direct link), or
-   - paste an official Instagram/TikTok embed in place of a tile.
+All were resized to ~1400px and recompressed (each under ~300KB). To add a
+new photo: export it ~1200-1600px wide, keep it under ~400KB, drop it here,
+then copy one of the <figure class="shot"> blocks in index.html and update
+src / alt / caption. Photos automatically join the lightbox (app.js wires
+every .media-zoom button).
+
+RGB SIGN ARTWORK — the neon signs in the Ambient lighting kits section
+(#ambient) are rebuilt as live HTML/CSS neon (script wordmark + rainbow
+panel), so they stay crisp at any size and animate. If Sergio prefers the
+original sign PNGs, drop them in here (e.g. sign-script.png, sign-promo.png)
+and swap them into .ambient__sign in index.html.
+
+For Instagram / TikTok video reels, either link a tile to the exact post
+(swap the profile URL for the post URL) or paste an official embed in
+place of a tile.
 
 The Google rating (4.9 / 66 reviews) shown on the site is the real number.
 The review *quotes* in the #reviews section are placeholders — replace them

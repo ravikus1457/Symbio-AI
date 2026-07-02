@@ -636,6 +636,99 @@
     });
   });
 
+  /* ============================ LIGHTBOX ================================ */
+  // Every .media-zoom button (gallery tiles, shop shots, ambient photos)
+  // opens its photo full-screen, with prev/next + keyboard navigation.
+  const zoomButtons = $$(".media-zoom");
+  if (zoomButtons.length) initLightbox(zoomButtons);
+
+  function initLightbox(buttons) {
+    const items = buttons
+      .map((btn) => {
+        const img = btn.querySelector("img");
+        return img ? { btn, src: img.currentSrc || img.src, alt: img.alt || "" } : null;
+      })
+      .filter(Boolean);
+    if (!items.length) return;
+
+    const box = document.createElement("div");
+    box.className = "lightbox";
+    box.setAttribute("role", "dialog");
+    box.setAttribute("aria-modal", "true");
+    box.setAttribute("aria-label", "Photo viewer");
+    box.hidden = true;
+    box.innerHTML =
+      '<img class="lightbox__img" src="" alt="" />' +
+      '<p class="lightbox__caption"></p>' +
+      '<span class="lightbox__count"></span>' +
+      '<button class="lightbox__close" type="button" aria-label="Close photo viewer">×</button>' +
+      '<button class="lightbox__prev" type="button" aria-label="Previous photo">‹</button>' +
+      '<button class="lightbox__next" type="button" aria-label="Next photo">›</button>';
+    document.body.appendChild(box);
+
+    const imgEl = $(".lightbox__img", box);
+    const captionEl = $(".lightbox__caption", box);
+    const countEl = $(".lightbox__count", box);
+    const closeBtn = $(".lightbox__close", box);
+    const prevBtn = $(".lightbox__prev", box);
+    const nextBtn = $(".lightbox__next", box);
+    let index = 0;
+    let lastTrigger = null;
+
+    function show(i) {
+      index = (i + items.length) % items.length;
+      const item = items[index];
+      imgEl.src = item.src;
+      imgEl.alt = item.alt;
+      captionEl.textContent = item.alt;
+      countEl.textContent = `${index + 1} / ${items.length}`;
+    }
+
+    function open(i, trigger) {
+      lastTrigger = trigger || null;
+      show(i);
+      box.hidden = false;
+      document.body.style.overflow = "hidden";
+      closeBtn.focus();
+    }
+
+    function close() {
+      box.hidden = true;
+      imgEl.src = "";
+      document.body.style.overflow = "";
+      if (lastTrigger) lastTrigger.focus();
+    }
+
+    items.forEach((item, i) => {
+      item.btn.addEventListener("click", () => open(i, item.btn));
+    });
+    closeBtn.addEventListener("click", close);
+    prevBtn.addEventListener("click", () => show(index - 1));
+    nextBtn.addEventListener("click", () => show(index + 1));
+    box.addEventListener("click", (ev) => {
+      if (ev.target === box) close();
+    });
+    document.addEventListener("keydown", (ev) => {
+      if (box.hidden) return;
+      if (ev.key === "Escape") {
+        close();
+      } else if (ev.key === "Tab") {
+        // aria-modal promises inertness — keep Tab cycling inside the dialog.
+        const focusables = [closeBtn, prevBtn, nextBtn];
+        const at = focusables.indexOf(document.activeElement);
+        ev.preventDefault();
+        const step = ev.shiftKey ? -1 : 1;
+        focusables[(at + step + focusables.length) % focusables.length].focus();
+      } else if (ev.key === "ArrowLeft") {
+        ev.preventDefault();
+        show(index - 1);
+      } else if (ev.key === "ArrowRight") {
+        ev.preventDefault();
+        show(index + 1);
+      }
+    });
+  }
+
   /* ============================ CHATBOT ================================= */
   const chatbot = $("[data-chatbot]");
   const chatLog = $("[data-chat-log]");
@@ -676,7 +769,7 @@
     shooting:
       "Shooting stars add animated meteor streaks across the headliner for that high-end look. Toggle \"Add shooting stars\" in the designer to see it, and we'll quote it as an add-on to your starlight install.",
     interior:
-      "Interior / ambient lighting covers doors, dash, footwells, and accent zones with RGB color control and clean, hidden wiring. Tell us the vehicle and the zones you want lit.",
+      "Interior / ambient lighting covers doors, dash, footwells, and accent zones — 16M colors, 200+ modes, music sync, and wireless app + remote control, with clean hidden wiring. Check the Ambient lighting kits section on this page, then tell us the vehicle and the zones you want lit.",
     exterior:
       "We do exterior lighting too — underglow and accent lighting tuned to your build. Send the vehicle and what you're going for and we'll quote it.",
     headliner:
@@ -684,7 +777,7 @@
     doors:
       "Yes — we do butterfly (vertical) door conversions, installed clean and reliable. Send your vehicle and we'll let you know fitment and pricing.",
     kits:
-      "We sell DIY kits too: a fiber-optic starlight kit, an RGB ambient lighting kit, and a shooting-star add-on — each with the LED engine, fibers/strips, remote, and a setup guide. See the DIY kits section, or tell me your vehicle and I'll point you to the right one.",
+      "We sell DIY kits too: a fiber-optic starlight kit, an RGB ambient lighting kit (16M colors, 200+ modes, music sync, app + remote), and a shooting-star add-on — each with the LED engine, fibers/strips, remote, and a setup guide. See the Ambient lighting kits and DIY kits sections, or tell me your vehicle and I'll point you to the right one.",
     booking:
       `Booking is easy: use the quote form on this page, or call/text ${BUSINESS.phone}. You can also DM us on Instagram (@bayareaautocustomz). Tell us your vehicle, the look you want, and timing, and we'll confirm a quote and an install date.`,
     location:

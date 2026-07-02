@@ -11,9 +11,9 @@ Eleventy build to `dist/clients/bay-area-auto-customz/`.
 | File             | Purpose                                                        |
 | ---------------- | ------------------------------------------------------------- |
 | `index.html`     | Page markup (self-contained, no framework).                  |
-| `styles.css`     | Black-and-gold theme; the DIY-kits section is the one RGB spot.|
-| `app.js`         | Starlight designer, before/after, booking, kits, chatbot.    |
-| `images/`        | Drop approved shop photos/reels here (see `images/README.txt`).|
+| `styles.css`     | Black-and-gold theme; RGB lives in the ambient + DIY-kit sections.|
+| `app.js`         | Starlight designer, before/after, gallery lightbox, booking, kits, chatbot.|
+| `images/`        | Sergio's approved shop photos (see `images/README.txt`).     |
 
 ## View it locally
 
@@ -28,14 +28,28 @@ npx serve dist          # then open /clients/bay-area-auto-customz/index.html
 ## What's real vs. placeholder
 
 - **Real:** the 4.9★ / 66 Google reviews aggregate, phone `(925) 536-5086`,
-  Instagram/TikTok links, and the full service list (starlight, shooting stars,
-  interior + exterior lighting, custom/Alcantara headliners, butterfly doors).
+  Instagram/TikTok links, the full service list (starlight, shooting stars,
+  interior + exterior lighting, custom/Alcantara headliners, butterfly doors),
+  and **all 10 gallery photos** (Sergio's shop shots — Mercedes starlight
+  builds + Corvette ambient doors, in `images/`).
 - **Placeholder — replace before launch:**
-  - Gallery visuals in **Our work** (CSS art) → swap in approved photos/reels
-    (`images/README.txt` has the exact steps).
   - Review **quotes** in the Reviews section → paste real, customer-approved
     Google snippets (the 4.9/66 number itself is real).
   - DIY-kit **prices** (`from $149 / $129 / $89`) → confirm with Sergio.
+
+## Ambient lighting kits section (`#ambient`)
+
+Sergio's RGB sign artwork is rebuilt as **live neon** (HTML/CSS): the cursive
+multicolor wordmark and a rainbow-bordered promo panel with the sign's real
+selling points — 16M colors, 200+ modes, music sync, wireless controlled
+customization — plus `@bayareaautocustomz` and the Corvette ambient photos.
+"Add to my quote" prefills the booking form with the RGB ambient kit. If he
+prefers the original sign PNGs, drop them in `images/` and swap them in.
+
+## Gallery (`#work`)
+
+Four featured tiles + a six-shot grid, all real photos with a keyboard-
+accessible lightbox (prev/next, Esc, focus restore) built in `app.js`.
 
 ## Key feature — the starlight designer (`#studio`)
 

@@ -119,9 +119,13 @@ These come straight from the Pandit's meeting notes. Search the `.html` files fo
 
 - [x] **Pandit ji's photo** — added at `assets/img/priest-panditji.jpg` and shown
       in the priest section.
-- [ ] **Photos of all the murtis** — each deity niche currently shows an original
-      gold emblem; drop in the temple's own murti photos when ready (see
-      `assets/img/README.md`).
+- [x] **Murti photos (partial)** — Durga Maa and the Shiv Parivar niches now show
+      the temple's own murtis (`assets/img/deities/durga.jpg`, `shiv-parivar.jpg`,
+      cropped from the temple's Facebook photos), and an "Inside the Mandir"
+      gallery (`assets/img/mandir/`) shows the full altar and worship photos.
+- [ ] **Remaining murti photos** — Ram Darbar, Hanuman ji, Ganesh ji, and Radha
+      Krishna niches still show classic artwork; swap in direct photos of those
+      murtis when available (see `assets/img/README.md`).
 - [x] **Temple exterior in the Welcome frame** — `assets/img/temple-welcome.jpg`,
       a sunset photograph of the temple (provided by the temple). Swap in a
       different photo anytime by replacing that file (keep the same 3:2-ish crop).

@@ -2847,3 +2847,28 @@ body:has(.site-nav__list.is-open) .tassist {
   color: var(--red);
   margin-bottom: 0.15rem;
 }
+
+/* -------------------------------------------------------------------------
+   34. Deity "about" text in the darshan niches
+   ------------------------------------------------------------------------- */
+.niche__about {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px dashed rgba(200, 155, 60, 0.45);
+  font-size: var(--fs-300);
+  color: var(--ink-soft);
+  text-align: left;
+}
+
+/* Grid variant of the poster wall — used when there are only a few posters,
+   where multicol balancing would bunch them into the first columns. */
+.poster-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.poster-grid .poster {
+  margin-bottom: 0;
+}

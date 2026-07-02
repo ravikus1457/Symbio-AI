@@ -2886,6 +2886,31 @@ body:has(.site-nav__list.is-open) .tassist {
   margin-bottom: 0.15rem;
 }
 
+/* -------------------------------------------------------------------------
+   34. Deity "about" text in the darshan niches
+   ------------------------------------------------------------------------- */
+.niche__about {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px dashed rgba(200, 155, 60, 0.45);
+  font-size: var(--fs-300);
+  color: var(--ink-soft);
+  text-align: left;
+}
+
+/* Grid variant of the poster wall — used when there are only a few posters,
+   where multicol balancing would bunch them into the first columns. */
+.poster-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.poster-grid .poster {
+  margin-bottom: 0;
+}
+
 </style>
     <script>
       document.documentElement.classList.add("js");
@@ -3791,6 +3816,7 @@ body:has(.site-nav__list.is-open) .tassist {
                 <h3 class="niche__name">Shri Ram Darbar</h3>
                 <p class="niche__deva deva">श्री राम दरबार</p>
                 <p class="niche__note">Bhagwan Ram, Mata Sita, Lakshman &amp; Hanuman ji</p>
+                <p class="niche__about">Bhagwan Ram — the seventh avatar of Vishnu and hero of the Ramayana — embodies dharma: truth, duty, and righteous living. He is worshipped with Mata Sita (virtue and devotion), his brother Lakshman (selfless service), and Hanuman ji at his feet. Praying to the Ram Darbar brings harmony to the home and courage to walk the right path.</p>
               </div>
             </article>
 
@@ -3809,12 +3835,13 @@ body:has(.site-nav__list.is-open) .tassist {
                     <path d="M53 74 L67 84 M53 84 L67 74 M53 74 V84 M67 74 V84" />
                   </svg>
                 </span>
-                <img class="niche__photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/An_Oleograph_of_Shiva%2C_Parvati_and_Nandi_by_Raja_Ravi_Varma.jpg?width=640" alt="Shiv Parivar — oleograph by Raja Ravi Varma (public domain)" loading="lazy" onerror="this.style.display='none'" />
+                <img class="niche__photo" src="assets/img/deities/shiv-parivar.jpg" width="700" height="1015" alt="Bhagwan Shiv and Mata Parvati — the temple's own murtis, garlanded with marigolds" loading="lazy" onerror="this.style.display='none'" />
               </div>
               <div class="niche__body">
                 <h3 class="niche__name">Shiv Parivar</h3>
                 <p class="niche__deva deva">शिव परिवार</p>
                 <p class="niche__note">Bhagwan Shiv, Mata Parvati &amp; family</p>
+                <p class="niche__about">Bhagwan Shiv, the Mahadev, is the great transformer — worshipped as both cosmic yogi and loving householder. With Mata Parvati and their sons Ganesh and Kartikeya, the Shiv Parivar is the ideal divine family. Devotees offer jal and bel leaves, especially on Mondays and Maha Shivaratri.</p>
               </div>
             </article>
 
@@ -3836,12 +3863,13 @@ body:has(.site-nav__list.is-open) .tassist {
                     <circle cx="60" cy="58" r="2.6" fill="currentColor" stroke="none" />
                   </svg>
                 </span>
-                <img class="niche__photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Goddess_Durga_by_Raja_Ravi_Varma.jpg?width=640" alt="Durga Maa — painting by Raja Ravi Varma (public domain)" loading="lazy" onerror="this.style.display='none'" />
+                <img class="niche__photo" src="assets/img/deities/durga.jpg" width="580" height="780" alt="Durga Maa on her lion — the temple's own murti, adorned for Navratri" loading="lazy" onerror="this.style.display='none'" />
               </div>
               <div class="niche__body">
                 <h3 class="niche__name">Durga Maa</h3>
                 <p class="niche__deva deva">दुर्गा माता</p>
                 <p class="niche__note">The Divine Mother, worshipped through the year</p>
+                <p class="niche__about">The Divine Mother riding her lion is Shakti herself — the fierce, protective energy of the universe. She vanquishes negativity and evil, as in her victory over Mahishasura, while showering her children with a mother's love. Navratri's nine nights honour her nine forms.</p>
               </div>
             </article>
 
@@ -3862,6 +3890,7 @@ body:has(.site-nav__list.is-open) .tassist {
                 <h3 class="niche__name">Shri Hanuman ji</h3>
                 <p class="niche__deva deva">श्री हनुमान जी</p>
                 <p class="niche__note">Protector and devoted servant of Shri Ram</p>
+                <p class="niche__about">Hanuman ji is the embodiment of bhakti — devotion, strength, and humility — and the greatest devotee of Shri Ram. Reciting the Hanuman Chalisa is said to remove fear and every obstacle. Tuesday is his day: join our Tuesday 6:30 PM Chalisa &amp; Ramayana Path.</p>
               </div>
             </article>
 
@@ -3888,6 +3917,7 @@ body:has(.site-nav__list.is-open) .tassist {
                 <h3 class="niche__name">Shri Ganesh ji</h3>
                 <p class="niche__deva deva">श्री गणेश जी</p>
                 <p class="niche__note">Remover of obstacles, worshipped first</p>
+                <p class="niche__about">The elephant-headed son of Shiv and Parvati is Vighnaharta — the remover of obstacles — and the lord of wisdom and new beginnings. Every pooja begins by invoking him. Offer modak and durva grass; Wednesdays and Ganesh Chaturthi are especially dear to him.</p>
               </div>
             </article>
 
@@ -3911,14 +3941,55 @@ body:has(.site-nav__list.is-open) .tassist {
                 <h3 class="niche__name">Radha Krishna</h3>
                 <p class="niche__deva deva">राधा कृष्ण</p>
                 <p class="niche__note">Divine love, devotion, and joy</p>
+                <p class="niche__about">Bhagwan Krishna — the eighth avatar of Vishnu, who gave the world the Bhagavad Gita — together with Shri Radha embodies the highest divine love and joy. Their worship through bhajan and kirtan fills the heart with sweetness, celebrated at Janmashtami and Holi.</p>
               </div>
             </article>
           </div>
 
           <p class="center mt-6" style="color: var(--ink-faint); font-size: var(--fs-300)">
-            Devotional artwork by Raja Ravi Varma &amp; the Ravi Varma Press (public domain).
-            Photographs of our own murtis will be added in time.
+            Durga Maa and the Shiv Parivar show the temple's own murtis. The remaining niches
+            show classic devotional artwork by Raja Ravi Varma (public domain) until each
+            murti's photograph is added.
           </p>
+        </div>
+      </section>
+
+      <!-- ===== Inside the mandir (photo gallery) ====================== -->
+      <section class="section section--tight" id="mandir-gallery" aria-labelledby="mandir-gallery-title">
+        <div class="container">
+          <div class="section__head center" data-reveal>
+            <span class="eyebrow">Mandir Darshan · मंदिर दर्शन</span>
+            <h2 class="title" id="mandir-gallery-title">Inside the Mandir</h2>
+            <p class="lead">
+              Glimpses of our altar and daily worship — tap any photo to view it full size.
+            </p>
+          </div>
+
+          <div class="poster-feature" style="max-width: 860px" data-reveal>
+            <a class="poster" href="assets/img/mandir/altar-wide.jpg" target="_blank" rel="noopener">
+              <img src="assets/img/mandir/altar-wide.jpg" width="1100" height="641" alt="The main altar of East Bay Hindu Temple with all the murtis adorned in garlands" loading="lazy" />
+              <span class="poster__cap">The main altar — our deities adorned for daily darshan</span>
+            </a>
+          </div>
+
+          <div class="poster-grid mt-6" data-reveal>
+            <a class="poster" href="assets/img/mandir/pandit-namaste.jpg" target="_blank" rel="noopener">
+              <img src="assets/img/mandir/pandit-namaste.jpg" width="900" height="1370" alt="Pandit ji seated in namaste before the altar with a puja thali" loading="lazy" />
+              <span class="poster__cap">Pandit ji at the morning pooja</span>
+            </a>
+            <a class="poster" href="assets/img/mandir/lingam-shringar.jpg" target="_blank" rel="noopener">
+              <img src="assets/img/mandir/lingam-shringar.jpg" width="900" height="1088" alt="The Shiva lingam draped in white and gold cloth with garlands and offerings" loading="lazy" />
+              <span class="poster__cap">Shiv lingam shringar</span>
+            </a>
+            <a class="poster" href="assets/img/mandir/priest-altar.jpg" target="_blank" rel="noopener">
+              <img src="assets/img/mandir/priest-altar.jpg" width="900" height="1019" alt="Pandit ji seated on the altar steps with the garlanded murtis behind" loading="lazy" />
+              <span class="poster__cap">At the feet of the deities</span>
+            </a>
+            <a class="poster" href="assets/img/mandir/lingam-parivar.jpg" target="_blank" rel="noopener">
+              <img src="assets/img/mandir/lingam-parivar.jpg" width="900" height="1279" alt="The decorated Shiva lingam with the marble murtis of Shiv, Parvati, and Krishna behind" loading="lazy" />
+              <span class="poster__cap">Lingam and the divine family</span>
+            </a>
+          </div>
         </div>
       </section>
 

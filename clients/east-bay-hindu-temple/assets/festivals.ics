@@ -1,0 +1,398 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//East Bay Hindu Temple//Festival Calendar//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:East Bay Hindu Temple - Festivals
+X-WR-TIMEZONE:America/Los_Angeles
+BEGIN:VEVENT
+UID:festival-0-2026-02-15@eastbayhindutemple
+DTSTAMP:20260702T000000Z
+DTSTART;VALUE=DATE:20260215
+DTEND;VALUE=DATE:20260216
+SUMMARY:Maha Shivaratri - East Bay Hindu Temple
+DESCRIPTION:Celebrated at East Bay Hindu Temple, 595 School Street, Pitts
+ burg, CA 94565. Dates follow the Hindu lunar calendar (PST/PDT) and may 
+ shift by a day - the temple announces confirmed dates and timings in adv
+ ance. Info: (925) 812-0581 or https://ravikus1457.github.io/Symbio-AI/cl
+ ients/east-bay-hindu-temple/
+LOCATION:595 School Street\, Pittsburg\, CA 94565
+END:VEVENT
+BEGIN:VEVENT
+UID:festival-1-2026-03-03@eastbayhindutemple
+DTSTAMP:20260702T000000Z
+DTSTART;VALUE=DATE:20260303
+DTEND;VALUE=DATE:20260304
+SUMMARY:Holi - East Bay Hindu Temple
+DESCRIPTION:Celebrated at East Bay Hindu Temple, 595 School Street, Pitts
+ burg, CA 94565. Dates follow the Hindu lunar calendar (PST/PDT) and may 
+ shift by a day - the temple announces confirmed dates and timings in adv
+ ance. Info: (925) 812-0581 or https://ravikus1457.github.io/Symbio-AI/cl
+ ients/east-bay-hindu-temple/
+LOCATION:595 School Street\, Pittsburg\, CA 94565
+END:VEVENT
+BEGIN:VEVENT
+UID:festival-2-2026-03-26@eastbayhindutemple
+DTSTAMP:20260702T000000Z
+DTSTART;VALUE=DATE:20260326
+DTEND;VALUE=DATE:20260327
+SUMMARY:Ram Navami - East Bay Hindu Temple
+DESCRIPTION:Celebrated at East Bay Hindu Temple, 595 School Street, Pitts
+ burg, CA 94565. Dates follow the Hindu lunar calendar (PST/PDT) and may 
+ shift by a day - the temple announces confirmed dates and timings in adv
+ ance. Info: (925) 812-0581 or https://ravikus1457.github.io/Symbio-AI/cl
+ ients/east-bay-hindu-temple/
+LOCATION:595 School Street\, Pittsburg\, CA 94565
+END:VEVENT
+BEGIN:VEVENT
+UID:festival-3-2026-04-02@eastbayhindutemple
+DTSTAMP:20260702T000000Z
+DTSTART;VALUE=DATE:20260402
+DTEND;VALUE=DATE:20260403
+SUMMARY:Hanuman Jayanti - East Bay Hindu Temple
+DESCRIPTION:Celebrated at East Bay Hindu Temple, 595 School Street, Pitts
+ burg, CA 94565. Dates follow the Hindu lunar calendar (PST/PDT) and may 
+ shift by a day - the temple announces confirmed dates and timings in adv
+ ance. Info: (925) 812-0581 or https://ravikus1457.github.io/Symbio-AI/cl
+ ients/east-bay-hindu-temple/
+LOCATION:595 School Street\, Pittsburg\, CA 94565
+END:VEVENT
+BEGIN:VEVENT
+UID:festival-4-2026-07-29@eastbayhindutemple
+DTSTAMP:20260702T000000Z
+DTSTART;VALUE=DATE:20260729
+DTEND;VALUE=DATE:20260730
+SUMMARY:Guru Purnima - East Bay Hindu Temple
+DESCRIPTION:Celebrated at East Bay Hindu Temple, 595 School Street, Pitts
+ burg, CA 94565. Dates follow the Hindu lunar calendar (PST/PDT) and may 
+ shift by a day - the temple announces confirmed dates and timings in adv
+ ance. Info: (925) 812-0581 or https://ravikus1457.github.io/Symbio-AI/cl
+ ients/east-bay-hindu-temple/
+LOCATION:595 School Street\, Pittsburg\, CA 94565
+END:VEVENT
+BEGIN:VEVENT
+UID:festival-5-2026-08-28@eastbayhindutemple
+DTSTAMP:20260702T000000Z
+DTSTART;VALUE=DATE:20260828
+DTEND;VALUE=DATE:20260829
+SUMMARY:Raksha Bandhan - East Bay Hindu Temple
+DESCRIPTION:Celebrated at East Bay Hindu Temple, 595 School Street, Pitts
+ burg, CA 94565. Dates follow the Hindu lunar calendar (PST/PDT) and may 
+ shift by a day - the temple announces confirmed dates and timings in adv
+ ance. Info: (925) 812-0581 or https://ravikus1457.github.io/Symbio-AI/cl
+ ients/east-bay-hindu-temple/
+LOCATION:595 School Street\, Pittsburg\, CA 94565
+END:VEVENT
+BEGIN:VEVENT
+UID:festival-6-2026-09-04@eastbayhindutemple
+DTSTAMP:20260702T000000Z
+DTSTART;VALUE=DATE:20260904
+DTEND;VALUE=DATE:20260905
+SUMMARY:Krishna Janmashtami - East Bay Hindu Temple
+DESCRIPTION:Celebrated at East Bay Hindu Temple, 595 School Street, Pitts
+ burg, CA 94565. Dates follow the Hindu lunar calendar (PST/PDT) and may 
+ shift by a day - the temple announces confirmed dates and timings in adv
+ ance. Info: (925) 812-0581 or https://ravikus1457.github.io/Symbio-AI/cl
+ ients/east-bay-hindu-temple/
+LOCATION:595 School Street\, Pittsburg\, CA 94565
+END:VEVENT
+BEGIN:VEVENT
+UID:festival-7-2026-09-14@eastbayhindutemple
+DTSTAMP:20260702T000000Z
+DTSTART;VALUE=DATE:20260914
+DTEND;VALUE=DATE:20260915
+SUMMARY:Ganesh Chaturthi - East Bay Hindu Temple
+DESCRIPTION:Celebrated at East Bay Hindu Temple, 595 School Street, Pitts
+ burg, CA 94565. Dates follow the Hindu lunar calendar (PST/PDT) and may 
+ shift by a day - the temple announces confirmed dates and timings in adv
+ ance. Info: (925) 812-0581 or https://ravikus1457.github.io/Symbio-AI/cl
+ ients/east-bay-hindu-temple/
+LOCATION:595 School Street\, Pittsburg\, CA 94565
+END:VEVENT
+BEGIN:VEVENT
+UID:festival-8-2026-10-11@eastbayhindutemple
+DTSTAMP:20260702T000000Z
+DTSTART;VALUE=DATE:20261011
+DTEND;VALUE=DATE:20261012
+SUMMARY:Sharad Navratri (begins) - East Bay Hindu Temple
+DESCRIPTION:Celebrated at East Bay Hindu Temple, 595 School Street, Pitts
+ burg, CA 94565. Dates follow the Hindu lunar calendar (PST/PDT) and may 
+ shift by a day - the temple announces confirmed dates and timings in adv
+ ance. Info: (925) 812-0581 or https://ravikus1457.github.io/Symbio-AI/cl
+ ients/east-bay-hindu-temple/
+LOCATION:595 School Street\, Pittsburg\, CA 94565
+END:VEVENT
+BEGIN:VEVENT
+UID:festival-9-2026-10-20@eastbayhindutemple
+DTSTAMP:20260702T000000Z
+DTSTART;VALUE=DATE:20261020
+DTEND;VALUE=DATE:20261021
+SUMMARY:Dussehra - East Bay Hindu Temple
+DESCRIPTION:Celebrated at East Bay Hindu Temple, 595 School Street, Pitts
+ burg, CA 94565. Dates follow the Hindu lunar calendar (PST/PDT) and may 
+ shift by a day - the temple announces confirmed dates and timings in adv
+ ance. Info: (925) 812-0581 or https://ravikus1457.github.io/Symbio-AI/cl
+ ients/east-bay-hindu-temple/
+LOCATION:595 School Street\, Pittsburg\, CA 94565
+END:VEVENT
+BEGIN:VEVENT
+UID:festival-10-2026-11-08@eastbayhindutemple
+DTSTAMP:20260702T000000Z
+DTSTART;VALUE=DATE:20261108
+DTEND;VALUE=DATE:20261109
+SUMMARY:Diwali & Lakshmi Pooja - East Bay Hindu Temple
+DESCRIPTION:Celebrated at East Bay Hindu Temple, 595 School Street, Pitts
+ burg, CA 94565. Dates follow the Hindu lunar calendar (PST/PDT) and may 
+ shift by a day - the temple announces confirmed dates and timings in adv
+ ance. Info: (925) 812-0581 or https://ravikus1457.github.io/Symbio-AI/cl
+ ients/east-bay-hindu-temple/
+LOCATION:595 School Street\, Pittsburg\, CA 94565
+END:VEVENT
+BEGIN:VEVENT
+UID:festival-11-2027-01-14@eastbayhindutemple
+DTSTAMP:20260702T000000Z
+DTSTART;VALUE=DATE:20270114
+DTEND;VALUE=DATE:20270115
+SUMMARY:Makar Sankranti - East Bay Hindu Temple
+DESCRIPTION:Celebrated at East Bay Hindu Temple, 595 School Street, Pitts
+ burg, CA 94565. Dates follow the Hindu lunar calendar (PST/PDT) and may 
+ shift by a day - the temple announces confirmed dates and timings in adv
+ ance. Info: (925) 812-0581 or https://ravikus1457.github.io/Symbio-AI/cl
+ ients/east-bay-hindu-temple/
+LOCATION:595 School Street\, Pittsburg\, CA 94565
+END:VEVENT
+BEGIN:VEVENT
+UID:festival-12-2027-02-11@eastbayhindutemple
+DTSTAMP:20260702T000000Z
+DTSTART;VALUE=DATE:20270211
+DTEND;VALUE=DATE:20270212
+SUMMARY:Maha Shivaratri - East Bay Hindu Temple
+DESCRIPTION:Celebrated at East Bay Hindu Temple, 595 School Street, Pitts
+ burg, CA 94565. Dates follow the Hindu lunar calendar (PST/PDT) and may 
+ shift by a day - the temple announces confirmed dates and timings in adv
+ ance. Info: (925) 812-0581 or https://ravikus1457.github.io/Symbio-AI/cl
+ ients/east-bay-hindu-temple/
+LOCATION:595 School Street\, Pittsburg\, CA 94565
+END:VEVENT
+BEGIN:VEVENT
+UID:festival-13-2027-02-27@eastbayhindutemple
+DTSTAMP:20260702T000000Z
+DTSTART;VALUE=DATE:20270227
+DTEND;VALUE=DATE:20270228
+SUMMARY:Holi - East Bay Hindu Temple
+DESCRIPTION:Celebrated at East Bay Hindu Temple, 595 School Street, Pitts
+ burg, CA 94565. Dates follow the Hindu lunar calendar (PST/PDT) and may 
+ shift by a day - the temple announces confirmed dates and timings in adv
+ ance. Info: (925) 812-0581 or https://ravikus1457.github.io/Symbio-AI/cl
+ ients/east-bay-hindu-temple/
+LOCATION:595 School Street\, Pittsburg\, CA 94565
+END:VEVENT
+BEGIN:VEVENT
+UID:festival-14-2027-03-28@eastbayhindutemple
+DTSTAMP:20260702T000000Z
+DTSTART;VALUE=DATE:20270328
+DTEND;VALUE=DATE:20270329
+SUMMARY:Ram Navami - East Bay Hindu Temple
+DESCRIPTION:Celebrated at East Bay Hindu Temple, 595 School Street, Pitts
+ burg, CA 94565. Dates follow the Hindu lunar calendar (PST/PDT) and may 
+ shift by a day - the temple announces confirmed dates and timings in adv
+ ance. Info: (925) 812-0581 or https://ravikus1457.github.io/Symbio-AI/cl
+ ients/east-bay-hindu-temple/
+LOCATION:595 School Street\, Pittsburg\, CA 94565
+END:VEVENT
+BEGIN:VEVENT
+UID:festival-15-2027-04-10@eastbayhindutemple
+DTSTAMP:20260702T000000Z
+DTSTART;VALUE=DATE:20270410
+DTEND;VALUE=DATE:20270411
+SUMMARY:Chaitra Navratri (begins) - East Bay Hindu Temple
+DESCRIPTION:Celebrated at East Bay Hindu Temple, 595 School Street, Pitts
+ burg, CA 94565. Dates follow the Hindu lunar calendar (PST/PDT) and may 
+ shift by a day - the temple announces confirmed dates and timings in adv
+ ance. Info: (925) 812-0581 or https://ravikus1457.github.io/Symbio-AI/cl
+ ients/east-bay-hindu-temple/
+LOCATION:595 School Street\, Pittsburg\, CA 94565
+END:VEVENT
+BEGIN:VEVENT
+UID:festival-16-2027-04-14@eastbayhindutemple
+DTSTAMP:20260702T000000Z
+DTSTART;VALUE=DATE:20270414
+DTEND;VALUE=DATE:20270415
+SUMMARY:Hanuman Jayanti - East Bay Hindu Temple
+DESCRIPTION:Celebrated at East Bay Hindu Temple, 595 School Street, Pitts
+ burg, CA 94565. Dates follow the Hindu lunar calendar (PST/PDT) and may 
+ shift by a day - the temple announces confirmed dates and timings in adv
+ ance. Info: (925) 812-0581 or https://ravikus1457.github.io/Symbio-AI/cl
+ ients/east-bay-hindu-temple/
+LOCATION:595 School Street\, Pittsburg\, CA 94565
+END:VEVENT
+BEGIN:VEVENT
+UID:festival-17-2027-04-17@eastbayhindutemple
+DTSTAMP:20260702T000000Z
+DTSTART;VALUE=DATE:20270417
+DTEND;VALUE=DATE:20270418
+SUMMARY:Durga Ashtami - East Bay Hindu Temple
+DESCRIPTION:Celebrated at East Bay Hindu Temple, 595 School Street, Pitts
+ burg, CA 94565. Dates follow the Hindu lunar calendar (PST/PDT) and may 
+ shift by a day - the temple announces confirmed dates and timings in adv
+ ance. Info: (925) 812-0581 or https://ravikus1457.github.io/Symbio-AI/cl
+ ients/east-bay-hindu-temple/
+LOCATION:595 School Street\, Pittsburg\, CA 94565
+END:VEVENT
+BEGIN:VEVENT
+UID:festival-18-2027-05-25@eastbayhindutemple
+DTSTAMP:20260702T000000Z
+DTSTART;VALUE=DATE:20270525
+DTEND;VALUE=DATE:20270526
+SUMMARY:Buddha Purnima - East Bay Hindu Temple
+DESCRIPTION:Celebrated at East Bay Hindu Temple, 595 School Street, Pitts
+ burg, CA 94565. Dates follow the Hindu lunar calendar (PST/PDT) and may 
+ shift by a day - the temple announces confirmed dates and timings in adv
+ ance. Info: (925) 812-0581 or https://ravikus1457.github.io/Symbio-AI/cl
+ ients/east-bay-hindu-temple/
+LOCATION:595 School Street\, Pittsburg\, CA 94565
+END:VEVENT
+BEGIN:VEVENT
+UID:festival-19-2027-06-06@eastbayhindutemple
+DTSTAMP:20260702T000000Z
+DTSTART;VALUE=DATE:20270606
+DTEND;VALUE=DATE:20270607
+SUMMARY:Vat Savitri Vrat - East Bay Hindu Temple
+DESCRIPTION:Celebrated at East Bay Hindu Temple, 595 School Street, Pitts
+ burg, CA 94565. Dates follow the Hindu lunar calendar (PST/PDT) and may 
+ shift by a day - the temple announces confirmed dates and timings in adv
+ ance. Info: (925) 812-0581 or https://ravikus1457.github.io/Symbio-AI/cl
+ ients/east-bay-hindu-temple/
+LOCATION:595 School Street\, Pittsburg\, CA 94565
+END:VEVENT
+BEGIN:VEVENT
+UID:festival-20-2027-06-16@eastbayhindutemple
+DTSTAMP:20260702T000000Z
+DTSTART;VALUE=DATE:20270616
+DTEND;VALUE=DATE:20270617
+SUMMARY:Nirjala Ekadashi - East Bay Hindu Temple
+DESCRIPTION:Celebrated at East Bay Hindu Temple, 595 School Street, Pitts
+ burg, CA 94565. Dates follow the Hindu lunar calendar (PST/PDT) and may 
+ shift by a day - the temple announces confirmed dates and timings in adv
+ ance. Info: (925) 812-0581 or https://ravikus1457.github.io/Symbio-AI/cl
+ ients/east-bay-hindu-temple/
+LOCATION:595 School Street\, Pittsburg\, CA 94565
+END:VEVENT
+BEGIN:VEVENT
+UID:festival-21-2027-07-05@eastbayhindutemple
+DTSTAMP:20260702T000000Z
+DTSTART;VALUE=DATE:20270705
+DTEND;VALUE=DATE:20270706
+SUMMARY:Guru Purnima - East Bay Hindu Temple
+DESCRIPTION:Celebrated at East Bay Hindu Temple, 595 School Street, Pitts
+ burg, CA 94565. Dates follow the Hindu lunar calendar (PST/PDT) and may 
+ shift by a day - the temple announces confirmed dates and timings in adv
+ ance. Info: (925) 812-0581 or https://ravikus1457.github.io/Symbio-AI/cl
+ ients/east-bay-hindu-temple/
+LOCATION:595 School Street\, Pittsburg\, CA 94565
+END:VEVENT
+BEGIN:VEVENT
+UID:festival-22-2027-08-16@eastbayhindutemple
+DTSTAMP:20260702T000000Z
+DTSTART;VALUE=DATE:20270816
+DTEND;VALUE=DATE:20270817
+SUMMARY:Raksha Bandhan - East Bay Hindu Temple
+DESCRIPTION:Celebrated at East Bay Hindu Temple, 595 School Street, Pitts
+ burg, CA 94565. Dates follow the Hindu lunar calendar (PST/PDT) and may 
+ shift by a day - the temple announces confirmed dates and timings in adv
+ ance. Info: (925) 812-0581 or https://ravikus1457.github.io/Symbio-AI/cl
+ ients/east-bay-hindu-temple/
+LOCATION:595 School Street\, Pittsburg\, CA 94565
+END:VEVENT
+BEGIN:VEVENT
+UID:festival-23-2027-09-06@eastbayhindutemple
+DTSTAMP:20260702T000000Z
+DTSTART;VALUE=DATE:20270906
+DTEND;VALUE=DATE:20270907
+SUMMARY:Krishna Janmashtami - East Bay Hindu Temple
+DESCRIPTION:Celebrated at East Bay Hindu Temple, 595 School Street, Pitts
+ burg, CA 94565. Dates follow the Hindu lunar calendar (PST/PDT) and may 
+ shift by a day - the temple announces confirmed dates and timings in adv
+ ance. Info: (925) 812-0581 or https://ravikus1457.github.io/Symbio-AI/cl
+ ients/east-bay-hindu-temple/
+LOCATION:595 School Street\, Pittsburg\, CA 94565
+END:VEVENT
+BEGIN:VEVENT
+UID:festival-24-2027-09-11@eastbayhindutemple
+DTSTAMP:20260702T000000Z
+DTSTART;VALUE=DATE:20270911
+DTEND;VALUE=DATE:20270912
+SUMMARY:Ganesh Chaturthi - East Bay Hindu Temple
+DESCRIPTION:Celebrated at East Bay Hindu Temple, 595 School Street, Pitts
+ burg, CA 94565. Dates follow the Hindu lunar calendar (PST/PDT) and may 
+ shift by a day - the temple announces confirmed dates and timings in adv
+ ance. Info: (925) 812-0581 or https://ravikus1457.github.io/Symbio-AI/cl
+ ients/east-bay-hindu-temple/
+LOCATION:595 School Street\, Pittsburg\, CA 94565
+END:VEVENT
+BEGIN:VEVENT
+UID:festival-25-2027-10-08@eastbayhindutemple
+DTSTAMP:20260702T000000Z
+DTSTART;VALUE=DATE:20271008
+DTEND;VALUE=DATE:20271009
+SUMMARY:Sharad Navratri (begins) - East Bay Hindu Temple
+DESCRIPTION:Celebrated at East Bay Hindu Temple, 595 School Street, Pitts
+ burg, CA 94565. Dates follow the Hindu lunar calendar (PST/PDT) and may 
+ shift by a day - the temple announces confirmed dates and timings in adv
+ ance. Info: (925) 812-0581 or https://ravikus1457.github.io/Symbio-AI/cl
+ ients/east-bay-hindu-temple/
+LOCATION:595 School Street\, Pittsburg\, CA 94565
+END:VEVENT
+BEGIN:VEVENT
+UID:festival-26-2027-10-17@eastbayhindutemple
+DTSTAMP:20260702T000000Z
+DTSTART;VALUE=DATE:20271017
+DTEND;VALUE=DATE:20271018
+SUMMARY:Dussehra - East Bay Hindu Temple
+DESCRIPTION:Celebrated at East Bay Hindu Temple, 595 School Street, Pitts
+ burg, CA 94565. Dates follow the Hindu lunar calendar (PST/PDT) and may 
+ shift by a day - the temple announces confirmed dates and timings in adv
+ ance. Info: (925) 812-0581 or https://ravikus1457.github.io/Symbio-AI/cl
+ ients/east-bay-hindu-temple/
+LOCATION:595 School Street\, Pittsburg\, CA 94565
+END:VEVENT
+BEGIN:VEVENT
+UID:festival-27-2027-11-04@eastbayhindutemple
+DTSTAMP:20260702T000000Z
+DTSTART;VALUE=DATE:20271104
+DTEND;VALUE=DATE:20271105
+SUMMARY:Diwali & Lakshmi Pujan - East Bay Hindu Temple
+DESCRIPTION:Celebrated at East Bay Hindu Temple, 595 School Street, Pitts
+ burg, CA 94565. Dates follow the Hindu lunar calendar (PST/PDT) and may 
+ shift by a day - the temple announces confirmed dates and timings in adv
+ ance. Info: (925) 812-0581 or https://ravikus1457.github.io/Symbio-AI/cl
+ ients/east-bay-hindu-temple/
+LOCATION:595 School Street\, Pittsburg\, CA 94565
+END:VEVENT
+BEGIN:VEVENT
+UID:festival-28-2027-11-05@eastbayhindutemple
+DTSTAMP:20260702T000000Z
+DTSTART;VALUE=DATE:20271105
+DTEND;VALUE=DATE:20271106
+SUMMARY:Govardhan Puja - East Bay Hindu Temple
+DESCRIPTION:Celebrated at East Bay Hindu Temple, 595 School Street, Pitts
+ burg, CA 94565. Dates follow the Hindu lunar calendar (PST/PDT) and may 
+ shift by a day - the temple announces confirmed dates and timings in adv
+ ance. Info: (925) 812-0581 or https://ravikus1457.github.io/Symbio-AI/cl
+ ients/east-bay-hindu-temple/
+LOCATION:595 School Street\, Pittsburg\, CA 94565
+END:VEVENT
+BEGIN:VEVENT
+UID:festival-29-2027-11-06@eastbayhindutemple
+DTSTAMP:20260702T000000Z
+DTSTART;VALUE=DATE:20271106
+DTEND;VALUE=DATE:20271107
+SUMMARY:Bhai Dooj - East Bay Hindu Temple
+DESCRIPTION:Celebrated at East Bay Hindu Temple, 595 School Street, Pitts
+ burg, CA 94565. Dates follow the Hindu lunar calendar (PST/PDT) and may 
+ shift by a day - the temple announces confirmed dates and timings in adv
+ ance. Info: (925) 812-0581 or https://ravikus1457.github.io/Symbio-AI/cl
+ ients/east-bay-hindu-temple/
+LOCATION:595 School Street\, Pittsburg\, CA 94565
+END:VEVENT
+END:VCALENDAR

@@ -46,9 +46,12 @@
     { id: "holi", name: "Holi", date: [2026, 2, 3] },
     { id: "ramnavami", name: "Ram Navami", date: [2026, 2, 26] },
     { id: "hanuman", name: "Hanuman Jayanti", date: [2026, 3, 2] },
+    { id: "guru-purnima-2026", name: "Guru Purnima", date: [2026, 6, 29] },
+    { id: "rakhi-2026", name: "Raksha Bandhan", date: [2026, 7, 28] },
     { id: "janmashtami", name: "Krishna Janmashtami", date: [2026, 8, 4] },
     { id: "ganesh", name: "Ganesh Chaturthi", date: [2026, 8, 14] },
     { id: "navratri", name: "Sharad Navratri", date: [2026, 9, 11] },
+    { id: "dussehra-2026", name: "Dussehra", date: [2026, 9, 20] },
     { id: "diwali", name: "Diwali & Lakshmi Pooja", date: [2026, 10, 8] },
     // 2027 (per the temple's 2027 festival calendar — see calendar.html)
     { id: "makar-2027", name: "Makar Sankranti", date: [2027, 0, 14] },
@@ -140,9 +143,24 @@
       }
     });
 
-    window.matchMedia("(min-width: 901px)").addEventListener("change", function (event) {
-      if (event.matches) setOpen(false);
+    // Move focus into the drawer when it opens so keyboard/AT users land in it,
+    // and hand focus back to the toggle when it closes.
+    toggle.addEventListener("click", function () {
+      if (toggle.getAttribute("aria-expanded") === "true") {
+        var first = menu.querySelector("a");
+        if (first) first.focus();
+      }
     });
+
+    // MediaQueryList.addEventListener is Safari 14+; older iOS only has
+    // addListener. Without this guard the whole script dies on those devices
+    // and every data-reveal section stays invisible.
+    var mq = window.matchMedia("(min-width: 901px)");
+    var onChange = function (event) {
+      if (event.matches) setOpen(false);
+    };
+    if (typeof mq.addEventListener === "function") mq.addEventListener("change", onChange);
+    else if (typeof mq.addListener === "function") mq.addListener(onChange);
   }
 
   /* ---- 3. Sticky-header shadow ---------------------------------------- */
@@ -235,9 +253,12 @@
     for (var i = 0; i < FESTIVALS.length; i += 1) {
       var f = FESTIVALS[i];
       var d = new Date(f.date[0], f.date[1], f.date[2]);
-      if (d >= today) {
+      // Dim festival cards whose date has passed, so a mid-year visitor can
+      // tell at a glance which celebrations are already behind us.
+      var pastCard = document.querySelector('[data-festival="' + f.id + '"]');
+      if (pastCard && d < today) pastCard.classList.add("is-past");
+      if (!next && d >= today) {
         next = { id: f.id, name: f.name, date: d };
-        break;
       }
     }
     if (!next) return;
@@ -320,29 +341,39 @@
         ta.style.opacity = "0";
         document.body.appendChild(ta);
         ta.select();
-        document.execCommand("copy");
+        var ok = document.execCommand("copy");
         document.body.removeChild(ta);
+        return ok;
       } catch (e) {
-        /* clipboard unavailable; the value is shown on screen to copy by hand */
+        return false;
       }
     }
 
     function copyText(text, btn) {
       var original = btn.textContent;
-      var done = function () {
-        btn.textContent = "Copied!";
+      var show = function (msg) {
+        btn.textContent = msg;
         window.setTimeout(function () {
           btn.textContent = original;
-        }, 1500);
+        }, 2000);
+      };
+      // Only claim "Copied!" when a copy actually happened — otherwise a donor
+      // pastes nothing into their banking app with no hint anything failed.
+      var done = function () {
+        show("Copied!");
+      };
+      var failed = function () {
+        show("Copy the text above");
       };
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(text).then(done, function () {
-          fallbackCopy(text);
-          done();
+          if (fallbackCopy(text)) done();
+          else failed();
         });
-      } else {
-        fallbackCopy(text);
+      } else if (fallbackCopy(text)) {
         done();
+      } else {
+        failed();
       }
     }
 
@@ -545,6 +576,25 @@
     });
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape" && !modal.hidden) closeModal();
+    });
+
+    // Focus trap: the dialog declares aria-modal, so Tab must actually cycle
+    // within it instead of escaping to the page behind the backdrop.
+    modal.addEventListener("keydown", function (e) {
+      if (e.key !== "Tab" || modal.hidden) return;
+      var focusables = modal.querySelectorAll(
+        'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      if (!focusables.length) return;
+      var first = focusables[0];
+      var last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     });
   }
 

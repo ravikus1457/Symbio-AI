@@ -32,9 +32,12 @@
     { name: "Holi", date: [2026, 2, 3] },
     { name: "Ram Navami", date: [2026, 2, 26] },
     { name: "Hanuman Jayanti", date: [2026, 3, 2] },
+    { name: "Guru Purnima", date: [2026, 6, 29] },
+    { name: "Raksha Bandhan", date: [2026, 7, 28] },
     { name: "Krishna Janmashtami", date: [2026, 8, 4] },
     { name: "Ganesh Chaturthi", date: [2026, 8, 14] },
     { name: "Sharad Navratri", date: [2026, 9, 11] },
+    { name: "Dussehra", date: [2026, 9, 20] },
     { name: "Diwali & Lakshmi Pooja", date: [2026, 10, 8] },
     { name: "Makar Sankranti", date: [2027, 0, 14] },
     { name: "Maha Shivaratri", date: [2027, 1, 11] },
@@ -62,7 +65,9 @@
     { kw: ["rot", "rot katta"], label: "Rot Katta Puja", price: STD },
     { kw: ["mundan", "first haircut", "tonsure"], label: "Mundan Sanskar", price: STD },
     { kw: ["vivah", "wedding", "marriage", "shaadi"], label: "Vivah (Wedding)", price: "$1,100 dakshina, +$150 for supplies ($1,250 with supplies). Wedding at the temple for up to 200 guests is $2,100 (incl. hall rent & dakshina)." },
-    { kw: ["funeral", "antim", "sanskar", "cremation", "death"], label: "Antim Sanskar (Funeral Rites)", price: "$1,100 ($1,250 with supplies)" },
+    /* Keep only unambiguous funeral words here — a bare "sanskar" would wrongly
+       route naming/thread-ceremony questions to funeral rites. */
+    { kw: ["funeral", "antim", "cremation", "shraddh", "last rites"], label: "Antim Sanskar (Funeral Rites)", price: "$1,100 ($1,250 with supplies)" },
     { kw: ["manglik", "mangal dosh"], label: "Manglik Puja", price: "$501 flat (supplies included)" },
     { kw: ["kundli", "horoscope scrib", "birth chart", "janam"], label: "Horoscope Scribing (Kundli)", price: "$51" },
     { kw: ["palm", "palmist", "reading", "hast"], label: "Horoscope / Palm Reading", price: "$25" },
@@ -263,6 +268,26 @@
   function rWhatsapp() {
     return "Join our community WhatsApp group for events, darshan, and announcements: " + link(WHATSAPP, "Join the group", true) + ".";
   }
+  function rVolunteer() {
+    return (
+      "We'd love your help! 🙏 The temple runs on seva — assisting Pandit ji during pooja, cooking & serving Maha Prasad, music and Hindi classes, media & live-streaming, cleaning, and more. For availability and details call Rama ji at " +
+      link(TEL_RAMA, RAMA) +
+      " or Pandit ji at " +
+      link(TEL, PHONE) +
+      ", or " +
+      link(WHATSAPP, "reach us on WhatsApp", true) +
+      ". " +
+      link("events.html", "See programs & seva") +
+      "."
+    );
+  }
+  function rFirstVisit() {
+    return (
+      "Everyone is welcome, and entry is always free. 🙏 A few tips: dress modestly (shoulders and knees covered), remove your shoes at the entrance, silence your phone, and receive prasad with your right hand or both hands. Come for darshan any time we're open — no appointment needed. " +
+      link(home("#plan-visit"), "Read the first-visit guide") +
+      "."
+    );
+  }
   function rGreeting() {
     return (
       "🙏 Namaste, and welcome to <b>East Bay Hindu Temple</b>! I can help with darshan timings, poojas & prices, donations, festivals, events, and directions. What would you like to know?"
@@ -281,44 +306,63 @@
     );
   }
 
-  /* ---- Intents (scored by keyword hits) -------------------------------- */
-  var INTENTS = [
-    { id: "greeting", kw: ["hello", "hi ", "hey", "namaste", "namaskar", "jai", "good morning", "good evening"], fn: rGreeting },
+  /* ---- Intents (scored by keyword hits) --------------------------------
+     Greeting/thanks are matched separately and only win when NO topical
+     intent scores — otherwise "Namaste, what are your hours?" would be
+     answered with just a welcome. "when is" is deliberately NOT a festival
+     keyword: it made "when is aarti / the Hanuman Chalisa?" answer with a
+     festival date instead of the daily/weekly schedule. */
+  var COURTESY = [
+    { id: "greeting", kw: ["hello", "hi ", "hey", "namaste", "namaskar", "jai shri", "jai shree", "good morning", "good evening"], fn: rGreeting },
     { id: "thanks", kw: ["thank", "thanks", "dhanyavad", "appreciate"], fn: rThanks },
+  ];
+  var INTENTS = [
     { id: "hours", kw: ["hour", "open", "close", "timing", "time", "darshan time", "when can", "what time", "today"], fn: rHours },
     { id: "location", kw: ["where", "address", "location", "direction", "map", "parking", "how do i get", "find you"], fn: rLocation },
     { id: "contact", kw: ["phone", "call", "contact", "number", "reach", "talk to", "speak"], fn: rContact },
-    { id: "donate", kw: ["donat", "daan", "contribut", "give money", "seva", "venmo", "zelle", "paypal", "support", "sponsor", "fund"], fn: rDonate },
-    { id: "festivals", kw: ["festival", "diwali", "holi", "navratri", "shivaratri", "janmashtami", "ganesh", "ram navami", "hanuman jayanti", "dussehra", "raksha", "rakhi", "makar", "sankranti", "calendar", "when is", "buddha", "guru purnima", "celebrat"], fn: rFestivals },
-    { id: "events", kw: ["event", "tuesday", "satsang", "chalisa", "ramayan", "bhajan", "kirtan", "class", "program", "aarti", "activit"], fn: rEvents },
+    { id: "visit", kw: ["first time", "first visit", "what to expect", "dress", "wear", "etiquette", "shoes", "shoe", "prasad", "entry fee", "ticket", "wheelchair", "accessib"], fn: rFirstVisit },
+    { id: "volunteer", kw: ["volunteer", "volunteering", "help out", "help the temple", "instructor", "teach", "offer my time", "seva opportunit"], fn: rVolunteer },
+    { id: "events", kw: ["event", "tuesday", "satsang", "chalisa", "ramayan", "bhajan", "kirtan", "class", "program", "aarti", "arti", "activit"], fn: rEvents },
+    { id: "donate", kw: ["donat", "daan", "contribut", "give money", "venmo", "zelle", "paypal", "support", "sponsor", "fund"], fn: rDonate },
+    { id: "festivals", kw: ["festival", "diwali", "holi", "navratri", "shivaratri", "janmashtami", "ganesh chaturthi", "ram navami", "hanuman jayanti", "dussehra", "raksha", "rakhi", "makar", "sankranti", "calendar", "buddha purnima", "guru purnima", "celebrat"], fn: rFestivals },
     { id: "priest", kw: ["priest", "pandit", "panditji", "astrolog", "kundli", "palm", "horoscope", "jyotish", "vastu", "healing", "mantra"], fn: rPriest },
     { id: "shop", kw: ["shop", "buy", "mala", "murti", "store", "purchase", "gift", "sell"], fn: rShop },
     { id: "whatsapp", kw: ["whatsapp", "group", "join", "updates"], fn: rWhatsapp },
-    { id: "puja", kw: ["pooja", "puja", "seva", "price", "cost", "how much", "book", "ceremony", "havan", "wedding", "vivah", "marriage", "funeral", "antim", "mundan", "manglik", "satyanarayan", "navagraha", "griha", "house warming", "vastu", "sanskar", "rate", "charge", "fee"], fn: rPuja },
+    { id: "puja", kw: ["pooja", "puja", "seva", "price", "cost", "how much", "book", "ceremony", "havan", "wedding", "vivah", "marriage", "funeral", "antim", "mundan", "manglik", "namkaran", "naming", "satyanarayan", "navagraha", "griha", "house warming", "sanskar", "rate", "charge", "fee"], fn: rPuja },
   ];
+
+  function scoreIntent(intent, t) {
+    var score = 0;
+    for (var j = 0; j < intent.kw.length; j += 1) {
+      if (t.indexOf(intent.kw[j]) !== -1) score += 1;
+    }
+    return score;
+  }
 
   function answer(text) {
     var t = " " + text.toLowerCase().replace(/[^\w\s@&]/g, " ").replace(/\s+/g, " ") + " ";
     var best = null;
     var bestScore = 0;
-    for (var i = 0; i < INTENTS.length; i += 1) {
-      var score = 0;
-      for (var j = 0; j < INTENTS[i].kw.length; j += 1) {
-        if (t.indexOf(INTENTS[i].kw[j]) !== -1) score += 1;
-      }
+    var i;
+    for (i = 0; i < INTENTS.length; i += 1) {
+      var score = scoreIntent(INTENTS[i], t);
       if (score > bestScore) {
         bestScore = score;
         best = INTENTS[i];
       }
     }
-    if (!best) return rFallback();
-    return best.fn(t);
+    if (best) return best.fn(t);
+    for (i = 0; i < COURTESY.length; i += 1) {
+      if (scoreIntent(COURTESY[i], t) > 0) return COURTESY[i].fn(t);
+    }
+    return rFallback();
   }
 
   /* ---- UI -------------------------------------------------------------- */
   var CHIPS = [
     { label: "🕉️ Timings", q: "What are your hours?" },
     { label: "📿 Book a pooja", q: "How do I book a pooja and what does it cost?" },
+    { label: "🙏 First visit?", q: "What should I know for my first visit?" },
     { label: "💛 Donate", q: "How can I donate?" },
     { label: "🎉 Next festival", q: "When is the next festival?" },
     { label: "🗓️ Tuesday satsang", q: "Tell me about the weekly events" },
@@ -403,6 +447,8 @@
       panel.hidden = !open;
       launcher.setAttribute("aria-expanded", String(open));
       root.classList.toggle("is-open", open);
+      // Lets the stylesheet hide the back-to-top button under the open panel.
+      document.body.classList.toggle("tassist-open", open);
       if (open) {
         if (!greeted) {
           greeted = true;

@@ -36,10 +36,12 @@
   --red-deep: #5e0a13;
   --red-soft: #a8323f;
 
-  /* Gold — the second lead colour */
+  /* Gold — the second lead colour.
+     --gold-deep doubles as small-text gold: #80601a holds 4.5:1+ (WCAG AA)
+     on both cream surfaces, where the old #9a7322 sat at ~4.0:1. */
   --gold: #c89b3c;
   --gold-bright: #f1cf7a;
-  --gold-deep: #9a7322;
+  --gold-deep: #80601a;
 
   /* Saffron / marigold warmth */
   --saffron: #e8861e;
@@ -51,7 +53,8 @@
   --cream-3: #f1dcb6;
   --ink: #33160f;
   --ink-soft: #6a4536;
-  --ink-faint: #9a7868;
+  --ink-faint: #7d5f51; /* 5.4:1 on cream (was #9a7868 at 3.7:1 — failed AA) */
+  --focus: #b35410; /* focus ring: 4.7:1 on cream (saffron was 2.5:1) */
   --line: rgba(122, 60, 30, 0.16);
   --line-strong: rgba(122, 60, 30, 0.3);
 
@@ -191,7 +194,7 @@ ul {
 }
 
 :focus-visible {
-  outline: 3px solid var(--saffron);
+  outline: 3px solid var(--focus);
   outline-offset: 3px;
   border-radius: 4px;
 }
@@ -715,6 +718,10 @@ ul {
   display: flex;
   align-items: center;
   gap: var(--space-3);
+  /* Keep the hamburger above the slide-out drawer so it stays visible and
+     tappable as a close control while the menu is open. */
+  position: relative;
+  z-index: 2;
 }
 
 .nav-toggle {
@@ -752,6 +759,22 @@ ul {
 }
 .nav-toggle__bars::after {
   top: 6px;
+}
+
+/* Morph the hamburger into an ✕ while the drawer is open, so there is always
+   a visible way to close the menu. */
+.nav-toggle[aria-expanded="true"] .nav-toggle__bars {
+  background: transparent;
+}
+
+.nav-toggle[aria-expanded="true"] .nav-toggle__bars::before {
+  top: 0;
+  transform: rotate(45deg);
+}
+
+.nav-toggle[aria-expanded="true"] .nav-toggle__bars::after {
+  top: 0;
+  transform: rotate(-45deg);
 }
 
 @media (max-width: 900px) {
@@ -1463,7 +1486,8 @@ ul {
   height: 22px;
 }
 
-.contact-list dt {
+.contact-list__dt {
+  display: block;
   font-size: var(--fs-200);
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -1471,18 +1495,18 @@ ul {
   font-weight: 700;
 }
 
-.contact-list dd {
+.contact-list__dd {
   margin: 0.2rem 0 0;
   font-size: var(--fs-400);
   color: var(--ink);
   font-weight: 600;
 }
 
-.contact-list dd a {
+.contact-list__dd a {
   color: var(--ink);
 }
 
-.contact-list dd a:hover {
+.contact-list__dd a:hover {
   color: var(--red);
 }
 
@@ -2489,6 +2513,9 @@ ul {
   bottom: clamp(1rem, 3vw, 1.6rem);
   width: min(370px, calc(100vw - 2rem));
   height: min(560px, calc(100vh - 2rem));
+  /* dvh tracks the real visible viewport on mobile (browser chrome shrinks
+     100vh and clipped the panel header); older browsers keep the vh line. */
+  height: min(560px, calc(100dvh - 2rem));
   display: flex;
   flex-direction: column;
   background: var(--cream);
@@ -2667,7 +2694,8 @@ ul {
   border-radius: var(--radius-pill);
   padding: 0.6rem 0.9rem;
   font-family: var(--font-body);
-  font-size: var(--fs-300);
+  /* 16px minimum: anything smaller makes iOS Safari zoom the page on focus. */
+  font-size: 1rem;
   color: var(--ink);
   background: #fff;
 }
@@ -2708,4 +2736,114 @@ ul {
   .tassist__dots i {
     animation: none;
   }
+}
+
+/* -------------------------------------------------------------------------
+   33. Overlap guards, past festivals, first-visit FAQ
+   ------------------------------------------------------------------------- */
+/* The open chat panel occupies the bottom-right corner — retire the
+   back-to-top button while it is open. */
+body.tassist-open .back-to-top {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* The mobile nav drawer slides in from the right; hide the floating chat
+   launcher so it cannot cover the drawer's own controls. */
+body:has(.site-nav__list.is-open) .tassist {
+  display: none;
+}
+
+/* Festivals whose date has passed (class added by temple.js). */
+.festival.is-past {
+  opacity: 0.62;
+}
+
+.festival.is-past .festival__date::after {
+  content: "✓";
+  display: block;
+  font-size: var(--fs-200);
+  color: var(--gold-deep);
+  margin-top: 0.15rem;
+}
+
+/* First-visit FAQ (native disclosure widgets, keyboard-accessible for free) */
+.faq {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.faq details {
+  background: var(--cream);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.faq summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: 0.95rem 1.2rem;
+  font-weight: 700;
+  color: var(--red);
+  font-size: var(--fs-400);
+}
+
+.faq summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq summary::after {
+  content: "+";
+  flex: none;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  line-height: 1;
+  color: var(--gold-deep);
+  transition: transform var(--dur) var(--ease);
+}
+
+.faq details[open] summary::after {
+  transform: rotate(45deg);
+}
+
+.faq details > div {
+  padding: 0 1.2rem 1.1rem;
+  color: var(--ink-soft);
+  font-size: var(--fs-300);
+}
+
+/* Etiquette quick-tips row on the first-visit guide */
+.etiquette {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-4);
+}
+
+.etiquette li {
+  background: var(--cream);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+  text-align: center;
+  font-size: var(--fs-300);
+  color: var(--ink-soft);
+  box-shadow: var(--shadow-sm);
+}
+
+.etiquette__icon {
+  display: block;
+  font-size: 1.6rem;
+  margin-bottom: 0.35rem;
+}
+
+.etiquette strong {
+  display: block;
+  color: var(--red);
+  margin-bottom: 0.15rem;
 }

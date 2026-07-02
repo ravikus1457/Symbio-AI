@@ -89,6 +89,16 @@ The opening hours and festival dates live at the top of
 `assets/js/temple.js` (clearly commented) — edit them there and the whole page
 follows.
 
+### First-visit guide, FAQ & structured data
+
+The home page has a "Visiting for the First Time?" section (`#plan-visit`) with
+etiquette tips and an FAQ, modeled on what the big Bay Area temple sites
+(Livermore, Fremont, BAPS) publish. The home page also ships schema.org
+structured data (HinduTemple with hours/phone/address, plus FAQPage) so Google
+can show the temple's info directly in search. `calendar.html` offers a
+downloadable `assets/festivals.ics` ("Add Festivals to Your Calendar") — 
+regenerate it if festival dates change.
+
 ### Temple Assistant (chatbot)
 
 A small floating "Ask us" assistant appears on every page (`assets/js/temple-assistant.js`).

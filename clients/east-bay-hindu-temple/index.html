@@ -11,6 +11,7 @@
     <meta name="theme-color" content="#5e0a13" />
 
     <link rel="icon" href="assets/img/logo-temple.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png" />
 
     <!-- Open Graph / social -->
     <meta property="og:type" content="website" />
@@ -19,7 +20,12 @@
       property="og:description"
       content="A community temple for daily darshan, aarti, poojas, and festivals in Pittsburg, California."
     />
-    <meta property="og:image" content="assets/img/logo-temple.svg" />
+    <meta property="og:image" content="https://ravikus1457.github.io/Symbio-AI/clients/east-bay-hindu-temple/assets/img/temple-welcome.jpg" />
+    <meta property="og:url" content="https://ravikus1457.github.io/Symbio-AI/clients/east-bay-hindu-temple/" />
+    <!-- NOTE: update og/canonical URLs when the site moves to its final domain. -->
+    <link rel="canonical" href="https://ravikus1457.github.io/Symbio-AI/clients/east-bay-hindu-temple/" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://ravikus1457.github.io/Symbio-AI/clients/east-bay-hindu-temple/assets/img/temple-welcome.jpg" />
 
     <!-- Fonts: elegant serif display + readable body + Devanagari for Sanskrit -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -35,6 +41,38 @@
     </script>
     <script src="assets/js/temple.js" defer></script>
     <script src="assets/js/temple-assistant.js" defer></script>
+
+    <!-- Structured data: lets Google show hours, phone, and address directly
+         in search results. Keep in sync with the visible hours and contacts. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "HinduTemple",
+        "name": "East Bay Hindu Temple",
+        "alternateName": "पूर्वी खाड़ी हिन्दू मंदिर",
+        "url": "https://ravikus1457.github.io/Symbio-AI/clients/east-bay-hindu-temple/",
+        "image": "https://ravikus1457.github.io/Symbio-AI/clients/east-bay-hindu-temple/assets/img/temple-welcome.jpg",
+        "telephone": "+1-925-812-0581",
+        "foundingDate": "2004",
+        "isAccessibleForFree": true,
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "595 School Street",
+          "addressLocality": "Pittsburg",
+          "addressRegion": "CA",
+          "postalCode": "94565",
+          "addressCountry": "US"
+        },
+        "openingHoursSpecification": [
+          { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Friday", "Saturday", "Sunday"], "opens": "10:00", "closes": "16:00" },
+          { "@type": "OpeningHoursSpecification", "dayOfWeek": "Tuesday", "opens": "10:00", "closes": "20:30" }
+        ],
+        "sameAs": [
+          "https://www.facebook.com/pittsburgeastbayhindutemple/",
+          "https://www.instagram.com/eastbayhindutemple/"
+        ]
+      }
+    </script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -200,7 +238,7 @@
                 <div class="framed__inner">
                   <img
                     class="framed__photo"
-                    src="assets/img/temple-welcome.jpg?v=2"
+                    src="assets/img/temple-welcome.jpg?v=2" width="1400" height="933"
                     alt="East Bay Hindu Temple on School Street, Pittsburg, California, at sunset"
                     loading="lazy"
                     onerror="this.remove()"
@@ -711,15 +749,15 @@
 
           <div class="grid grid--3">
             <a class="poster" href="assets/img/flyers/calendar-2027.jpg" target="_blank" rel="noopener" data-reveal>
-              <img src="assets/img/flyers/calendar-2027.jpg" alt="2027 Hindu Festival Calendar" loading="lazy" />
+              <img src="assets/img/flyers/calendar-2027.jpg" width="1100" height="619" alt="2027 Hindu Festival Calendar" loading="lazy" />
               <span class="poster__cap">2027 Festival Calendar</span>
             </a>
             <a class="poster" href="assets/img/flyers/tuesday-satsang.jpg" target="_blank" rel="noopener" data-reveal data-reveal-delay="1">
-              <img src="assets/img/flyers/tuesday-satsang.jpg" alt="Tuesday 6:30 PM Hanuman Chalisa &amp; Ramayana Path" loading="lazy" />
+              <img src="assets/img/flyers/tuesday-satsang.jpg" width="1024" height="1536" alt="Tuesday 6:30 PM Hanuman Chalisa &amp; Ramayana Path" loading="lazy" />
               <span class="poster__cap">Tuesday Satsang</span>
             </a>
             <a class="poster" href="assets/img/flyers/support-temple.jpg" target="_blank" rel="noopener" data-reveal data-reveal-delay="2">
-              <img src="assets/img/flyers/support-temple.jpg" alt="Support Your Temple — ways to donate" loading="lazy" />
+              <img src="assets/img/flyers/support-temple.jpg" width="1100" height="619" alt="Support Your Temple — ways to donate" loading="lazy" />
               <span class="poster__cap">Support Your Temple</span>
             </a>
           </div>
@@ -742,7 +780,7 @@
                        then this falls back to the placeholder below. -->
                   <img
                     class="framed__photo"
-                    src="assets/img/priest-panditji.jpg"
+                    src="assets/img/priest-panditji.jpg" width="982" height="817" loading="lazy"
                     alt="Pandit Rakesh Bhargav ji, head priest of East Bay Hindu Temple"
                     onerror="this.remove()"
                     style="object-position: 72% top"
@@ -867,14 +905,16 @@
               </div>
             </div>
             <div class="info-note" data-reveal data-reveal-delay="1">
-              <div class="info-note__title">🎉 Sponsor an event</div>
+              <div class="info-note__title">🎉 Sponsor a seva or festival</div>
               <p>
-                Sponsor a festival, an aarti, or an annadanam in your family's name — a beautiful way
-                to give back. Sponsorships start from <strong>$251</strong>; call to choose an event
-                and amount.
+                Sponsor a seva in your family's name — your sankalp is taken at the pooja and prasad
+                is offered on your behalf. Suggested sponsorships:
+                <strong>$51</strong> aarti seva · <strong>$101</strong> Tuesday prasad ·
+                <strong>$251</strong> festival annadanam · <strong>$501</strong> festival grand
+                sponsor. Call to choose a date and dedicate it.
               </p>
               <div class="btn-row mt-6">
-                <a class="btn btn--primary" href="tel:+19258120581">Sponsor an Event</a>
+                <a class="btn btn--primary" href="tel:+19258120581">Sponsor a Seva</a>
               </div>
             </div>
           </div>
@@ -978,6 +1018,126 @@
         </div>
       </section>
 
+      <!-- ===== First visit guide ====================================== -->
+      <section class="section" id="plan-visit" aria-labelledby="plan-visit-title">
+        <div class="container">
+          <div class="section__head center" data-reveal>
+            <span class="eyebrow">First Visit · प्रथम दर्शन</span>
+            <h2 class="title" id="plan-visit-title">Visiting for the First Time?</h2>
+            <p class="lead">
+              Everyone is welcome, and entry is always free — come as you are. A few simple customs
+              will help you feel at home in any mandir.
+            </p>
+          </div>
+
+          <ul class="etiquette" data-reveal>
+            <li>
+              <span class="etiquette__icon" aria-hidden="true">👟</span>
+              <strong>Remove your shoes</strong>
+              Leave footwear at the racks by the entrance before going in for darshan.
+            </li>
+            <li>
+              <span class="etiquette__icon" aria-hidden="true">👘</span>
+              <strong>Dress modestly</strong>
+              Clothing that covers shoulders and knees is appreciated — traditional or casual.
+            </li>
+            <li>
+              <span class="etiquette__icon" aria-hidden="true">📱</span>
+              <strong>Silence your phone</strong>
+              Keep voices low in the darshan hall; please ask before photographing the murtis.
+            </li>
+            <li>
+              <span class="etiquette__icon" aria-hidden="true">🍚</span>
+              <strong>Receive prasad</strong>
+              Accept prasad with your right hand or both hands — it is a blessing to be shared.
+            </li>
+            <li>
+              <span class="etiquette__icon" aria-hidden="true">🪔</span>
+              <strong>Join the aarti</strong>
+              You're welcome to stand with everyone during aarti and offer the flame's blessing.
+            </li>
+            <li>
+              <span class="etiquette__icon" aria-hidden="true">🅿️</span>
+              <strong>Parking is easy</strong>
+              Free parking is available on-site and on School Street.
+            </li>
+          </ul>
+
+          <div class="faq mt-7" data-reveal>
+            <details>
+              <summary>Do I need an appointment for darshan?</summary>
+              <div>
+                No — come any time during open hours for darshan. Appointments are only needed for
+                personal poojas and ceremonies with Pandit ji, which you can arrange at
+                <a href="tel:+19258120581">(925) 812-0581</a>.
+              </div>
+            </details>
+            <details>
+              <summary>Is there an entry fee?</summary>
+              <div>
+                Never. The temple is free and open to all, regardless of background. It runs
+                entirely on the generosity of devotees — donations are welcome but never required.
+              </div>
+            </details>
+            <details>
+              <summary>Can I bring offerings from home?</summary>
+              <div>
+                Yes — flowers, fruit, and sweets are all welcome offerings. You can also purchase
+                prasad and puja items at the <a href="#shop">temple shop</a>.
+              </div>
+            </details>
+            <details>
+              <summary>I'm not Hindu — may I still visit?</summary>
+              <div>
+                Absolutely. Visitors of every faith and background are warmly welcome. Come for a
+                quiet moment, ask questions, and stay for prasad.
+              </div>
+            </details>
+            <details>
+              <summary>Is the temple wheelchair accessible?</summary>
+              <div>
+                Please call ahead at <a href="tel:+19258120581">(925) 812-0581</a> and we will
+                gladly make arrangements to assist you.
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <script type="application/ld+json">
+          {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Do I need an appointment for darshan at East Bay Hindu Temple?",
+                "acceptedAnswer": { "@type": "Answer", "text": "No — come any time during open hours for darshan. Appointments are only needed for personal poojas and ceremonies with Pandit ji, arranged at (925) 812-0581." }
+              },
+              {
+                "@type": "Question",
+                "name": "Is there an entry fee?",
+                "acceptedAnswer": { "@type": "Answer", "text": "Never. The temple is free and open to all, regardless of background. Donations are welcome but never required." }
+              },
+              {
+                "@type": "Question",
+                "name": "Can I bring offerings from home?",
+                "acceptedAnswer": { "@type": "Answer", "text": "Yes — flowers, fruit, and sweets are all welcome offerings. Prasad and puja items are also available at the temple shop." }
+              },
+              {
+                "@type": "Question",
+                "name": "I'm not Hindu — may I still visit?",
+                "acceptedAnswer": { "@type": "Answer", "text": "Absolutely. Visitors of every faith and background are warmly welcome." }
+              },
+              {
+                "@type": "Question",
+                "name": "Is the temple wheelchair accessible?",
+                "acceptedAnswer": { "@type": "Answer", "text": "Please call ahead at (925) 812-0581 and we will gladly make arrangements to assist you." }
+              }
+            ]
+          }
+        </script>
+      </section>
+
       <!-- ===== Visit & contact ========================================= -->
       <section class="section section--cream" id="visit" aria-labelledby="visit-title">
         <div class="container">
@@ -992,7 +1152,7 @@
 
           <div class="visit">
             <div data-reveal>
-              <dl class="contact-list">
+              <ul class="contact-list">
                 <li>
                   <span class="contact-list__icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
@@ -1001,15 +1161,15 @@
                     </svg>
                   </span>
                   <div>
-                    <dt>Address</dt>
-                    <dd>
+                    <span class="contact-list__dt">Address</span>
+                    <div class="contact-list__dd">
                       <a
                         href="https://www.google.com/maps/search/?api=1&query=595+School+St,+Pittsburg,+CA+94565"
                         target="_blank"
                         rel="noopener"
                         >595 School Street, Pittsburg, CA 94565</a
                       >
-                    </dd>
+                    </div>
                   </div>
                 </li>
                 <li>
@@ -1019,11 +1179,11 @@
                     </svg>
                   </span>
                   <div>
-                    <dt>Phone</dt>
-                    <dd>
+                    <span class="contact-list__dt">Phone</span>
+                    <div class="contact-list__dd">
                       Pandit ji · <a href="tel:+19258120581">(925) 812-0581</a><br />
                       Seva &amp; volunteering · Rama ji <a href="tel:+19256954200">(925) 695-4200</a>
-                    </dd>
+                    </div>
                   </div>
                 </li>
                 <li>
@@ -1034,8 +1194,8 @@
                     </svg>
                   </span>
                   <div>
-                    <dt>Open Today</dt>
-                    <dd><span data-open-status>See weekly hours above</span></dd>
+                    <span class="contact-list__dt">Open Today</span>
+                    <div class="contact-list__dd"><span data-open-status>See weekly hours above</span></div>
                   </div>
                 </li>
                 <li>
@@ -1045,18 +1205,18 @@
                     </svg>
                   </span>
                   <div>
-                    <dt>Connect</dt>
-                    <dd>
+                    <span class="contact-list__dt">Connect</span>
+                    <div class="contact-list__dd">
                       <div class="social-links">
                         <a class="social-link" href="https://www.facebook.com/pittsburgeastbayhindutemple/" target="_blank" rel="noopener">Facebook</a>
                         <a class="social-link" href="https://www.instagram.com/eastbayhindutemple/" target="_blank" rel="noopener">Instagram</a>
                         <a class="social-link" href="https://chat.whatsapp.com/L7b2cV31LiNAMih8pO4E7F" target="_blank" rel="noopener">WhatsApp</a>
                         <a class="social-link" href="https://www.panditbhargavji.com" target="_blank" rel="noopener">panditbhargavji.com</a>
                       </div>
-                    </dd>
+                    </div>
                   </div>
                 </li>
-              </dl>
+              </ul>
 
               <div class="btn-row mt-6">
                 <a
@@ -1111,6 +1271,7 @@
             <li><a href="puja-services.html">Poojas &amp; Prices</a></li>
             <li><a href="events.html">Events</a></li>
             <li><a href="calendar.html">Festival Calendar</a></li>
+            <li><a href="#plan-visit">First Visit Guide</a></li>
             <li><a href="#daan">Support the Temple</a></li>
           </ul>
         </nav>

@@ -11,6 +11,7 @@
     <meta name="theme-color" content="#5e0a13" />
 
     <link rel="icon" href="assets/img/logo-temple.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png" />
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Festival Calendar 2026 &amp; 2027 — East Bay Hindu Temple" />
@@ -18,7 +19,12 @@
       property="og:description"
       content="The year's major Hindu festivals with a live countdown to the next celebration."
     />
-    <meta property="og:image" content="assets/img/logo-temple.svg" />
+    <meta property="og:image" content="https://ravikus1457.github.io/Symbio-AI/clients/east-bay-hindu-temple/assets/img/flyers/calendar-2027.jpg" />
+    <meta property="og:url" content="https://ravikus1457.github.io/Symbio-AI/clients/east-bay-hindu-temple/calendar.html" />
+    <!-- NOTE: update og/canonical URLs when the site moves to its final domain. -->
+    <link rel="canonical" href="https://ravikus1457.github.io/Symbio-AI/clients/east-bay-hindu-temple/calendar.html" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://ravikus1457.github.io/Symbio-AI/clients/east-bay-hindu-temple/assets/img/flyers/calendar-2027.jpg" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -112,18 +118,6 @@
         </div>
       </section>
 
-      <!-- ===== Official 2027 calendar poster ========================= -->
-      <section class="section section--tight">
-        <div class="container">
-          <div class="poster-feature" data-reveal>
-            <a class="poster" href="assets/img/flyers/calendar-2027.jpg" target="_blank" rel="noopener">
-              <img src="assets/img/flyers/calendar-2027.jpg" alt="East Bay Hindu Temple 2027 Hindu Festival Calendar" loading="lazy" />
-              <span class="poster__cap">The temple's official 2027 festival calendar — tap to view or save</span>
-            </a>
-          </div>
-        </div>
-      </section>
-
       <!-- ===== 2026 =================================================== -->
       <section class="section section--tight">
         <div class="container">
@@ -165,6 +159,22 @@
                 <div class="festival__desc">Sundar Kand and Hanuman Chalisa paath.</div>
               </div>
             </div>
+            <div class="festival" data-festival="guru-purnima-2026" data-reveal>
+              <div class="festival__date"><span class="festival__day">29</span><span class="festival__mon">Jul</span></div>
+              <div>
+                <div class="festival__name">Guru Purnima <span data-festival-badge></span></div>
+                <div class="festival__deva deva">गुरु पूर्णिमा</div>
+                <div class="festival__desc">Honouring our gurus and teachers.</div>
+              </div>
+            </div>
+            <div class="festival" data-festival="rakhi-2026" data-reveal data-reveal-delay="1">
+              <div class="festival__date"><span class="festival__day">28</span><span class="festival__mon">Aug</span></div>
+              <div>
+                <div class="festival__name">Raksha Bandhan <span data-festival-badge></span></div>
+                <div class="festival__deva deva">रक्षा बंधन</div>
+                <div class="festival__desc">The bond of love and protection between siblings.</div>
+              </div>
+            </div>
             <div class="festival" data-festival="janmashtami" data-reveal>
               <div class="festival__date"><span class="festival__day">4</span><span class="festival__mon">Sep</span></div>
               <div>
@@ -189,7 +199,15 @@
                 <div class="festival__desc">Nine nights of Durga Maa — garba, aarti, and fasting.</div>
               </div>
             </div>
-            <div class="festival" data-festival="diwali" data-reveal data-reveal-delay="1">
+            <div class="festival" data-festival="dussehra-2026" data-reveal data-reveal-delay="1">
+              <div class="festival__date"><span class="festival__day">20</span><span class="festival__mon">Oct</span></div>
+              <div>
+                <div class="festival__name">Dussehra <span data-festival-badge></span></div>
+                <div class="festival__deva deva">दशहरा</div>
+                <div class="festival__desc">The victory of good over evil — Vijayadashami.</div>
+              </div>
+            </div>
+            <div class="festival" data-festival="diwali" data-reveal>
               <div class="festival__date"><span class="festival__day">8</span><span class="festival__mon">Nov</span></div>
               <div>
                 <div class="festival__name">Diwali &amp; Lakshmi Pooja <span data-festival-badge></span></div>
@@ -197,6 +215,18 @@
                 <div class="festival__desc">The festival of lights and Lakshmi pooja.</div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Official 2027 calendar poster ========================= -->
+      <section class="section section--tight">
+        <div class="container">
+          <div class="poster-feature" data-reveal>
+            <a class="poster" href="assets/img/flyers/calendar-2027.jpg" target="_blank" rel="noopener">
+              <img src="assets/img/flyers/calendar-2027.jpg" width="1100" height="619" alt="East Bay Hindu Temple 2027 Hindu Festival Calendar" loading="lazy" />
+              <span class="poster__cap">The temple's official 2027 festival calendar — tap to view or save</span>
+            </a>
           </div>
         </div>
       </section>
@@ -384,11 +414,15 @@
               Dates follow the Hindu lunar calendar and may shift by a day. All dates &amp; tithi are
               calculated as per <strong>San Francisco time (PST/PDT)</strong>. Confirmed dates and
               timings for each festival are announced by the temple in advance — follow us or join
-              our WhatsApp group to stay updated.
+              our WhatsApp group to stay updated. For the daily panchang (tithi, nakshatra, rahu
+              kalam), see
+              <a href="https://www.drikpanchang.com/" target="_blank" rel="noopener" style="color: var(--red); font-weight: 700">Drik Panchang ↗</a>
+              and set your city to Pittsburg, CA.
             </p>
           </div>
           <div class="btn-row btn-row--center mt-7" data-reveal>
-            <a class="btn btn--primary btn--lg" href="events.html">See Events &amp; Programs</a>
+            <a class="btn btn--primary btn--lg" href="assets/festivals.ics" download="east-bay-hindu-temple-festivals.ics">📲 Add Festivals to Your Calendar</a>
+            <a class="btn btn--gold btn--lg" href="events.html">See Events &amp; Programs</a>
             <a class="btn btn--ghost btn--lg" href="index.html#visit">Plan Your Visit</a>
           </div>
         </div>

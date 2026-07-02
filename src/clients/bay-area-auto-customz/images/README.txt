@@ -7,10 +7,18 @@ optimized (photos ~1400-1600px JPEG; signs/logos WebP; each well under ~400KB).
 BRAND SIGNS & LOGOS (from Sergio's real RGB signage)
   sign-wordmark.webp     rainbow neon script wordmark — banner atop #ambient
   sign-features.webp     ambient-lighting sign w/ Instagram QR — left of #ambient
-                         (kept high-quality so the QR stays scannable)
+                         (his stylized rainbow QR is decorative; on the site the
+                         sign is a tap link to Instagram, so the link always works)
   logo-badge-rgb.webp    RGB neon car badge — emblem in the #ambient panel
   logo-badge-gold.webp   gold car badge — the site logo (header + footer)
   logo-badge-gold.jpg    same badge as JPEG — og:image / link-preview
+
+INSTAGRAM QR (regenerated — the stylized QR baked into the sign scans poorly)
+  qr-instagram-card.png  branded "Scan to follow" card, gold frame + IG glyph —
+                         hand this to Sergio for the physical sign / car / flyers
+  qr-instagram.png       plain black-on-white QR (same link), for any other use
+  Both are verified-scannable and encode https://www.instagram.com/bayareaautocustomz/.
+  Neither is embedded in the page (the site uses tap links); they're print assets.
 
 STARLIGHT (Our work — #work)
   starlight-roof-purple.jpg        purple starlight, Mercedes C-Class (featured)

@@ -1198,6 +1198,11 @@ img.tile__media {
   flex-direction: column;
 }
 
+.ambient__promo a {
+  display: block;
+  line-height: 0;
+}
+
 .ambient__promo img {
   display: block;
   width: 100%;
@@ -1209,6 +1214,11 @@ img.tile__media {
   border-top: 1px solid var(--line-soft);
   color: var(--muted);
   font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.ambient__promo figcaption a {
+  color: var(--gold-bright);
 }
 
 .ambient__promo figcaption strong {

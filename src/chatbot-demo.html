@@ -81,7 +81,8 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 12px;
+        flex-wrap: wrap;
+        gap: 8px 12px;
         padding: 10px 20px;
         background: #0c1322;
         color: #fff;
@@ -120,8 +121,48 @@
 
       /* Sample business site */
       .hero {
+        position: relative;
+        overflow: hidden;
         padding: clamp(3rem, 8vw, 6rem) 0;
         background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 12%, #fff), var(--bg));
+      }
+      /* Drifting accent auroras — they re-tint live with the chosen industry. */
+      .hero::before,
+      .hero::after {
+        content: "";
+        position: absolute;
+        width: min(50vw, 420px);
+        aspect-ratio: 1;
+        border-radius: 50%;
+        filter: blur(70px);
+        opacity: 0.35;
+        pointer-events: none;
+      }
+      .hero::before {
+        top: -30%;
+        left: -6%;
+        background: radial-gradient(circle, color-mix(in srgb, var(--accent) 75%, #fff), transparent 60%);
+        animation: drift-a 18s ease-in-out infinite alternate;
+      }
+      .hero::after {
+        top: -10%;
+        right: -8%;
+        background: radial-gradient(circle, color-mix(in srgb, var(--accent) 45%, #7a4dff), transparent 60%);
+        animation: drift-b 22s ease-in-out infinite alternate;
+      }
+      @keyframes drift-a {
+        to {
+          transform: translate3d(6%, 10%, 0) scale(1.15);
+        }
+      }
+      @keyframes drift-b {
+        to {
+          transform: translate3d(-8%, 6%, 0) scale(0.9);
+        }
+      }
+      .hero .wrap {
+        position: relative;
+        z-index: 1;
       }
       .hero__eyebrow {
         font-weight: 700;
@@ -172,11 +213,40 @@
         margin-top: 1.6rem;
       }
       .card {
+        --mx: 50%;
+        --my: 50%;
+        --rx: 0deg;
+        --ry: 0deg;
+        position: relative;
         background: var(--surface);
         border: 1px solid var(--border);
         border-radius: 16px;
         padding: 1.4rem;
-        box-shadow: var(--shadow);
+        box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        transform-style: preserve-3d;
+      }
+      /* Cursor-following glare + 3D tilt (the demo script feeds the vars). */
+      .card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: radial-gradient(
+          220px circle at var(--mx) var(--my),
+          color-mix(in srgb, var(--accent) 18%, transparent),
+          transparent 60%
+        );
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+      }
+      .card:hover {
+        transform: perspective(800px) rotateX(var(--rx)) rotateY(var(--ry)) translateY(-4px);
+        transition: transform 0.1s ease;
+      }
+      .card:hover::before {
+        opacity: 1;
       }
       .card h3 {
         font-size: 1.1rem;
@@ -206,10 +276,35 @@
         box-shadow: var(--shadow);
         overflow: hidden;
         transform: translateX(calc(-100% - 24px));
-        transition: transform 0.25s ease;
+        visibility: hidden;
+        transition: transform 0.25s ease, visibility 0.25s ease;
       }
       .panel.is-open {
         transform: none;
+        visibility: visible;
+      }
+      /* Attention pulse on the Customize button until it's used once. */
+      .demobar button.is-nudge {
+        position: relative;
+      }
+      .demobar button.is-nudge::after {
+        content: "";
+        position: absolute;
+        inset: -4px;
+        border-radius: 999px;
+        border: 2px solid rgba(255, 255, 255, 0.7);
+        animation: nudge 1.8s ease-out infinite;
+        pointer-events: none;
+      }
+      @keyframes nudge {
+        from {
+          opacity: 1;
+          transform: scale(1);
+        }
+        to {
+          opacity: 0;
+          transform: scale(1.3);
+        }
       }
       .panel--customize {
         top: 64px;
@@ -356,9 +451,10 @@
     <div class="demobar">
       <span>
         <strong>Symbio AI</strong> live demo
-        <span class="demobar__tag">sample business — pick an industry →</span>
+        <span class="demobar__tag">sample business — rebrand it in Customize</span>
       </span>
       <span class="demobar__actions">
+        <button type="button" data-tour>▶ Watch it work</button>
         <button type="button" data-toggle="customize">Customize</button>
         <button type="button" data-toggle="leads">Leads <span class="count" data-lead-count>0</span></button>
         <a href="index.html">← Back to Symbio</a>
@@ -454,405 +550,742 @@
         phone: "510-555-0142",
         price: "from $35",
         position: "right",
+        // The sample page is light-only, so pin the widget to match — otherwise
+        // dark-OS visitors would see a dark chat on a light page.
+        theme: "light",
       };
     </script>
 
     <!-- 2) The Symbio Widget, inlined so this file is fully self-contained.
-            This is a copy of assets/js/symbio-widget.js — keep them in sync. -->
+            This is a verbatim copy of the IIFE from assets/js/symbio-widget.js
+            (the file's doc-header comment is dropped here because it contains
+            literal script tags that would end this inline block). If you edit
+            the widget, re-copy it here to keep the demo in sync. -->
     <script>
-      (function () {
-        "use strict";
-        if (window.SymbioWidget && window.SymbioWidget.__loaded) return;
+      /* Symbio Widget — inlined copy of assets/js/symbio-widget.js */
+(function () {
+  "use strict";
 
-        function resolveConfig() {
-          let script = document.currentScript;
-          const attr = (name) =>
-            script && script.hasAttribute("data-" + name) ? script.getAttribute("data-" + name) : null;
-          const toList = (value) => {
-            if (Array.isArray(value)) return value.slice();
-            if (typeof value === "string")
-              return value.split(/[,|]/).map((s) => s.trim()).filter(Boolean);
-            return null;
-          };
-          const user = window.SymbioConfig || {};
-          const theme = (attr("theme") || user.theme || "auto").toLowerCase();
-          return {
-            businessName: attr("business-name") || user.businessName || "Our Business",
-            accent: attr("accent") || user.accent || "#1f6bff",
-            services:
-              toList(attr("services")) || toList(user.services) || ["General enquiry", "Pricing", "Booking"],
-            hours: attr("hours") || user.hours || "Mon–Fri, 9am–5pm",
-            location: attr("location") || user.location || "",
-            phone: attr("phone") || user.phone || "",
-            price: attr("price") || user.price || "",
-            position:
-              (attr("position") || user.position || "right").toLowerCase() === "left" ? "left" : "right",
-            theme: theme === "light" || theme === "dark" ? theme : "auto",
-            greeting: attr("greeting") || user.greeting || "",
-            leadEndpoint: attr("lead-endpoint") || user.leadEndpoint || "",
-            aiEndpoint: attr("ai-endpoint") || user.aiEndpoint || "",
-            onLead: typeof user.onLead === "function" ? user.onLead : null,
-          };
-        }
+  if (window.SymbioWidget && window.SymbioWidget.__loaded) return;
 
-        const cfg = resolveConfig();
-        let isOpen = false;
-        let mounted = false;
-        let shadow = null;
-        const el = {};
-        const history = [];
-        let lead = { step: null, name: "", contact: "", detail: "" };
+  /* ---- Config resolution (runs at load so document.currentScript works) - */
+  function resolveConfig() {
+    let script = document.currentScript;
+    if (!script) {
+      const guesses = document.querySelectorAll(
+        'script[data-symbio-widget], script[src*="symbio-widget"]'
+      );
+      script = guesses[guesses.length - 1] || null;
+    }
+    const attr = (name) =>
+      script && script.hasAttribute("data-" + name) ? script.getAttribute("data-" + name) : null;
+    const toList = (value) => {
+      if (Array.isArray(value)) return value.slice();
+      if (typeof value === "string") {
+        return value
+          .split(/[,|]/)
+          .map((s) => s.trim())
+          .filter(Boolean);
+      }
+      return null;
+    };
+    const user = window.SymbioConfig || {};
+    const theme = (attr("theme") || user.theme || "auto").toLowerCase();
+    return {
+      businessName: attr("business-name") || user.businessName || "Our Business",
+      accent: attr("accent") || user.accent || "#1f6bff",
+      services: toList(attr("services")) ||
+        toList(user.services) || ["General enquiry", "Pricing", "Booking"],
+      hours: attr("hours") || user.hours || "Mon–Fri, 9am–5pm",
+      location: attr("location") || user.location || "",
+      phone: attr("phone") || user.phone || "",
+      price: attr("price") || user.price || "",
+      paymentPlans: attr("payment-plans") || user.paymentPlans || "",
+      position:
+        (attr("position") || user.position || "right").toLowerCase() === "left" ? "left" : "right",
+      // "auto" follows the visitor's OS; "light" / "dark" force the widget theme.
+      theme: theme === "light" || theme === "dark" ? theme : "auto",
+      greeting: attr("greeting") || user.greeting || "",
+      leadEndpoint: attr("lead-endpoint") || user.leadEndpoint || "",
+      aiEndpoint: attr("ai-endpoint") || user.aiEndpoint || "",
+      onLead: typeof user.onLead === "function" ? user.onLead : null,
+    };
+  }
 
-        function escapeHtml(str) {
-          return String(str)
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;");
-        }
-        function firstName(name) {
-          return String(name).trim().split(/\s+/)[0] || "there";
-        }
-        function looksLikeContact(text) {
-          const t = String(text);
-          return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(t.trim()) || t.replace(/[^0-9]/g, "").length >= 7;
-        }
-        function defaultGreeting() {
-          return (
-            cfg.greeting ||
-            "Hi! 👋 I'm the assistant for " +
-              cfg.businessName +
-              ". Ask about our services, hours, or say “book” to get started."
-          );
-        }
+  const cfg = resolveConfig();
 
-        function styles() {
-          return `
-            :host { all: initial; }
-            *, *::before, *::after { box-sizing: border-box; }
-            .root { --sa: ${cfg.accent}; --bg:#fff; --bg-2:#f3f5f9; --text:#0c1322; --muted:#5a6477;
-              --border:rgba(12,19,34,0.12); --shadow:0 24px 60px -18px rgba(12,19,34,0.35);
-              position:fixed; bottom:20px; ${cfg.position}:20px; z-index:2147483000;
-              font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
-              font-size:15px; line-height:1.5; color:var(--text); }
-            .root[data-theme="dark"] { --bg:#131a27; --bg-2:#1b2433; --text:#eef2fb;
-              --muted:#a3afc6; --border:rgba(255,255,255,0.12); --shadow:0 24px 60px -18px rgba(0,0,0,0.7); }
-            @media (prefers-color-scheme: dark) { .root[data-theme="auto"] { --bg:#131a27; --bg-2:#1b2433; --text:#eef2fb;
-              --muted:#a3afc6; --border:rgba(255,255,255,0.12); --shadow:0 24px 60px -18px rgba(0,0,0,0.7); } }
-            .launcher { appearance:none; border:0; cursor:pointer; width:60px; height:60px; border-radius:50%;
-              background:var(--sa); background:linear-gradient(135deg,var(--sa),color-mix(in srgb,var(--sa),#000 16%));
-              color:#fff; box-shadow:var(--shadow); display:grid; place-items:center; transition:transform .18s ease,opacity .18s ease; }
-            .launcher:hover { transform:translateY(-2px) scale(1.04); }
-            .launcher svg { width:28px; height:28px; }
-            .launcher:focus-visible { outline:3px solid var(--sa); outline-offset:3px; }
-            .root.is-open .launcher { transform:scale(.9); opacity:0; pointer-events:none; }
-            .panel { position:absolute; bottom:0; ${cfg.position}:0; width:370px; max-width:calc(100vw - 32px);
-              height:560px; max-height:calc(100vh - 40px); background:var(--bg); border:1px solid var(--border);
-              border-radius:20px; box-shadow:var(--shadow); display:flex; flex-direction:column; overflow:hidden;
-              opacity:0; transform:translateY(16px) scale(.98); transform-origin:bottom ${cfg.position};
-              pointer-events:none; transition:opacity .2s ease,transform .2s ease; }
-            .root.is-open .panel { opacity:1; transform:none; pointer-events:auto; }
-            .header { background:var(--sa); background:linear-gradient(135deg,var(--sa),color-mix(in srgb,var(--sa),#000 16%));
-              color:#fff; padding:16px 18px; display:flex; align-items:center; gap:12px; }
-            .avatar { width:38px; height:38px; border-radius:50%; background:rgba(255,255,255,.22);
-              display:grid; place-items:center; font-weight:700; flex:none; }
-            .htext { flex:1; min-width:0; }
-            .hname { font-weight:700; font-size:15px; }
-            .hsub { font-size:12px; opacity:.9; display:flex; align-items:center; gap:6px; }
-            .dot { width:7px; height:7px; border-radius:50%; background:#57e08a; }
-            .close { appearance:none; border:0; cursor:pointer; width:32px; height:32px; border-radius:50%;
-              background:rgba(255,255,255,.18); color:#fff; display:grid; place-items:center; flex:none; }
-            .close:hover { background:rgba(255,255,255,.3); }
-            .messages { flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:10px; background:var(--bg-2); }
-            .msg { max-width:84%; padding:10px 13px; border-radius:14px; white-space:pre-wrap; word-wrap:break-word; }
-            .msg--bot { align-self:flex-start; background:var(--bg); border:1px solid var(--border); border-bottom-left-radius:4px; }
-            .msg--user { align-self:flex-end; color:#fff; background:var(--sa);
-              background:linear-gradient(135deg,var(--sa),color-mix(in srgb,var(--sa),#000 16%)); border-bottom-right-radius:4px; }
-            .typing { display:inline-flex; gap:4px; align-items:center; }
-            .typing span { width:6px; height:6px; border-radius:50%; background:var(--muted); animation:sb-typing 1.2s infinite ease-in-out; }
-            .typing span:nth-child(2){animation-delay:.15s;} .typing span:nth-child(3){animation-delay:.3s;}
-            @keyframes sb-typing { 0%,60%,100%{opacity:.3;transform:translateY(0);} 30%{opacity:1;transform:translateY(-3px);} }
-            .chips { display:flex; flex-wrap:wrap; gap:6px; padding:0 16px 6px; background:var(--bg-2); }
-            .chip { appearance:none; cursor:pointer; font:inherit; font-size:13px; padding:7px 12px; border-radius:999px;
-              border:1px solid var(--sa); color:var(--sa); background:transparent; transition:background .15s ease,color .15s ease; }
-            .chip:hover { background:var(--sa); color:#fff; }
-            .composer { display:flex; gap:8px; padding:12px; border-top:1px solid var(--border); background:var(--bg); }
-            .input { flex:1; font:inherit; font-size:14px; padding:11px 14px; border:1px solid var(--border);
-              border-radius:999px; background:var(--bg-2); color:var(--text); }
-            .input:focus { outline:none; border-color:var(--sa); }
-            .send { appearance:none; border:0; cursor:pointer; flex:none; width:44px; height:44px; border-radius:50%;
-              color:#fff; background:var(--sa); background:linear-gradient(135deg,var(--sa),color-mix(in srgb,var(--sa),#000 16%));
-              display:grid; place-items:center; }
-            .send svg { width:18px; height:18px; }
-            .footer { text-align:center; font-size:11px; color:var(--muted); padding:8px; background:var(--bg); }
-            .footer a { color:var(--muted); }
-            @media (prefers-reduced-motion: reduce) { .launcher,.panel,.typing span { transition:none; animation:none; } }
-            @media (max-width:480px) { .panel { height:calc(100vh - 32px); } }
-          `;
-        }
+  /* ---- State ----------------------------------------------------------- */
+  let isOpen = false;
+  let mounted = false;
+  let shadow = null;
+  const el = {};
+  const history = [];
+  let lead = { step: null, name: "", contact: "", detail: "" };
 
-        function template() {
-          const initial = (cfg.businessName || "S").trim().charAt(0).toUpperCase();
-          return `
-            <div class="root" data-theme="${cfg.theme}">
-              <button class="launcher" type="button" aria-label="Open chat with ${escapeHtml(cfg.businessName)}">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7a8.5 8.5 0 0 1-.9-3.8 8.38 8.38 0 0 1 8.5-8.5 8.38 8.38 0 0 1 8.5 8.5Z"/>
-                </svg>
-              </button>
-              <section class="panel" role="dialog" aria-modal="false" aria-label="Chat with ${escapeHtml(cfg.businessName)}">
-                <header class="header">
-                  <span class="avatar" aria-hidden="true">${escapeHtml(initial)}</span>
-                  <span class="htext">
-                    <span class="hname" data-name>${escapeHtml(cfg.businessName)}</span>
-                    <span class="hsub"><span class="dot"></span> <span>Online now</span></span>
-                  </span>
-                  <button class="close" type="button" aria-label="Close chat">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
-                  </button>
-                </header>
-                <div class="messages" data-messages role="log" aria-live="polite"></div>
-                <div class="chips" data-chips></div>
-                <form class="composer" data-form>
-                  <input class="input" data-input type="text" autocomplete="off" placeholder="Type your message…" aria-label="Type your message" />
-                  <button class="send" type="submit" aria-label="Send message">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4Z"/></svg>
-                  </button>
-                </form>
-                <div class="footer">Powered by <a href="https://mmajeed7864.github.io/" target="_blank" rel="noopener">Symbio AI</a></div>
-              </section>
-            </div>`;
-        }
+  /* ---- Small helpers --------------------------------------------------- */
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
 
-        function addMessage(role, text, opts) {
-          const options = opts || {};
-          const item = document.createElement("div");
-          item.className = "msg msg--" + (role === "user" ? "user" : "bot");
-          if (options.html) item.innerHTML = options.html;
-          else item.textContent = text;
-          el.messages.appendChild(item);
-          el.messages.scrollTop = el.messages.scrollHeight;
-          if (!options.transient) history.push({ role: role === "user" ? "user" : "assistant", text });
-          return item;
-        }
+  function firstName(name) {
+    return String(name).trim().split(/\s+/)[0] || "there";
+  }
 
-        let typingEl = null;
-        function showTyping() {
-          if (typingEl) return;
-          typingEl = addMessage("bot", "", {
-            html: '<span class="typing"><span></span><span></span><span></span></span>',
-            transient: true,
-          });
-        }
-        function hideTyping() {
-          if (typingEl) {
-            typingEl.remove();
-            typingEl = null;
-          }
-        }
+  function looksLikeContact(text) {
+    const t = String(text);
+    const email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(t.trim());
+    const phone = t.replace(/[^0-9]/g, "").length >= 7;
+    return email || phone;
+  }
 
-        function setChips(items) {
-          el.chips.innerHTML = "";
-          (items || []).forEach((label) => {
-            const chip = document.createElement("button");
-            chip.type = "button";
-            chip.className = "chip";
-            chip.textContent = label;
-            chip.addEventListener("click", () => handleUserText(label));
-            el.chips.appendChild(chip);
-          });
-        }
-        function defaultChips() {
-          const chips = ["Services", "Hours"];
-          if (cfg.location) chips.push("Location");
-          chips.push("Book now");
-          return chips;
-        }
+  function defaultGreeting() {
+    return (
+      cfg.greeting ||
+      "Hi! 👋 I'm the assistant for " +
+        cfg.businessName +
+        ". Ask about our services, hours, or say “book” to get started."
+    );
+  }
 
-        function has(text, words) {
-          return words.some((w) => text.indexOf(w) !== -1);
+  /* ---- Shadow DOM styles ---------------------------------------------- */
+  function styles() {
+    return `
+      :host { all: initial; }
+      *, *::before, *::after { box-sizing: border-box; }
+      .root {
+        --sa: ${cfg.accent};
+        --bg: #ffffff;
+        --bg-2: #f3f5f9;
+        --text: #0c1322;
+        --muted: #5a6477;
+        --border: rgba(12,19,34,0.12);
+        --shadow: 0 24px 60px -18px rgba(12,19,34,0.35);
+        position: fixed;
+        bottom: 20px;
+        ${cfg.position}: 20px;
+        z-index: 2147483000;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica,
+          Arial, sans-serif;
+        font-size: 15px;
+        line-height: 1.5;
+        color: var(--text);
+      }
+      /* Dark tokens: forced via data-theme="dark", or the OS preference when "auto". */
+      .root[data-theme="dark"] {
+        --bg: #131a27;
+        --bg-2: #1b2433;
+        --text: #eef2fb;
+        --muted: #a3afc6;
+        --border: rgba(255,255,255,0.12);
+        --shadow: 0 24px 60px -18px rgba(0,0,0,0.7);
+      }
+      @media (prefers-color-scheme: dark) {
+        .root[data-theme="auto"] {
+          --bg: #131a27;
+          --bg-2: #1b2433;
+          --text: #eef2fb;
+          --muted: #a3afc6;
+          --border: rgba(255,255,255,0.12);
+          --shadow: 0 24px 60px -18px rgba(0,0,0,0.7);
         }
-        function isLeadTrigger(text) {
-          return has(text, ["book", "appointment", "schedule", "quote", "sign up", "signup",
-            "get started", "contact", "call me", "reach me", "leave my details", "leave details", "interested"]);
-        }
-        function intentReply(raw) {
-          const text = raw.toLowerCase();
-          if (has(text, ["hour", "open", "close", "when are you"]))
-            return { text: cfg.businessName + " is open " + cfg.hours + "." };
-          if (has(text, ["where", "location", "address", "find you"]))
-            return { text: cfg.location ? "We're located in " + cfg.location + "." : "We mostly work online — tell me where you are and we'll sort it out." };
-          if (has(text, ["price", "cost", "how much", "pricing", "rates", "fee"])) {
-            const base = cfg.price ? "Pricing starts " + cfg.price + ". " : "Pricing depends on what you need. ";
-            return { text: base + "Want me to have someone follow up with a quote?", offerLead: true };
-          }
-          if (has(text, ["service", "what do you", "offer", "do you do", "help with"]))
-            return { text: "We help with: " + cfg.services.join(", ") + ". Which one fits?" };
-          if (has(text, ["phone", "number", "call"]))
-            return { text: cfg.phone ? "You can reach us at " + cfg.phone + ", or leave your details and we'll call you." : "Leave your details and we'll call you back.", offerLead: true };
-          if (has(text, ["thank", "thanks", "cheers", "appreciate"]))
-            return { text: "You're welcome! Anything else I can help with?" };
-          if (text === "hi" || text === "hello" || has(text, ["hello", "hey"]))
-            return { text: "Hey! How can I help you today?" };
-          return { text: "I can help with our services, hours" + (cfg.location ? ", location" : "") + ", or getting you booked. What do you need?" };
-        }
+      }
+      .launcher {
+        appearance: none;
+        border: 0;
+        cursor: pointer;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: var(--sa);
+        background: linear-gradient(135deg, var(--sa), color-mix(in srgb, var(--sa), #000 16%));
+        color: #fff;
+        box-shadow: var(--shadow);
+        display: grid;
+        place-items: center;
+        transition: transform 0.18s ease, opacity 0.18s ease;
+      }
+      .launcher:hover { transform: translateY(-2px) scale(1.04); }
+      .launcher svg { width: 28px; height: 28px; }
+      .launcher:focus-visible { outline: 3px solid var(--sa); outline-offset: 3px; }
+      .root.is-open .launcher { transform: scale(0.9); opacity: 0; pointer-events: none; }
 
-        function systemPrompt() {
-          const parts = ["You are the friendly assistant for " + cfg.businessName + ".",
-            "Services: " + cfg.services.join(", ") + ".", "Hours: " + cfg.hours + "."];
-          if (cfg.location) parts.push("Location: " + cfg.location + ".");
-          if (cfg.phone) parts.push("Phone: " + cfg.phone + ".");
-          if (cfg.price) parts.push("Pricing: " + cfg.price + ".");
-          parts.push("Be concise and helpful. Encourage the visitor to leave their name and contact so the team can follow up.");
-          return parts.join(" ");
-        }
-        async function aiReply() {
-          const messages = history.map((m) => ({ role: m.role, content: m.text }));
-          const res = await fetch(cfg.aiEndpoint, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ messages, system: systemPrompt() }),
-          });
-          if (!res.ok) throw new Error("ai endpoint " + res.status);
-          const data = await res.json();
-          return data && data.reply ? String(data.reply) : null;
-        }
+      .panel {
+        position: absolute;
+        bottom: 0;
+        ${cfg.position}: 0;
+        width: 370px;
+        max-width: calc(100vw - 32px);
+        height: 560px;
+        max-height: calc(100vh - 40px);
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        opacity: 0;
+        transform: translateY(16px) scale(0.98);
+        transform-origin: bottom ${cfg.position};
+        pointer-events: none;
+        transition: opacity 0.2s ease, transform 0.2s ease;
+      }
+      .root.is-open .panel { opacity: 1; transform: none; pointer-events: auto; }
 
-        function startLead() {
-          lead = { step: "name", name: "", contact: "", detail: "" };
-          setChips([]);
-          addMessage("bot", "Happy to help with that. First — what's your name?");
-        }
-        function advanceLead(text) {
-          if (lead.step === "name") {
-            lead.name = text;
-            lead.step = "contact";
-            addMessage("bot", "Thanks, " + firstName(text) + "! What's the best email or phone to reach you?");
-          } else if (lead.step === "contact") {
-            if (!looksLikeContact(text)) {
-              addMessage("bot", "Hmm, that doesn't look like an email or phone — mind trying again?");
-              return;
-            }
-            lead.contact = text;
-            lead.step = "detail";
-            addMessage("bot", "Got it. Briefly, what do you need help with?");
-          } else if (lead.step === "detail") {
-            lead.detail = text;
-            lead.step = null;
-            finishLead();
-          }
-        }
-        function finishLead() {
-          const record = {
-            name: lead.name, contact: lead.contact, detail: lead.detail,
-            business: cfg.businessName, page: window.location.href, at: new Date().toISOString(),
-          };
-          addMessage("bot", "Perfect — thanks, " + firstName(record.name) + ". " + cfg.businessName + " will follow up shortly. ✅");
-          deliverLead(record);
+      .header {
+        background: var(--sa);
+        background: linear-gradient(135deg, var(--sa), color-mix(in srgb, var(--sa), #000 16%));
+        color: #fff;
+        padding: 16px 18px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .avatar {
+        width: 38px; height: 38px; border-radius: 50%;
+        background: rgba(255,255,255,0.22);
+        display: grid; place-items: center; font-weight: 700; flex: none;
+      }
+      .htext { flex: 1; min-width: 0; }
+      .hname { font-weight: 700; font-size: 15px; }
+      .hsub { font-size: 12px; opacity: 0.9; display: flex; align-items: center; gap: 6px; }
+      .dot { width: 7px; height: 7px; border-radius: 50%; background: #57e08a; }
+      .close {
+        appearance: none; border: 0; cursor: pointer;
+        width: 32px; height: 32px; border-radius: 50%;
+        background: rgba(255,255,255,0.18); color: #fff;
+        display: grid; place-items: center; flex: none;
+      }
+      .close:hover { background: rgba(255,255,255,0.3); }
+      .close:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+
+      .messages {
+        flex: 1; overflow-y: auto; padding: 16px;
+        display: flex; flex-direction: column; gap: 10px;
+        background: var(--bg-2);
+      }
+      .msg { max-width: 84%; padding: 10px 13px; border-radius: 14px; white-space: pre-wrap;
+        word-wrap: break-word; }
+      .msg--bot { align-self: flex-start; background: var(--bg);
+        border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+      .msg--user { align-self: flex-end; color: #fff;
+        background: var(--sa);
+        background: linear-gradient(135deg, var(--sa), color-mix(in srgb, var(--sa), #000 16%));
+        border-bottom-right-radius: 4px; }
+      .typing { display: inline-flex; gap: 4px; align-items: center; }
+      .typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--muted);
+        animation: sb-typing 1.2s infinite ease-in-out; }
+      .typing span:nth-child(2) { animation-delay: 0.15s; }
+      .typing span:nth-child(3) { animation-delay: 0.3s; }
+      @keyframes sb-typing { 0%,60%,100% { opacity: 0.3; transform: translateY(0); }
+        30% { opacity: 1; transform: translateY(-3px); } }
+
+      .chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 16px 6px; background: var(--bg-2); }
+      .chip {
+        appearance: none; cursor: pointer; font: inherit; font-size: 13px;
+        padding: 7px 12px; border-radius: 999px;
+        border: 1px solid var(--sa); color: var(--sa); background: transparent;
+        transition: background 0.15s ease, color 0.15s ease;
+      }
+      .chip:hover { background: var(--sa); color: #fff; }
+      .chip:focus-visible { outline: 2px solid var(--sa); outline-offset: 2px; }
+
+      .composer { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--border);
+        background: var(--bg); }
+      .input {
+        flex: 1; font: inherit; font-size: 14px; padding: 11px 14px;
+        border: 1px solid var(--border); border-radius: 999px;
+        background: var(--bg-2); color: var(--text);
+      }
+      .input:focus { outline: none; border-color: var(--sa); }
+      .send {
+        appearance: none; border: 0; cursor: pointer; flex: none;
+        width: 44px; height: 44px; border-radius: 50%; color: #fff;
+        background: var(--sa);
+        background: linear-gradient(135deg, var(--sa), color-mix(in srgb, var(--sa), #000 16%));
+        display: grid; place-items: center;
+      }
+      .send:hover { filter: brightness(1.05); }
+      .send:focus-visible { outline: 3px solid var(--sa); outline-offset: 2px; }
+      .send svg { width: 18px; height: 18px; }
+
+      .footer { text-align: center; font-size: 11px; color: var(--muted); padding: 8px;
+        background: var(--bg); }
+      .footer a { color: var(--muted); }
+
+      @media (prefers-reduced-motion: reduce) {
+        .launcher, .panel, .typing span { transition: none; animation: none; }
+      }
+      @media (max-width: 480px) {
+        .panel { height: calc(100vh - 32px); }
+      }
+    `;
+  }
+
+  /* ---- Markup ---------------------------------------------------------- */
+  function template() {
+    const initial = (cfg.businessName || "S").trim().charAt(0).toUpperCase();
+    return `
+      <div class="root" data-theme="${cfg.theme}">
+        <button class="launcher" type="button" part="launcher" aria-label="Open chat with ${escapeHtml(
+          cfg.businessName
+        )}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7a8.5 8.5 0 0 1-.9-3.8 8.38 8.38 0 0 1 8.5-8.5 8.38 8.38 0 0 1 8.5 8.5Z"/>
+          </svg>
+        </button>
+
+        <section class="panel" role="dialog" aria-modal="false"
+                 aria-label="Chat with ${escapeHtml(cfg.businessName)}">
+          <header class="header">
+            <span class="avatar" aria-hidden="true">${escapeHtml(initial)}</span>
+            <span class="htext">
+              <span class="hname" data-name>${escapeHtml(cfg.businessName)}</span>
+              <span class="hsub"><span class="dot"></span> <span data-status>Online now</span></span>
+            </span>
+            <button class="close" type="button" aria-label="Close chat">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                   stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+            </button>
+          </header>
+
+          <div class="messages" data-messages role="log" aria-live="polite" aria-atomic="false"></div>
+          <div class="chips" data-chips></div>
+
+          <form class="composer" data-form>
+            <input class="input" data-input type="text" autocomplete="off"
+                   placeholder="Type your message…" aria-label="Type your message" />
+            <button class="send" type="submit" aria-label="Send message">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M22 2 11 13M22 2l-7 20-4-9-9-4Z"/>
+              </svg>
+            </button>
+          </form>
+          <div class="footer">Powered by <a href="https://mmajeed7864.github.io/" target="_blank"
+            rel="noopener">Symbio AI</a></div>
+        </section>
+      </div>
+    `;
+  }
+
+  /* ---- Rendering ------------------------------------------------------- */
+  function addMessage(role, text, opts) {
+    const options = opts || {};
+    const item = document.createElement("div");
+    item.className = "msg msg--" + (role === "user" ? "user" : "bot");
+    if (options.html) item.innerHTML = options.html;
+    else item.textContent = text;
+    el.messages.appendChild(item);
+    el.messages.scrollTop = el.messages.scrollHeight;
+    if (!options.transient) history.push({ role: role === "user" ? "user" : "assistant", text });
+    return item;
+  }
+
+  let typingEl = null;
+  function showTyping() {
+    if (typingEl) return;
+    typingEl = addMessage("bot", "", {
+      html: '<span class="typing"><span></span><span></span><span></span></span>',
+      transient: true,
+    });
+  }
+  function hideTyping() {
+    if (typingEl) {
+      typingEl.remove();
+      typingEl = null;
+    }
+  }
+
+  function setChips(items) {
+    el.chips.innerHTML = "";
+    (items || []).forEach((label) => {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "chip";
+      chip.textContent = label;
+      chip.addEventListener("click", () => handleUserText(label));
+      el.chips.appendChild(chip);
+    });
+  }
+
+  function defaultChips() {
+    const chips = ["Services", "Hours"];
+    if (cfg.location) chips.push("Location");
+    if (cfg.paymentPlans) chips.push("Payment plans");
+    chips.push("Book now");
+    return chips;
+  }
+
+  /* ---- Intent engine (zero-backend fallback) -------------------------- */
+  function has(text, words) {
+    return words.some((w) => text.indexOf(w) !== -1);
+  }
+
+  function isLeadTrigger(text) {
+    // Lowercase here: callers pass raw input, and the "Book now" chip sends
+    // a capital B — without this, the chip never started the lead flow.
+    return has(String(text).toLowerCase(), [
+      "book",
+      "appointment",
+      "schedule",
+      "quote",
+      "sign up",
+      "signup",
+      "get started",
+      "contact",
+      "call me",
+      "reach me",
+      "leave my details",
+      "leave details",
+      "interested",
+    ]);
+  }
+
+  function intentReply(raw) {
+    const text = raw.toLowerCase();
+
+    if (has(text, ["hour", "open", "close", "when are you"])) {
+      return { text: cfg.businessName + " is open " + cfg.hours + "." };
+    }
+    if (has(text, ["where", "location", "address", "find you"])) {
+      return {
+        text: cfg.location
+          ? "We're located in " + cfg.location + "."
+          : "We mostly work online — tell me where you are and we'll sort it out.",
+      };
+    }
+    if (
+      has(text, [
+        "payment plan",
+        "payment plans",
+        "installment",
+        "instalment",
+        "split the cost",
+        "split payment",
+        "pay monthly",
+        "monthly payments",
+        "pay over time",
+        "financing",
+        "finance",
+      ])
+    ) {
+      return {
+        text: cfg.paymentPlans
+          ? cfg.paymentPlans + " Want me to have someone walk you through the options?"
+          : "We can usually split the cost into a few scheduled payments — leave your details and we'll confirm the options for you.",
+        offerLead: true,
+      };
+    }
+    if (has(text, ["price", "cost", "how much", "pricing", "rates", "fee"])) {
+      const base = cfg.price
+        ? "Pricing starts " + cfg.price + ". "
+        : "Pricing depends on what you need. ";
+      const plans = cfg.paymentPlans ? "Payment plans are available too. " : "";
+      return {
+        text: base + plans + "Want me to have someone follow up with a quote?",
+        offerLead: true,
+      };
+    }
+    if (has(text, ["service", "what do you", "offer", "do you do", "help with"])) {
+      return { text: "We help with: " + cfg.services.join(", ") + ". Which one fits?" };
+    }
+    if (has(text, ["phone", "number", "call"])) {
+      return {
+        text: cfg.phone
+          ? "You can reach us at " + cfg.phone + ", or leave your details and we'll call you."
+          : "Leave your details and we'll call you back.",
+        offerLead: true,
+      };
+    }
+    if (has(text, ["thank", "thanks", "cheers", "appreciate"])) {
+      return { text: "You're welcome! Anything else I can help with?" };
+    }
+    if (has(text, ["hi", "hello", "hey", "yo "]) || text === "hi" || text === "hello") {
+      return { text: "Hey! How can I help you today?" };
+    }
+    return {
+      text:
+        "I can help with our services, hours" +
+        (cfg.location ? ", location" : "") +
+        ", or getting you booked. What do you need?",
+    };
+  }
+
+  /* ---- AI endpoint (optional) ----------------------------------------- */
+  function systemPrompt() {
+    const parts = [
+      "You are the friendly assistant for " + cfg.businessName + ".",
+      "Services: " + cfg.services.join(", ") + ".",
+      "Hours: " + cfg.hours + ".",
+    ];
+    if (cfg.location) parts.push("Location: " + cfg.location + ".");
+    if (cfg.phone) parts.push("Phone: " + cfg.phone + ".");
+    if (cfg.price) parts.push("Pricing: " + cfg.price + ".");
+    if (cfg.paymentPlans) parts.push("Payment plans: " + cfg.paymentPlans);
+    parts.push(
+      "Be concise and helpful. Encourage the visitor to leave their name and contact so the team can follow up."
+    );
+    return parts.join(" ");
+  }
+
+  async function aiReply() {
+    const messages = history.map((m) => ({ role: m.role, content: m.text }));
+    const res = await fetch(cfg.aiEndpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ messages, system: systemPrompt() }),
+    });
+    if (!res.ok) throw new Error("ai endpoint " + res.status);
+    const data = await res.json();
+    return data && data.reply ? String(data.reply) : null;
+  }
+
+  /* ---- Lead capture (deterministic: name -> contact -> detail) -------- */
+  function startLead() {
+    lead = { step: "name", name: "", contact: "", detail: "" };
+    setChips([]);
+    addMessage("bot", "Happy to help with that. First — what's your name?");
+  }
+
+  function advanceLead(text) {
+    if (lead.step === "name") {
+      lead.name = text;
+      lead.step = "contact";
+      addMessage(
+        "bot",
+        "Thanks, " + firstName(text) + "! What's the best email or phone to reach you?"
+      );
+    } else if (lead.step === "contact") {
+      if (!looksLikeContact(text)) {
+        addMessage("bot", "Hmm, that doesn't look like an email or phone — mind trying again?");
+        return;
+      }
+      lead.contact = text;
+      lead.step = "detail";
+      addMessage("bot", "Got it. Briefly, what do you need help with?");
+    } else if (lead.step === "detail") {
+      lead.detail = text;
+      lead.step = null;
+      finishLead();
+    }
+  }
+
+  function finishLead() {
+    const record = {
+      name: lead.name,
+      contact: lead.contact,
+      detail: lead.detail,
+      business: cfg.businessName,
+      page: window.location.href,
+      at: new Date().toISOString(),
+    };
+    addMessage(
+      "bot",
+      "Perfect — thanks, " +
+        firstName(record.name) +
+        ". " +
+        cfg.businessName +
+        " will follow up shortly. ✅"
+    );
+    deliverLead(record);
+    setChips(defaultChips());
+  }
+
+  function deliverLead(record) {
+    try {
+      window.dispatchEvent(new CustomEvent("symbio:lead", { detail: record }));
+    } catch (e) {
+      /* CustomEvent unsupported — ignore */
+    }
+    if (cfg.onLead) {
+      try {
+        cfg.onLead(record);
+      } catch (e) {
+        /* host callback threw — ignore */
+      }
+    }
+    if (cfg.leadEndpoint) {
+      try {
+        fetch(cfg.leadEndpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(record),
+        }).catch(function () {
+          /* delivery is best-effort; the event/callback already fired */
+        });
+      } catch (e) {
+        /* ignore */
+      }
+    }
+  }
+
+  /* ---- Message orchestration ------------------------------------------ */
+  async function handleUserText(raw) {
+    const text = String(raw).trim();
+    if (!text) return;
+    addMessage("user", text);
+    el.input.value = "";
+
+    if (lead.step) {
+      advanceLead(text);
+      return;
+    }
+
+    if (isLeadTrigger(text)) {
+      startLead();
+      return;
+    }
+
+    if (cfg.aiEndpoint) {
+      showTyping();
+      try {
+        const reply = await aiReply();
+        hideTyping();
+        if (reply) {
+          addMessage("bot", reply);
           setChips(defaultChips());
+          return;
         }
-        function deliverLead(record) {
-          try { window.dispatchEvent(new CustomEvent("symbio:lead", { detail: record })); } catch (e) {}
-          if (cfg.onLead) { try { cfg.onLead(record); } catch (e) {} }
-          if (cfg.leadEndpoint) {
-            try {
-              fetch(cfg.leadEndpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(record) }).catch(function () {});
-            } catch (e) {}
-          }
-        }
+      } catch (e) {
+        hideTyping();
+        /* fall through to the built-in engine */
+      }
+    }
 
-        async function handleUserText(raw) {
-          const text = String(raw).trim();
-          if (!text) return;
-          addMessage("user", text);
-          el.input.value = "";
-          if (lead.step) { advanceLead(text); return; }
-          if (isLeadTrigger(text)) { startLead(); return; }
-          if (cfg.aiEndpoint) {
-            showTyping();
-            try {
-              const reply = await aiReply();
-              hideTyping();
-              if (reply) { addMessage("bot", reply); setChips(defaultChips()); return; }
-            } catch (e) { hideTyping(); }
-          }
-          const result = intentReply(text);
-          addMessage("bot", result.text);
-          if (result.offerLead) setChips(["Yes, contact me"].concat(defaultChips()));
-          else setChips(defaultChips());
-        }
+    const result = intentReply(text);
+    addMessage("bot", result.text);
+    if (result.offerLead) setChips(["Yes, contact me"].concat(defaultChips()));
+    else setChips(defaultChips());
+  }
 
-        function openPanel() {
-          if (!mounted) mount();
-          isOpen = true;
-          el.root.classList.add("is-open");
-          el.launcher.setAttribute("aria-expanded", "true");
-          if (!history.length) { addMessage("bot", defaultGreeting()); setChips(defaultChips()); }
-          window.setTimeout(() => el.input.focus(), 60);
-        }
-        function closePanel() {
-          isOpen = false;
-          if (el.root) {
-            el.root.classList.remove("is-open");
-            el.launcher.setAttribute("aria-expanded", "false");
-            el.launcher.focus();
-          }
-        }
-        function togglePanel() { if (isOpen) closePanel(); else openPanel(); }
+  /* ---- Open / close --------------------------------------------------- */
+  function openPanel() {
+    if (!mounted) mount();
+    isOpen = true;
+    el.root.classList.add("is-open");
+    el.launcher.setAttribute("aria-expanded", "true");
+    if (!history.length) {
+      addMessage("bot", defaultGreeting());
+      setChips(defaultChips());
+    }
+    window.setTimeout(() => el.input.focus(), 60);
+  }
 
-        const BRANDING_KEYS = ["businessName", "accent", "services", "hours", "location", "phone", "price", "greeting"];
-        function configure(partial) {
-          if (!partial) return;
-          const brandingChanged = BRANDING_KEYS.some((key) => key in partial);
-          Object.keys(partial).forEach((key) => {
-            if (key === "services") { if (Array.isArray(partial.services)) cfg.services = partial.services.slice(); }
-            else if (partial[key] !== undefined) cfg[key] = partial[key];
-          });
-          if (!mounted) return;
-          el.root.style.setProperty("--sa", cfg.accent);
-          el.root.setAttribute("data-theme", cfg.theme);
-          if (el.name) el.name.textContent = cfg.businessName;
-          if (brandingChanged) {
-            history.length = 0;
-            lead = { step: null, name: "", contact: "", detail: "" };
-            el.messages.innerHTML = "";
-            if (isOpen) { addMessage("bot", defaultGreeting()); setChips(defaultChips()); }
-          }
-        }
+  function closePanel() {
+    isOpen = false;
+    if (el.root) {
+      el.root.classList.remove("is-open");
+      el.launcher.setAttribute("aria-expanded", "false");
+      el.launcher.focus();
+    }
+  }
 
-        function mount() {
-          if (mounted) return;
-          const host = document.createElement("div");
-          host.id = "symbio-widget-host";
-          document.body.appendChild(host);
-          shadow = host.attachShadow({ mode: "open" });
-          const styleTag = document.createElement("style");
-          styleTag.textContent = styles();
-          shadow.appendChild(styleTag);
-          const wrap = document.createElement("div");
-          wrap.innerHTML = template();
-          shadow.appendChild(wrap.firstElementChild);
-          el.root = shadow.querySelector(".root");
-          el.launcher = shadow.querySelector(".launcher");
-          el.messages = shadow.querySelector("[data-messages]");
-          el.chips = shadow.querySelector("[data-chips]");
-          el.input = shadow.querySelector("[data-input]");
-          el.form = shadow.querySelector("[data-form]");
-          el.name = shadow.querySelector("[data-name]");
-          el.launcher.addEventListener("click", togglePanel);
-          shadow.querySelector(".close").addEventListener("click", closePanel);
-          el.form.addEventListener("submit", (event) => { event.preventDefault(); handleUserText(el.input.value); });
-          shadow.addEventListener("keydown", (event) => { if (event.key === "Escape") closePanel(); });
-          mounted = true;
-        }
+  function togglePanel() {
+    if (isOpen) closePanel();
+    else openPanel();
+  }
 
-        window.SymbioWidget = { open: openPanel, close: closePanel, toggle: togglePanel, configure: configure, __loaded: true };
-        if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mount);
-        else mount();
-      })();
+  /* ---- Reconfigure at runtime (used by the demo's presets) ------------ */
+  // Branding fields whose change warrants a fresh greeting; theme is cosmetic.
+  const BRANDING_KEYS = [
+    "businessName",
+    "accent",
+    "services",
+    "hours",
+    "location",
+    "phone",
+    "price",
+    "paymentPlans",
+    "greeting",
+  ];
+
+  function configure(partial) {
+    if (!partial) return;
+    const brandingChanged = BRANDING_KEYS.some((key) => key in partial);
+    Object.keys(partial).forEach((key) => {
+      if (key === "services") {
+        if (Array.isArray(partial.services)) cfg.services = partial.services.slice();
+      } else if (partial[key] !== undefined) {
+        cfg[key] = partial[key];
+      }
+    });
+    if (!mounted) return;
+    el.root.style.setProperty("--sa", cfg.accent);
+    el.root.setAttribute("data-theme", cfg.theme);
+    if (el.name) el.name.textContent = cfg.businessName;
+    // Only reset the conversation when the brand changed — not for a theme switch.
+    if (brandingChanged) {
+      history.length = 0;
+      lead = { step: null, name: "", contact: "", detail: "" };
+      el.messages.innerHTML = "";
+      if (isOpen) {
+        addMessage("bot", defaultGreeting());
+        setChips(defaultChips());
+      }
+    }
+  }
+
+  /* ---- Mount ----------------------------------------------------------- */
+  function mount() {
+    if (mounted) return;
+    const host = document.createElement("div");
+    host.id = "symbio-widget-host";
+    document.body.appendChild(host);
+    shadow = host.attachShadow({ mode: "open" });
+
+    const styleTag = document.createElement("style");
+    styleTag.textContent = styles();
+    shadow.appendChild(styleTag);
+
+    const wrap = document.createElement("div");
+    wrap.innerHTML = template();
+    shadow.appendChild(wrap.firstElementChild);
+
+    el.root = shadow.querySelector(".root");
+    el.launcher = shadow.querySelector(".launcher");
+    el.messages = shadow.querySelector("[data-messages]");
+    el.chips = shadow.querySelector("[data-chips]");
+    el.input = shadow.querySelector("[data-input]");
+    el.form = shadow.querySelector("[data-form]");
+    el.name = shadow.querySelector("[data-name]");
+
+    el.launcher.addEventListener("click", togglePanel);
+    shadow.querySelector(".close").addEventListener("click", closePanel);
+    el.form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      handleUserText(el.input.value);
+    });
+    shadow.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closePanel();
+    });
+
+    mounted = true;
+  }
+
+  /* ---- Public API ------------------------------------------------------ */
+  window.SymbioWidget = {
+    open: openPanel,
+    close: closePanel,
+    toggle: togglePanel,
+    configure: configure,
+    __loaded: true,
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", mount);
+  } else {
+    mount();
+  }
+})();
     </script>
 
-    <!-- 3) Demo controller: presets, live rebrand, leads panel ----------- -->
+    <!-- 3) Demo controller: presets, rebrand, leads, 3D tilt, guided tour -->
     <script>
       (function () {
         "use strict";
@@ -868,6 +1301,7 @@
             location: "Oakland, CA",
             phone: "510-555-0142",
             price: "from $35",
+            paymentPlans: "Bridal and color packages can be split into two payments.",
           },
           Dental: {
             businessName: "BrightSmile Dental",
@@ -879,6 +1313,8 @@
             location: "San Jose, CA",
             phone: "408-555-0190",
             price: "from $99",
+            paymentPlans:
+              "We offer in-house membership plans and 0% monthly payment plans on treatment.",
           },
           Restaurant: {
             businessName: "Bella Cucina",
@@ -890,6 +1326,7 @@
             location: "Berkeley, CA",
             phone: "510-555-0177",
             price: "",
+            paymentPlans: "",
           },
           Law: {
             businessName: "Hayes & Co. Law",
@@ -901,6 +1338,7 @@
             location: "San Francisco, CA",
             phone: "415-555-0123",
             price: "",
+            paymentPlans: "Flat fees with staged payment schedules are available on most matters.",
           },
           Gym: {
             businessName: "Forge Fitness",
@@ -912,6 +1350,7 @@
             location: "Oakland, CA",
             phone: "510-555-0160",
             price: "from $29/mo",
+            paymentPlans: "",
           },
           Plumber: {
             businessName: "RapidFlow Plumbing",
@@ -923,11 +1362,13 @@
             location: "Bay Area",
             phone: "510-555-0111",
             price: "",
+            paymentPlans: "Bigger jobs can be split into staged payments — just ask.",
           },
         };
 
         const $ = (sel) => document.querySelector(sel);
         const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+        const LEADS_KEY = "symbio-demo-leads";
         let leadCount = 0;
 
         function setText(sel, value) {
@@ -935,7 +1376,10 @@
           if (node) node.textContent = value;
         }
 
-        function applyPreset(preset, pressedBtn) {
+        function applyPreset(key, pressedBtn) {
+          const preset = PRESETS[key];
+          if (!preset) return;
+
           // Rebrand the visible page.
           document.documentElement.style.setProperty("--accent", preset.accent);
           setText("[data-biz-eyebrow]", preset.eyebrow);
@@ -945,6 +1389,13 @@
           setText("[data-biz-location]", preset.location);
           setText("[data-biz-phone]", preset.phone);
           document.title = preset.businessName + " — Symbio AI demo";
+
+          // Shareable deep link: chatbot-demo.html?preset=Dental
+          try {
+            history.replaceState(null, "", "?preset=" + encodeURIComponent(key));
+          } catch (e) {
+            /* file:// or ancient browser — the link just won't update */
+          }
 
           const wrap = $("[data-biz-services]");
           if (wrap) {
@@ -978,6 +1429,7 @@
               location: preset.location,
               phone: preset.phone,
               price: preset.price,
+              paymentPlans: preset.paymentPlans,
             });
           }
 
@@ -988,11 +1440,13 @@
 
         // Build preset buttons.
         const presetWrap = $("[data-presets]");
+        const presetButtons = {};
         Object.keys(PRESETS).forEach((key) => {
           const btn = document.createElement("button");
           btn.type = "button";
           btn.textContent = key;
-          btn.addEventListener("click", () => applyPreset(PRESETS[key], btn));
+          btn.addEventListener("click", () => applyPreset(key, btn));
+          presetButtons[key] = btn;
           presetWrap.appendChild(btn);
         });
 
@@ -1012,15 +1466,33 @@
           }
         });
 
-        // Panel open/close.
+        // Panel open/close (with aria-expanded kept in sync + Escape).
+        function setPanel(name, open) {
+          const panel = $('[data-panel="' + name + '"]');
+          if (!panel) return;
+          panel.classList.toggle("is-open", open);
+          $$('[data-toggle="' + name + '"]').forEach((b) =>
+            b.setAttribute("aria-expanded", String(open))
+          );
+        }
         $$("[data-toggle]").forEach((btn) => {
+          btn.setAttribute("aria-expanded", "false");
           btn.addEventListener("click", () => {
-            const panel = $('[data-panel="' + btn.getAttribute("data-toggle") + '"]');
-            if (panel) panel.classList.toggle("is-open");
+            const name = btn.getAttribute("data-toggle");
+            const panel = $('[data-panel="' + name + '"]');
+            setPanel(name, !(panel && panel.classList.contains("is-open")));
+            btn.classList.remove("is-nudge");
           });
         });
         $$("[data-close]").forEach((btn) => {
-          btn.addEventListener("click", () => btn.closest("[data-panel]").classList.remove("is-open"));
+          btn.addEventListener("click", () =>
+            setPanel(btn.closest("[data-panel]").getAttribute("data-panel"), false)
+          );
+        });
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape") {
+            $$(".panel.is-open").forEach((p) => setPanel(p.getAttribute("data-panel"), false));
+          }
         });
 
         // "Chat with us" buttons open the widget.
@@ -1028,9 +1500,23 @@
           btn.addEventListener("click", () => window.SymbioWidget && window.SymbioWidget.open())
         );
 
-        // Listen for captured leads and render them.
-        window.addEventListener("symbio:lead", (event) => {
-          const lead = event.detail || {};
+        // Leads: render + persist for the session, so a refresh mid-pitch
+        // doesn't erase the proof.
+        function loadLeads() {
+          try {
+            return JSON.parse(sessionStorage.getItem(LEADS_KEY)) || [];
+          } catch (e) {
+            return [];
+          }
+        }
+        function saveLeads(leads) {
+          try {
+            sessionStorage.setItem(LEADS_KEY, JSON.stringify(leads));
+          } catch (e) {
+            /* storage blocked — leads just won't survive a refresh */
+          }
+        }
+        function renderLead(lead) {
           leadCount += 1;
           $$("[data-lead-count]").forEach((node) => (node.textContent = String(leadCount)));
 
@@ -1054,14 +1540,121 @@
           li.appendChild(detail);
           li.appendChild(time);
           list.insertBefore(li, list.firstChild);
+        }
 
+        const storedLeads = loadLeads();
+        storedLeads.forEach(renderLead);
+
+        window.addEventListener("symbio:lead", (event) => {
+          const lead = event.detail || {};
+          storedLeads.push(lead);
+          saveLeads(storedLeads);
+          renderLead(lead);
           // Auto-open the leads panel so the result is visible.
-          $('[data-panel="leads"]').classList.add("is-open");
+          setPanel("leads", true);
         });
 
-        // Start on the Salon preset and open Customize so the demo is discoverable.
-        applyPreset(PRESETS.Salon, presetWrap.querySelector("button"));
-        $('[data-panel="customize"]').classList.add("is-open");
+        // 3D tilt + cursor glare on the sample cards. Delegated, because the
+        // services cards are re-created on every preset switch.
+        if (
+          window.matchMedia("(hover: hover) and (pointer: fine)").matches &&
+          !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ) {
+          document.addEventListener("pointermove", (event) => {
+            const card = event.target.closest ? event.target.closest(".card") : null;
+            if (!card) return;
+            const rect = card.getBoundingClientRect();
+            const px = (event.clientX - rect.left) / rect.width;
+            const py = (event.clientY - rect.top) / rect.height;
+            card.style.setProperty("--mx", (px * 100).toFixed(1) + "%");
+            card.style.setProperty("--my", (py * 100).toFixed(1) + "%");
+            card.style.setProperty("--ry", ((px - 0.5) * 10).toFixed(2) + "deg");
+            card.style.setProperty("--rx", (-(py - 0.5) * 10).toFixed(2) + "deg");
+          });
+          document.addEventListener("pointerout", (event) => {
+            const card = event.target.closest ? event.target.closest(".card") : null;
+            if (!card) return;
+            if (event.relatedTarget && card.contains(event.relatedTarget)) return;
+            card.style.setProperty("--rx", "0deg");
+            card.style.setProperty("--ry", "0deg");
+          });
+        }
+
+        // "Watch it work" — a hands-off scripted tour: asks a pricing
+        // question, books, and lands a lead in the panel. Click again stops.
+        const tourBtn = $("[data-tour]");
+        let touring = false;
+        let tourTimers = [];
+
+        function tourWait(ms) {
+          return new Promise((resolve) => tourTimers.push(window.setTimeout(resolve, ms)));
+        }
+        function widgetEls() {
+          const host = document.getElementById("symbio-widget-host");
+          if (!host || !host.shadowRoot) return null;
+          return {
+            input: host.shadowRoot.querySelector("[data-input]"),
+            form: host.shadowRoot.querySelector("[data-form]"),
+          };
+        }
+        async function tourType(text) {
+          const els = widgetEls();
+          if (!els || !els.input || !touring) return;
+          els.input.value = "";
+          for (const ch of text) {
+            if (!touring) return;
+            els.input.value += ch;
+            await tourWait(26);
+          }
+          await tourWait(350);
+          if (!touring) return;
+          els.form.dispatchEvent(new Event("submit", { cancelable: true }));
+        }
+        function tourStop() {
+          touring = false;
+          tourTimers.forEach(window.clearTimeout);
+          tourTimers = [];
+          if (tourBtn) tourBtn.textContent = "▶ Watch it work";
+        }
+        async function tourRun() {
+          if (touring) {
+            tourStop();
+            return;
+          }
+          if (!window.SymbioWidget) return;
+          touring = true;
+          tourBtn.textContent = "■ Stop";
+          window.SymbioWidget.open();
+          await tourWait(900);
+          const firstService = $("[data-biz-services] h3");
+          const svc = firstService ? firstService.textContent.toLowerCase() : "an appointment";
+          await tourType("How much for " + svc + "?");
+          await tourWait(1600);
+          await tourType("Book now");
+          await tourWait(1400);
+          await tourType("Taylor Rivera");
+          await tourWait(1400);
+          await tourType("taylor@example.com");
+          await tourWait(1400);
+          await tourType("Do you have anything Saturday morning?");
+          await tourWait(1200);
+          tourStop();
+        }
+        if (tourBtn) tourBtn.addEventListener("click", tourRun);
+
+        // Start on the requested preset (?preset=Dental links are shareable),
+        // and nudge the Customize button instead of covering the hero with an
+        // auto-opened panel.
+        let startKey = "Salon";
+        try {
+          const requested = new URLSearchParams(window.location.search).get("preset");
+          if (requested && PRESETS[requested]) startKey = requested;
+        } catch (e) {
+          /* keep the default */
+        }
+        applyPreset(startKey, presetButtons[startKey]);
+        const customizeBtn = $('[data-toggle="customize"]');
+        if (customizeBtn) customizeBtn.classList.add("is-nudge");
       })();
     </script>
   </body>

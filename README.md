@@ -43,17 +43,17 @@ src/
     nav.njk             # site header / primary navigation
     footer.njk          # site footer
     brand.njk           # logo + wordmark lockup (reused by nav and footer)
-  index.njk             # Home — the living hero, teasers, closing CTA
+  index.njk             # Home — the living hero (3D scene), teasers, closing CTA
   about.njk             # About / Vision — founders + Scan → Map → Build → Polish
   services.njk          # Services — websites, booking, AI agents + AI-assistant highlight
-  pricing.njk           # Pricing — three honest tiers
+  pricing.njk           # Pricing — three honest tiers + payment plans
   portfolio.njk         # Portfolio — honest, early-stage work
   reviews.njk           # Reviews — proof, not fluff (no fabricated testimonials)
   scan.njk              # Free scan / Contact — the conversion form + contact cards
   chatbot-demo.html     # Self-contained, shareable full-page chatbot demo (passthrough)
   assets/
     css/styles.css      # the single design system (CSS custom properties, sectioned)
-    js/main.js          # theme toggle, mobile menu, reveals, living hero, scan form
+    js/main.js          # intro, theme toggle, menu, reveals, living hero, 3D tilt/parallax, scan form
     js/symbio-widget.js # standalone embeddable chat widget (NOT bundled with the site)
     js/symbio-widget.min.js  # minified widget (run `npm run minify:widget` to regenerate)
     img/                # logo-symbio.svg (favicon), -color / -mono / -reversed marks (brand kit)
@@ -77,10 +77,20 @@ commented sections.
   the choice in `localStorage` under the key **`symbio-theme`**; with no stored choice the OS
   preference (`prefers-color-scheme`) governs.
 - **Mobile-first & responsive**, with a clean collapsing mobile menu.
-- **Honors `prefers-reduced-motion`** — the rotating hero word, drifting aurora, and live lead
-  feed all degrade to a static populated state; reveal-on-scroll content is shown immediately.
+- **Honors `prefers-reduced-motion`** — the rotating hero word, drifting aurora, live lead
+  feed, 3D tilt/parallax, and the first-load intro all degrade to a calm static state;
+  reveal-on-scroll content is shown immediately.
 - Accessible: landmarks, skip link, visible focus states, `aria-current` on the active nav
   item, labelled controls, and sufficient contrast in both themes.
+
+### The first-load intro
+
+Once per browser session, the site opens with a short intro: the logo mark draws itself
+stroke-by-stroke, the **Symbio AI** wordmark rises in, and the page fades up as the curtain
+lifts (~2s, click to skip). It is armed **before first paint** by the same inline script that
+sets the theme, so there is no flash; it never plays under reduced motion, with JS off, or
+twice in a session, and a safety net drops the curtain if scripts fail — the page can never
+stay covered.
 
 ### The living hero
 
@@ -89,6 +99,15 @@ The home hero is one orchestrated moment: a headline whose last word cycles thro
 and a live “lead inbox” where leads slide in, a typing indicator resolves to **Replied/Booked**,
 and a counter ticks up. Animation **pauses when the tab is hidden** and is replaced by a static
 populated state under reduced motion.
+
+### The 3D layer
+
+The premium depth effects are all dependency-free CSS + a few pointer listeners: the lead
+inbox rests at a 3D showcase angle inside a perspective wrapper and steers with the pointer,
+glossy orbs float on their own depth planes, auroras drift against the scroll, raised cards
+tilt in 3D with a cursor-following glare (`.tilt`, applied by `main.js` on fine pointers
+only), and the featured pricing tier wears a rotating gradient ring. Everything degrades to a
+calm posed state on touch devices, under reduced motion, or without JS.
 
 ---
 
@@ -146,6 +165,7 @@ wins):
     location: "Oakland, CA",
     phone: "510-555-0100",
     price: "From $35",
+    paymentPlans: "", // optional: e.g. "Split any package into 3 monthly payments."
     position: "right", // "right" | "left"
     theme: "auto", // "auto" (follow the OS) | "light" | "dark"
     leadEndpoint: "", // optional, see contracts below
@@ -174,8 +194,10 @@ Quick setup via attributes:
 
 ### Behavior & API
 
-- Built-in **intent engine** (hours, location, pricing, services, contact) and a deterministic
-  **lead-capture flow** (name → contact → detail) that works with **zero backend**.
+- Built-in **intent engine** (hours, location, pricing, payment plans, services, contact) and a
+  deterministic **lead-capture flow** (name → contact → detail) that works with **zero backend**.
+  Set `paymentPlans` to describe your plans — the widget answers plan questions with it and adds
+  a “Payment plans” quick-reply chip.
 - Every captured lead fires a `window` **`symbio:lead`** event (`event.detail` is the lead) and
   calls `config.onLead(lead)`.
 - **Theme:** `auto` follows the visitor’s OS; pass `light`/`dark` (or call `configure({ theme })`)

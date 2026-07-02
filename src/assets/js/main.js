@@ -1,13 +1,18 @@
 /* =========================================================================
    Symbio AI — site behaviour
    Plain, dependency-free JavaScript shared by every page. Sections:
-     1. Helpers
-     2. Theme toggle (persisted, respects OS preference)
-     3. Mobile menu
-     4. Reveal-on-scroll
-     5. Hero: rotating word
-     6. Hero: live lead inbox
-     7. Free-scan form (POST JSON, mailto fallback)
+     1.  Helpers
+     2.  First-load intro (logo draw, then the site fades in)
+     3.  Theme toggle (persisted, respects OS preference)
+     4.  Mobile menu
+     5.  Reveal-on-scroll
+     6.  Hero: rotating word
+     7.  Hero: live lead inbox
+     8.  Free-scan form (POST JSON, mailto fallback)
+     9.  Widget lead bridge
+     10. Card motion: 3D tilt + cursor glare
+     11. Hero pointer parallax (3D scene)
+     12. Aurora scroll parallax
    Each feature is guarded by element checks, so the file is safe on any page.
    ========================================================================= */
 (function () {
@@ -29,7 +34,39 @@
       .toUpperCase();
   }
 
-  /* ---- 2. Theme toggle ------------------------------------------------- */
+  /* ---- 2. First-load intro --------------------------------------------- */
+  // The pre-paint script in base.njk arms the intro by setting `data-intro`
+  // on <html> (once per session, JS on, no reduced-motion) and marks it seen.
+  // CSS runs the draw/rise animations; this times the exit, allows
+  // click-to-skip, and defers `onFinish` (the reveal choreography) so
+  // entrance animations aren't spent invisibly behind the curtain.
+  function initIntro(onFinish) {
+    const overlay = document.querySelector(".intro");
+
+    if (!overlay || !root.hasAttribute("data-intro") || prefersReducedMotion()) {
+      root.removeAttribute("data-intro");
+      if (overlay) overlay.remove();
+      onFinish();
+      return;
+    }
+
+    let finished = false;
+    function finish() {
+      if (finished) return;
+      finished = true;
+      // Dropping the attribute lifts the curtain (page fades in); .is-done
+      // keeps the overlay rendered while its own fade-out plays.
+      overlay.classList.add("is-done");
+      root.removeAttribute("data-intro");
+      onFinish();
+      window.setTimeout(() => overlay.remove(), 700);
+    }
+
+    window.setTimeout(finish, 2100);
+    overlay.addEventListener("click", finish, { once: true });
+  }
+
+  /* ---- 3. Theme toggle ------------------------------------------------- */
   const THEME_KEY = "symbio-theme";
 
   function storedTheme() {
@@ -85,7 +122,7 @@
     });
   }
 
-  /* ---- 3. Mobile menu -------------------------------------------------- */
+  /* ---- 4. Mobile menu -------------------------------------------------- */
   function initMenu() {
     const toggle = document.querySelector("[data-nav-toggle]");
     const menu = document.querySelector("[data-nav-menu]");
@@ -128,7 +165,7 @@
     });
   }
 
-  /* ---- 4. Reveal-on-scroll -------------------------------------------- */
+  /* ---- 5. Reveal-on-scroll -------------------------------------------- */
   function initReveals() {
     const els = document.querySelectorAll("[data-reveal]");
     if (!els.length) return;
@@ -153,7 +190,7 @@
     els.forEach((el) => observer.observe(el));
   }
 
-  /* ---- 5. Hero: rotating word ----------------------------------------- */
+  /* ---- 6. Hero: rotating word ----------------------------------------- */
   function initRotator() {
     const rotator = document.querySelector("[data-rotator]");
     if (!rotator) return;
@@ -202,7 +239,7 @@
     start();
   }
 
-  /* ---- 6. Hero: live lead inbox --------------------------------------- */
+  /* ---- 7. Hero: live lead inbox --------------------------------------- */
   const SAMPLE_LEADS = [
     { name: "Jordan M.", msg: "Do you take new patients this week?", outcome: "Booked" },
     { name: "Sarah R.", msg: "Can I get a quote for a kitchen remodel?", outcome: "Replied" },
@@ -316,7 +353,7 @@
     start();
   }
 
-  /* ---- 7. Free-scan form ---------------------------------------------- */
+  /* ---- 8. Free-scan form ---------------------------------------------- */
   // Backend contract: POST JSON to the endpoint; success = HTTP 200 AND
   // {"ok": true}. On any failure, fall back to a pre-filled mailto.
   const SCAN_FIELDS = [
@@ -444,7 +481,7 @@
     });
   }
 
-  /* ---- 8. Widget lead bridge ------------------------------------------ */
+  /* ---- 9. Widget lead bridge ------------------------------------------ */
   // The embedded chat widget fires "symbio:lead" when it captures someone.
   // Deliver those to the same inbox as the scan form (best-effort — the widget
   // has already confirmed to the visitor and fired its own event/callback).
@@ -475,14 +512,24 @@
     });
   }
 
-  /* ---- 9. Card motion: 3D tilt + cursor spotlight --------------------- */
+  /* ---- 10. Card motion: 3D tilt + cursor glare ------------------------- */
+  // Tags every raised surface with .tilt (the CSS hook for the perspective
+  // transform and the ::before glare) and feeds it pointer-driven custom
+  // properties. Cards containing forms are skipped — tilting under a cursor
+  // while someone types is hostile, not premium.
   function initCardMotion() {
     if (prefersReducedMotion()) return;
     // Pointer tilt only makes sense with a precise, hovering pointer.
     if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
 
     const MAX_TILT = 6; // degrees
-    document.querySelectorAll(".grid .card").forEach((card) => {
+    const surfaces = document.querySelectorAll(
+      ".grid .card, .price, .price-anchor, .proof, .step, .founder, .plan"
+    );
+
+    surfaces.forEach((card) => {
+      if (card.querySelector("form")) return;
+      card.classList.add("tilt");
       card.addEventListener("pointermove", (event) => {
         const rect = card.getBoundingClientRect();
         const px = (event.clientX - rect.left) / rect.width; // 0..1
@@ -499,16 +546,99 @@
     });
   }
 
+  /* ---- 11. Hero pointer parallax (3D scene) ----------------------------- */
+  // Eases --px/--py (-1..1) on .hero towards the pointer with a small rAF
+  // lerp loop; CSS turns them into layered depth (inbox pose, orbs, copy).
+  function initHeroParallax() {
+    if (prefersReducedMotion()) return;
+    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+
+    const hero = document.querySelector(".hero");
+    if (!hero) return;
+
+    let targetX = 0;
+    let targetY = 0;
+    let currentX = 0;
+    let currentY = 0;
+    let raf = null;
+
+    function frame() {
+      currentX += (targetX - currentX) * 0.08;
+      currentY += (targetY - currentY) * 0.08;
+      hero.style.setProperty("--px", currentX.toFixed(3));
+      hero.style.setProperty("--py", currentY.toFixed(3));
+      if (Math.abs(targetX - currentX) > 0.002 || Math.abs(targetY - currentY) > 0.002) {
+        raf = window.requestAnimationFrame(frame);
+      } else {
+        raf = null;
+      }
+    }
+
+    function kick() {
+      if (!raf) raf = window.requestAnimationFrame(frame);
+    }
+
+    hero.addEventListener("pointermove", (event) => {
+      const rect = hero.getBoundingClientRect();
+      targetX = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
+      targetY = ((event.clientY - rect.top) / rect.height - 0.5) * 2;
+      kick();
+    });
+
+    hero.addEventListener("pointerleave", () => {
+      targetX = 0;
+      targetY = 0;
+      kick();
+    });
+  }
+
+  /* ---- 12. Aurora scroll parallax ---------------------------------------- */
+  // Aurora layers drift gently against the scroll. The offset rides the
+  // `translate` property (via --scroll-drift) so it composes with the drift
+  // keyframes' transform instead of fighting them.
+  function initAuroraParallax() {
+    if (prefersReducedMotion()) return;
+
+    const layers = document.querySelectorAll(".hero__aurora, .aurora");
+    if (!layers.length) return;
+
+    let raf = null;
+
+    function update() {
+      raf = null;
+      const viewH = window.innerHeight;
+      layers.forEach((layer) => {
+        const host = layer.parentElement || layer;
+        const box = host.getBoundingClientRect();
+        if (box.bottom < -200 || box.top > viewH + 200) return;
+        const offset = box.top + box.height / 2 - viewH / 2;
+        layer.style.setProperty("--scroll-drift", (offset * -0.08).toFixed(1) + "px");
+      });
+    }
+
+    function queue() {
+      if (!raf) raf = window.requestAnimationFrame(update);
+    }
+
+    window.addEventListener("scroll", queue, { passive: true });
+    window.addEventListener("resize", queue);
+    update();
+  }
+
   /* ---- Init ------------------------------------------------------------ */
   function init() {
+    // Reveals wait for the intro curtain (initReveals runs when it lifts —
+    // immediately when there is no intro this load).
+    initIntro(initReveals);
     initTheme();
     initMenu();
-    initReveals();
     initRotator();
     initInbox();
     initScanForm();
     initWidgetLeadBridge();
     initCardMotion();
+    initHeroParallax();
+    initAuroraParallax();
     // Tell the pre-paint safety net that we ran, so it won't unhide reveals.
     window.__symbioReady = true;
   }

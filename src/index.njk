@@ -7,6 +7,12 @@ description: Symbio AI builds websites, custom apps, AI agents, and booking & le
 {# ===== Living hero ===================================================== #}
 <section class="hero">
   <div class="hero__aurora" aria-hidden="true"></div>
+  {# Glossy 3D orbs on their own depth planes — steered by the pointer. #}
+  <div class="hero__orbs" aria-hidden="true">
+    <span class="hero__orb hero__orb--a"></span>
+    <span class="hero__orb hero__orb--b"></span>
+    <span class="hero__orb hero__orb--c"></span>
+  </div>
   <div class="container">
     <div class="hero__grid">
       <div class="hero__content">
@@ -43,7 +49,9 @@ description: Symbio AI builds websites, custom apps, AI agents, and booking & le
       </div>
 
       {# Live "lead inbox". main.js animates it; these items are the static
-         fallback for no-JS and reduced-motion. #}
+         fallback for no-JS and reduced-motion. The wrapper provides the 3D
+         perspective for its showcase pose + pointer parallax. #}
+      <div class="hero__device">
       <aside class="lead-inbox" aria-label="Example live lead inbox">
         <div class="lead-inbox__bar">
           <span class="lead-inbox__title">
@@ -82,6 +90,7 @@ description: Symbio AI builds websites, custom apps, AI agents, and booking & le
           </li>
         </ul>
       </aside>
+      </div>
     </div>
   </div>
 </section>
@@ -226,7 +235,7 @@ description: Symbio AI builds websites, custom apps, AI agents, and booking & le
     <div class="grid grid--4">
       <a class="card card--link" href="pricing.html" data-reveal>
         <h3 class="card__title">Honest pricing</h3>
-        <p class="card__text">Clear starting points by service — a free scan first, a real number second.</p>
+        <p class="card__text">Clear starting points, three honest tiers, and payment plans that split the cost.</p>
         <span class="card__link">See pricing</span>
       </a>
       <a class="card card--link" href="portfolio.html" data-reveal data-reveal-delay="1">

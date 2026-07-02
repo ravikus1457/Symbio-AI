@@ -19,9 +19,11 @@
     <meta name="twitter:card" content="summary" />
 
     {# Runs before first paint. Sets the theme (localStorage wins, else the OS
-       preference governs via CSS) and flags `.js` so reveal-on-scroll content
-       starts hidden without a flash. A safety net unhides it if main.js never
-       loads, so the page is never left with invisible content. #}
+       preference governs via CSS), flags `.js` so reveal-on-scroll content
+       starts hidden without a flash, and arms the first-load intro (once per
+       session, never under reduced motion). A safety net unhides content and
+       drops the intro curtain if main.js never loads, so the page is never
+       left covered or invisible. #}
     <script>
       (function () {
         var d = document.documentElement;
@@ -34,9 +36,25 @@
         } catch (e) {
           /* localStorage may be unavailable; fall back to CSS media query. */
         }
+        try {
+          if (
+            !sessionStorage.getItem("symbio-intro") &&
+            !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          ) {
+            // Mark seen BEFORE arming: if storage writes throw we skip the
+            // intro entirely, and a crash mid-intro can never replay it.
+            sessionStorage.setItem("symbio-intro", "seen");
+            d.setAttribute("data-intro", "");
+          }
+        } catch (e) {
+          /* sessionStorage may be unavailable; skip the intro entirely. */
+        }
         window.addEventListener("load", function () {
           window.setTimeout(function () {
-            if (!window.__symbioReady) d.classList.remove("js");
+            if (!window.__symbioReady) {
+              d.classList.remove("js");
+              d.removeAttribute("data-intro");
+            }
           }, 1500);
         });
       })();
@@ -47,6 +65,30 @@
   </head>
   <body class="page page--{{ pageKey or 'default' }}">
     <a class="skip-link" href="#main">Skip to content</a>
+
+    {# First-load intro: the logo draws itself, the name rises, then the site
+       fades in. Plays once per browser session; the pre-paint script above
+       only arms it (html[data-intro]) when it should play, so with JS off or
+       reduced motion this block stays display:none. Click skips it. #}
+    <div class="intro" aria-hidden="true">
+      <div class="intro__inner">
+        <svg class="intro__mark" viewBox="0 0 100 100" focusable="false" aria-hidden="true">
+          <defs>
+            <linearGradient id="intro-grad" x1="30" y1="16" x2="70" y2="84" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#2f6bff" />
+              <stop offset="1" stop-color="#7a4dff" />
+            </linearGradient>
+          </defs>
+          <path class="intro__stroke intro__stroke--ink" pathLength="1" d="M66,16 C40,27 40,43 54,50 C40,57 40,73 66,84" />
+          <path class="intro__stroke intro__stroke--grad" pathLength="1" d="M34,16 C60,27 60,43 46,50 C60,57 60,73 34,84" stroke="url(#intro-grad)" />
+          <path class="intro__cross" pathLength="1" d="M54,50 C40,57 40,73 66,84" />
+        </svg>
+        <div class="intro__word">
+          <span class="intro__word-inner">Symbio<span class="intro__word-accent">AI</span></span>
+        </div>
+        <p class="intro__tag">{{ site.tagline }}</p>
+      </div>
+    </div>
 
     {% include "nav.njk" %}
 
@@ -69,6 +111,8 @@
         location: "Online — we build remote",
         phone: {{ site.founders[0].phone | dump | safe }},
         price: "with a free scan first",
+        paymentPlans:
+          "We split projects into 2–6 monthly payments — 0% interest, agreed in writing before we start.",
         position: "right",
         theme: "auto",
         greeting:

@@ -15,6 +15,7 @@
          location: "Oakland, CA",
          phone: "510-555-0100",
          price: "From $35",
+         paymentPlans: "",           // optional: how you split payments, e.g. "Split any package into 3 monthly payments."
          position: "right",          // "right" | "left"
          leadEndpoint: "",           // optional: POST {name,contact,detail,business,page,at}
          aiEndpoint: "",             // optional: POST {messages,system} -> {reply}
@@ -75,6 +76,7 @@
       location: attr("location") || user.location || "",
       phone: attr("phone") || user.phone || "",
       price: attr("price") || user.price || "",
+      paymentPlans: attr("payment-plans") || user.paymentPlans || "",
       position:
         (attr("position") || user.position || "right").toLowerCase() === "left" ? "left" : "right",
       // "auto" follows the visitor's OS; "light" / "dark" force the widget theme.
@@ -391,6 +393,7 @@
   function defaultChips() {
     const chips = ["Services", "Hours"];
     if (cfg.location) chips.push("Location");
+    if (cfg.paymentPlans) chips.push("Payment plans");
     chips.push("Book now");
     return chips;
   }
@@ -401,7 +404,9 @@
   }
 
   function isLeadTrigger(text) {
-    return has(text, [
+    // Lowercase here: callers pass raw input, and the "Book now" chip sends
+    // a capital B — without this, the chip never started the lead flow.
+    return has(String(text).toLowerCase(), [
       "book",
       "appointment",
       "schedule",
@@ -431,11 +436,37 @@
           : "We mostly work online — tell me where you are and we'll sort it out.",
       };
     }
+    if (
+      has(text, [
+        "payment plan",
+        "payment plans",
+        "installment",
+        "instalment",
+        "split the cost",
+        "split payment",
+        "pay monthly",
+        "monthly payments",
+        "pay over time",
+        "financing",
+        "finance",
+      ])
+    ) {
+      return {
+        text: cfg.paymentPlans
+          ? cfg.paymentPlans + " Want me to have someone walk you through the options?"
+          : "We can usually split the cost into a few scheduled payments — leave your details and we'll confirm the options for you.",
+        offerLead: true,
+      };
+    }
     if (has(text, ["price", "cost", "how much", "pricing", "rates", "fee"])) {
       const base = cfg.price
         ? "Pricing starts " + cfg.price + ". "
         : "Pricing depends on what you need. ";
-      return { text: base + "Want me to have someone follow up with a quote?", offerLead: true };
+      const plans = cfg.paymentPlans ? "Payment plans are available too. " : "";
+      return {
+        text: base + plans + "Want me to have someone follow up with a quote?",
+        offerLead: true,
+      };
     }
     if (has(text, ["service", "what do you", "offer", "do you do", "help with"])) {
       return { text: "We help with: " + cfg.services.join(", ") + ". Which one fits?" };
@@ -472,6 +503,7 @@
     if (cfg.location) parts.push("Location: " + cfg.location + ".");
     if (cfg.phone) parts.push("Phone: " + cfg.phone + ".");
     if (cfg.price) parts.push("Pricing: " + cfg.price + ".");
+    if (cfg.paymentPlans) parts.push("Payment plans: " + cfg.paymentPlans);
     parts.push(
       "Be concise and helpful. Encourage the visitor to leave their name and contact so the team can follow up."
     );
@@ -645,6 +677,7 @@
     "location",
     "phone",
     "price",
+    "paymentPlans",
     "greeting",
   ];
 

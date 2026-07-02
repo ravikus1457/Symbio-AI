@@ -18,11 +18,13 @@
     <meta property="og:site_name" content="Bay Area Auto Customz" />
     <meta property="og:title" content="Bay Area Auto Customz | Starlight Headliners &amp; Custom Auto Lighting" />
     <meta property="og:description" content="Starlight headliners, custom lighting, Alcantara headliners, and butterfly doors. 4.9 stars on Google. Design your starlight live, then book." />
+    <meta property="og:image" content="images/logo-badge-gold.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Mr+Dafoe&family=Space+Grotesk:wght@500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
@@ -54,7 +56,13 @@
       <!-- ============================ HEADER ============================ -->
       <header class="header" data-header>
         <a class="brand" href="#top" aria-label="Bay Area Auto Customz home">
-          <span class="brand__mark" aria-hidden="true">BAC</span>
+          <img
+            class="brand__logo"
+            src="images/logo-badge-gold.webp"
+            alt="Bay Area Auto Customz logo"
+            width="720"
+            height="576"
+          />
           <span class="brand__text">
             <strong>Bay Area Auto Customz</strong>
             <em>Starlight &amp; custom auto lighting</em>
@@ -520,14 +528,38 @@
             </p>
           </div>
 
+          <!-- Sergio's real RGB shop signage (approved brand art). -->
+          <figure class="sign-banner">
+            <img
+              src="images/sign-wordmark.webp"
+              alt="Bay Area Auto Customz in rainbow neon script lettering"
+              loading="lazy"
+              width="1254"
+              height="392"
+            />
+          </figure>
+
           <div class="ambient">
-            <div class="ambient__sign">
-              <p class="neon-script">
-                <span class="neon-script__word neon-script__word--gold">Bay</span>
-                <span class="neon-script__word neon-script__word--pink">Area</span>
-                <span class="neon-script__word neon-script__word--blue">Auto</span>
-                <span class="neon-script__word neon-script__word--green">Customz</span>
-              </p>
+            <figure class="sign-card ambient__promo">
+              <img
+                src="images/sign-features.webp"
+                alt="Bay Area Auto Customz ambient lighting sign: ambient lighting, 16M colors, 200+ modes &amp; more, music sync, wireless controlled customization, with an Instagram QR code for @bayareaautocustomz"
+                loading="lazy"
+                width="1691"
+                height="930"
+              />
+              <figcaption>Point your camera at the code to follow <strong>@bayareaautocustomz</strong>.</figcaption>
+            </figure>
+
+            <div class="ambient__panel">
+              <img
+                class="ambient__emblem"
+                src="images/logo-badge-rgb.webp"
+                alt="Bay Area Auto Customz RGB neon badge logo — a car emblem outlined in rainbow neon, est. 2023"
+                loading="lazy"
+                width="900"
+                height="721"
+              />
               <ul class="neon-list">
                 <li class="neon-list__item neon-list__item--pink">
                   <strong>16M colors</strong>
@@ -554,8 +586,47 @@
                 <a href="https://www.instagram.com/bayareaautocustomz/" target="_blank" rel="noopener">@bayareaautocustomz</a>
               </p>
             </div>
+          </div>
 
-            <div class="ambient__shots">
+          <div class="ambient__installs">
+            <span class="eyebrow">Ambient installs — straight from the shop</span>
+            <div class="shots">
+              <figure class="shot">
+                <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
+                  <img
+                    src="images/ambient-bmw-green.jpg"
+                    alt="Green ambient light lines tracing the dash, doors, and steering wheel of a BMW with a blue footwell glow"
+                    loading="lazy"
+                    width="1600"
+                    height="2133"
+                  />
+                </button>
+                <figcaption>Green trim + blue footwells — BMW</figcaption>
+              </figure>
+              <figure class="shot">
+                <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
+                  <img
+                    src="images/ambient-bmw-red.jpg"
+                    alt="Rainbow gradient ambient light strip across the dash of a BMW with red leather interior"
+                    loading="lazy"
+                    width="1400"
+                    height="1867"
+                  />
+                </button>
+                <figcaption>Full rainbow sweep — red-interior BMW</figcaption>
+              </figure>
+              <figure class="shot">
+                <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
+                  <img
+                    src="images/ambient-bmw-door.jpg"
+                    alt="Teal and green ambient lighting along the doors and dash of a white BMW with the door open"
+                    loading="lazy"
+                    width="1600"
+                    height="1200"
+                  />
+                </button>
+                <figcaption>Teal door-to-dash lines — BMW</figcaption>
+              </figure>
               <figure class="shot">
                 <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
                   <img
@@ -566,7 +637,19 @@
                     height="1867"
                   />
                 </button>
-                <figcaption>Ambient kit installed — Corvette door &amp; speaker glow</figcaption>
+                <figcaption>Door &amp; speaker glow — Corvette</figcaption>
+              </figure>
+              <figure class="shot">
+                <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
+                  <img
+                    src="images/ambient-door-corvette.jpg"
+                    alt="Blue ambient light line running along a Corvette door panel with red stitching"
+                    loading="lazy"
+                    width="1400"
+                    height="1867"
+                  />
+                </button>
+                <figcaption>Door accent line — Corvette</figcaption>
               </figure>
               <figure class="shot">
                 <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
@@ -578,7 +661,7 @@
                     height="1867"
                   />
                 </button>
-                <figcaption>Pairs with a starlight roof for the full night-cabin look</figcaption>
+                <figcaption>Pairs with a starlight roof — Mercedes</figcaption>
               </figure>
             </div>
           </div>
@@ -738,7 +821,13 @@
       <!-- ========================== FOOTER ========================== -->
       <footer class="footer">
         <div class="footer__brand">
-          <span class="brand__mark" aria-hidden="true">BAC</span>
+          <img
+            class="brand__logo"
+            src="images/logo-badge-gold.webp"
+            alt="Bay Area Auto Customz logo"
+            width="720"
+            height="576"
+          />
           <div>
             <strong>Bay Area Auto Customz</strong>
             <span>Starlight headliners &amp; custom auto lighting · Walnut Creek &amp; the East Bay</span>

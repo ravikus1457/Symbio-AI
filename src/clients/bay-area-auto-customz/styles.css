@@ -213,19 +213,14 @@ h3 {
   gap: 0.7rem;
 }
 
-.brand__mark {
-  display: grid;
-  place-items: center;
-  width: 2.7rem;
-  height: 2.7rem;
-  border: 1px solid rgba(255, 221, 138, 0.4);
-  border-radius: 0.8rem;
-  font-family: "Space Grotesk", sans-serif;
-  font-weight: 700;
-  font-size: 0.85rem;
-  letter-spacing: -0.02em;
-  color: var(--gold-bright);
-  background: linear-gradient(135deg, rgba(255, 221, 138, 0.16), rgba(255, 255, 255, 0.02));
+.brand__logo {
+  height: 2.9rem;
+  width: auto;
+  border-radius: 0.6rem;
+}
+
+.footer__brand .brand__logo {
+  height: 3.4rem;
 }
 
 .brand__text strong {
@@ -1168,20 +1163,63 @@ img.tile__media {
 }
 
 /* ------------------------------------- ambient lighting kits (RGB neon) */
-/* Sergio's RGB sign artwork, rebuilt as live neon so it stays crisp and
-   animates. The script wordmark + rainbow-border panel mirror the signs. */
-.ambient {
-  display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
-  gap: 1.2rem;
-  align-items: stretch;
+/* Sergio's real RGB shop signage (approved brand art) framed like the signs
+   hanging in the shop, paired with the readable selling points + real
+   install photos. */
+.sign-banner,
+.sign-card {
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  background: #050505;
+  box-shadow: var(--shadow);
 }
 
-.ambient__sign {
+.sign-banner {
+  margin-bottom: 1.2rem;
+}
+
+.sign-banner img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.ambient {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: 1.2rem;
+  align-items: start;
+}
+
+.ambient__promo {
+  display: flex;
+  flex-direction: column;
+}
+
+.ambient__promo img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.ambient__promo figcaption {
+  padding: 0.8rem 1.1rem;
+  border-top: 1px solid var(--line-soft);
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.ambient__promo figcaption strong {
+  color: var(--gold-bright);
+}
+
+.ambient__panel {
   position: relative;
   display: flex;
   flex-direction: column;
-  padding: clamp(1.4rem, 3.2vw, 2.4rem);
+  padding: clamp(1.3rem, 3vw, 2.1rem);
   border: 2px solid transparent;
   border-radius: var(--radius-xl);
   background:
@@ -1192,36 +1230,10 @@ img.tile__media {
   animation: neonBorder 9s linear infinite;
 }
 
-.neon-script {
-  display: flex;
-  flex-wrap: wrap;
-  column-gap: clamp(0.6rem, 1.6vw, 1.1rem);
-  margin: 0 0 1.4rem;
-  font-family: "Mr Dafoe", "Space Grotesk", cursive;
-  font-size: clamp(2.3rem, 4.6vw, 3.4rem);
-  font-weight: 400;
-  line-height: 1.15;
-  letter-spacing: 0.01em;
-}
-
-.neon-script__word--gold {
-  color: #ffe9a8;
-  text-shadow: 0 0 5px rgba(255, 211, 106, 0.9), 0 0 16px rgba(255, 166, 44, 0.7), 0 0 38px rgba(255, 140, 0, 0.45);
-}
-
-.neon-script__word--pink {
-  color: #ffc4cd;
-  text-shadow: 0 0 5px rgba(255, 91, 110, 0.9), 0 0 16px rgba(255, 45, 117, 0.7), 0 0 38px rgba(255, 0, 100, 0.45);
-}
-
-.neon-script__word--blue {
-  color: #d2f0ff;
-  text-shadow: 0 0 5px rgba(91, 208, 255, 0.9), 0 0 16px rgba(45, 170, 255, 0.7), 0 0 38px rgba(0, 140, 255, 0.45);
-}
-
-.neon-script__word--green {
-  color: #d3ffe4;
-  text-shadow: 0 0 5px rgba(91, 255, 158, 0.9), 0 0 16px rgba(45, 230, 120, 0.7), 0 0 38px rgba(0, 200, 90, 0.45);
+.ambient__emblem {
+  width: min(240px, 66%);
+  height: auto;
+  margin: 0 0 1.3rem;
 }
 
 .neon-list {
@@ -1291,31 +1303,13 @@ img.tile__media {
   animation: rgbShift 6s linear infinite;
 }
 
-.ambient__shots {
-  display: grid;
-  grid-template-rows: 1fr 1fr;
-  gap: 1.2rem;
+.ambient__installs {
+  margin-top: 1.8rem;
 }
 
-.ambient__shots .shot {
+.ambient__installs .eyebrow {
   display: flex;
-  flex-direction: column;
-  min-height: 0;
-}
-
-/* Photos fill whatever height the sign panel sets (absolute within the
-   frame), so tall portraits never stretch the section. */
-.ambient__shots .media-zoom {
-  position: relative;
-  flex: 1;
-  min-height: 14rem;
-}
-
-.ambient__shots .media-zoom img {
-  position: absolute;
-  inset: 0;
-  height: 100%;
-  object-fit: cover;
+  margin-bottom: 1rem;
 }
 
 @keyframes neonBorder {
@@ -2085,15 +2079,6 @@ img.tile__media {
     grid-template-columns: 1fr;
   }
 
-  .ambient__shots {
-    grid-template-rows: none;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .ambient__shots .media-zoom {
-    min-height: 15rem;
-  }
-
   .services,
   .kits,
   .reviews {
@@ -2125,7 +2110,6 @@ img.tile__media {
   .hero__proof,
   .gallery,
   .shots,
-  .ambient__shots,
   .services,
   .kits,
   .reviews,

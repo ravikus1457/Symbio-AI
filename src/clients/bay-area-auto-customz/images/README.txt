@@ -1,38 +1,44 @@
-BAY AREA AUTO CUSTOMZ — REAL PHOTOS / REELS
-============================================
+BAY AREA AUTO CUSTOMZ — REAL PHOTOS, SIGNS & LOGOS
+===================================================
 
-Sergio's approved shop photos live here and are wired into the site:
+Sergio's approved shop photos + brand art. All are wired into the site and
+optimized (photos ~1400-1600px JPEG; signs/logos WebP; each well under ~400KB).
 
-  Featured "Our work" tiles (index.html #work):
-    starlight-roof-purple.jpg        purple starlight, Mercedes C-Class
-    starlight-white-ice.jpg          ice-white starlight
-    ambient-door-speaker.jpg         Corvette door + speaker glow (also in #ambient)
-    starlight-mercedes-wide.jpg      doors-open reveal, white Mercedes
+BRAND SIGNS & LOGOS (from Sergio's real RGB signage)
+  sign-wordmark.webp     rainbow neon script wordmark — banner atop #ambient
+  sign-features.webp     ambient-lighting sign w/ Instagram QR — left of #ambient
+                         (kept high-quality so the QR stays scannable)
+  logo-badge-rgb.webp    RGB neon car badge — emblem in the #ambient panel
+  logo-badge-gold.webp   gold car badge — the site logo (header + footer)
+  logo-badge-gold.jpg    same badge as JPEG — og:image / link-preview
 
-  "Our work" shots grid:
-    starlight-mercedes-cabin.jpg     rear-cabin star coverage
-    starlight-console-white.jpg      console glow + starlight (also in #ambient)
-    starlight-roof-console.jpg       from the driver's door
-    starlight-roof-doors.jpg         roof-to-pillar coverage
-    starlight-headliner-violet.jpg   violet star field
-    ambient-door-corvette.jpg        Corvette door accent
+STARLIGHT (Our work — #work)
+  starlight-roof-purple.jpg        purple starlight, Mercedes C-Class (featured)
+  starlight-white-ice.jpg          ice-white starlight (featured)
+  starlight-mercedes-wide.jpg      doors-open reveal, white Mercedes (featured)
+  starlight-mercedes-cabin.jpg     rear-cabin star coverage
+  starlight-roof-console.jpg       from the driver's door
+  starlight-roof-doors.jpg         roof-to-pillar coverage
+  starlight-headliner-violet.jpg   violet star field
+  starlight-console-white.jpg      console glow + starlight (also in #ambient)
 
-All were resized to ~1400px and recompressed (each under ~300KB). To add a
-new photo: export it ~1200-1600px wide, keep it under ~400KB, drop it here,
-then copy one of the <figure class="shot"> blocks in index.html and update
-src / alt / caption. Photos automatically join the lightbox (app.js wires
-every .media-zoom button).
+AMBIENT INSTALLS (#ambient "Ambient installs" grid)
+  ambient-bmw-green.jpg     green trim + blue footwells, BMW
+  ambient-bmw-red.jpg       full rainbow sweep, red-interior BMW
+  ambient-bmw-door.jpg      teal door-to-dash lines, white BMW
+  ambient-door-speaker.jpg  Corvette door + speaker glow (also featured in #work)
+  ambient-door-corvette.jpg Corvette door accent line
 
-RGB SIGN ARTWORK — the neon signs in the Ambient lighting kits section
-(#ambient) are rebuilt as live HTML/CSS neon (script wordmark + rainbow
-panel), so they stay crisp at any size and animate. If Sergio prefers the
-original sign PNGs, drop them in here (e.g. sign-script.png, sign-promo.png)
-and swap them into .ambient__sign in index.html.
+ADDING MORE
+  Export ~1200-1600px wide, keep under ~400KB, drop it here, then copy a
+  <figure class="shot"> block in index.html and update src / alt / caption.
+  New photos automatically join the lightbox (app.js wires .media-zoom).
 
-For Instagram / TikTok video reels, either link a tile to the exact post
-(swap the profile URL for the post URL) or paste an official embed in
-place of a tile.
+  The two ORIGINAL sign PNGs also included a gold starry-background badge and
+  a promo layout; the versions above are the ones used. To swap any sign,
+  replace the file (keep the name) or point the <img> at a new one.
 
-The Google rating (4.9 / 66 reviews) shown on the site is the real number.
-The review *quotes* in the #reviews section are placeholders — replace them
-with real, customer-approved Google review snippets before launch.
+NOTES
+  The Google rating (4.9 / 66 reviews) is the real number. The review *quotes*
+  in #reviews are still placeholders — replace with customer-approved Google
+  snippets before launch. DIY-kit prices are placeholders (confirm w/ Sergio).

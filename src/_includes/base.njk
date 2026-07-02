@@ -57,6 +57,12 @@
             }
           }, 1500);
         });
+        // Absolute cap for the intro curtain: if main.js stalls so long that
+        // `load` never fires, drop the curtain anyway. The page must never
+        // stay covered.
+        window.setTimeout(function () {
+          if (!window.__symbioReady) d.removeAttribute("data-intro");
+        }, 6000);
       })();
     </script>
 
@@ -112,7 +118,7 @@
         phone: {{ site.founders[0].phone | dump | safe }},
         price: "with a free scan first",
         paymentPlans:
-          "We split projects into 2–6 monthly payments — 0% interest, agreed in writing before we start.",
+          "Yes — split any project in two (half to start, half at launch) or spread it across 3–6 equal monthly payments. 0% interest, agreed in writing before we start.",
         position: "right",
         theme: "auto",
         greeting:

@@ -1269,7 +1269,7 @@ ol {
   background: var(--c-surface);
   border: 1px solid var(--c-border);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-sm), var(--edge-highlight);
   transition:
     transform var(--dur) var(--ease),
     box-shadow var(--dur) var(--ease),
@@ -1363,7 +1363,7 @@ a.card {
   background: var(--c-surface);
   border: 1px solid var(--c-border);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-sm), var(--edge-highlight);
 }
 
 .step__num {
@@ -1397,7 +1397,7 @@ a.card {
   background: var(--c-surface);
   border: 1px solid var(--c-border);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-sm), var(--edge-highlight);
 }
 
 .founder__avatar {
@@ -1459,7 +1459,7 @@ a.card {
   background: var(--c-surface);
   border: 1px solid var(--c-border);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-sm), var(--edge-highlight);
 }
 
 .price--popular {
@@ -1527,7 +1527,9 @@ a.card {
   color: var(--c-text-faint);
 }
 
-/* Per-tier payment-plan line — quiet, factual, right under the number. */
+/* Per-tier payment-plan line — quiet, factual, right under the number.
+   Accent text sits on the plain card surface (soft border, no tinted fill)
+   so it keeps WCAG AA contrast in both themes. */
 .price__plan {
   align-self: flex-start;
   margin-top: 0.7rem;
@@ -1535,7 +1537,7 @@ a.card {
   font-size: var(--fs-200);
   font-weight: 600;
   color: var(--c-accent);
-  background: var(--c-accent-soft);
+  border: 1px solid var(--c-accent-soft);
   border-radius: var(--radius-pill);
 }
 
@@ -1581,7 +1583,7 @@ a.card {
   background: var(--c-surface);
   border: 1px solid var(--c-border);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-sm), var(--edge-highlight);
 }
 
 .plan--feature {
@@ -1624,7 +1626,7 @@ a.card {
   background: var(--c-surface);
   border: 1px solid var(--c-border);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-sm), var(--edge-highlight);
 }
 
 .proof__label {
@@ -1680,12 +1682,18 @@ a.card {
   box-shadow: var(--shadow-lg);
 }
 
-/* Soft drifting light inside the band — depth without extra markup. */
+/* Soft drifting light inside the band — depth without extra markup. It stays
+   in the top-left corner so it never brightens the band behind the copy
+   (white-on-gradient contrast holds). */
 .cta-band::after {
   content: "";
   position: absolute;
-  inset: -30%;
-  background: radial-gradient(closest-side, rgba(255, 255, 255, 0.2), transparent 70%);
+  top: -55%;
+  left: -18%;
+  width: 60%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255, 255, 255, 0.16), transparent 70%);
   animation: aurora-drift-a 16s ease-in-out infinite alternate;
   pointer-events: none;
 }
@@ -1994,7 +2002,7 @@ a.card {
   background: var(--c-surface);
   border: 1px solid var(--c-border);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-sm), var(--edge-highlight);
 }
 
 .price-anchor--feature {
@@ -2098,18 +2106,6 @@ a.card {
   transform: translateY(-4px);
   box-shadow: var(--shadow-md), var(--edge-highlight);
   border-color: var(--c-border-strong);
-}
-
-/* Specular top edge on raised surfaces — a glass light-catch in both themes.
-   The popular tier and feature card keep their own, stronger shadows. */
-.card:not(.card--feature),
-.price:not(.price--popular),
-.step,
-.founder,
-.proof,
-.price-anchor,
-.plan {
-  box-shadow: var(--shadow-sm), var(--edge-highlight);
 }
 
 /* Smoothly animatable angle for the rotating glow borders. */
@@ -2272,6 +2268,15 @@ a.card {
   border-color: var(--c-border-strong);
 }
 
+/* The featured tier keeps its glow while hovered on either motion path. */
+.price--popular:hover,
+.js .price--popular.tilt:hover {
+  box-shadow:
+    var(--shadow-lg),
+    var(--edge-highlight),
+    0 0 44px -14px rgba(122, 77, 255, 0.5);
+}
+
 /* -------------------------------------------------------------------------
    20. First-load intro (logo draw + name reveal)
    The pre-paint script in base.njk sets `data-intro` on <html> only when the
@@ -2307,7 +2312,7 @@ html[data-intro] body {
   overflow: hidden;
 }
 
-html[data-intro] #symbio-widget-host {
+.intro ~ #symbio-widget-host {
   visibility: hidden;
 }
 

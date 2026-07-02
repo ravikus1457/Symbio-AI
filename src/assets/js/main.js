@@ -54,6 +54,7 @@
     function finish() {
       if (finished) return;
       finished = true;
+      document.removeEventListener("keydown", onSkipKey);
       // Dropping the attribute lifts the curtain (page fades in); .is-done
       // keeps the overlay rendered while its own fade-out plays.
       overlay.classList.add("is-done");
@@ -62,8 +63,14 @@
       window.setTimeout(() => overlay.remove(), 700);
     }
 
+    // Keyboard users can skip too — the overlay itself isn't focusable.
+    function onSkipKey(event) {
+      if (event.key === "Escape" || event.key === "Enter") finish();
+    }
+
     window.setTimeout(finish, 2100);
     overlay.addEventListener("click", finish, { once: true });
+    document.addEventListener("keydown", onSkipKey);
   }
 
   /* ---- 3. Theme toggle ------------------------------------------------- */

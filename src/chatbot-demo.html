@@ -439,7 +439,9 @@
         margin-left: 6px;
       }
       @media (prefers-reduced-motion: reduce) {
-        * {
+        *,
+        *::before,
+        *::after {
           animation: none !important;
           transition: none !important;
         }
@@ -549,6 +551,7 @@
         location: "Oakland, CA",
         phone: "510-555-0142",
         price: "from $35",
+        paymentPlans: "Bridal and color packages can be split into two payments.",
         position: "right",
         // The sample page is light-only, so pin the widget to match — otherwise
         // dark-OS visitors would see a dark chat on a light page.
@@ -1380,6 +1383,10 @@
           const preset = PRESETS[key];
           if (!preset) return;
 
+          // Rebranding resets the widget conversation, which would strand a
+          // running tour mid lead-capture — stop it cleanly instead.
+          if (touring) tourStop();
+
           // Rebrand the visible page.
           document.documentElement.style.setProperty("--accent", preset.accent);
           setText("[data-biz-eyebrow]", preset.eyebrow);
@@ -1470,6 +1477,12 @@
         function setPanel(name, open) {
           const panel = $('[data-panel="' + name + '"]');
           if (!panel) return;
+          // Closing hides the panel (visibility: hidden) — hand focus back to
+          // its toggle first so keyboard users aren't left on a hidden node.
+          if (!open && panel.contains(document.activeElement)) {
+            const toggleBtn = $('[data-toggle="' + name + '"]');
+            if (toggleBtn) toggleBtn.focus();
+          }
           panel.classList.toggle("is-open", open);
           $$('[data-toggle="' + name + '"]').forEach((b) =>
             b.setAttribute("aria-expanded", String(open))
@@ -1491,6 +1504,9 @@
         });
         document.addEventListener("keydown", (event) => {
           if (event.key === "Escape") {
+            // Escape inside the chat widget bubbles out retargeted to its
+            // host — leave that to the widget's own close handling.
+            if (event.target && event.target.id === "symbio-widget-host") return;
             $$(".panel.is-open").forEach((p) => setPanel(p.getAttribute("data-panel"), false));
           }
         });
@@ -1624,6 +1640,10 @@
           if (!window.SymbioWidget) return;
           touring = true;
           tourBtn.textContent = "■ Stop";
+          // A branding-key configure() resets the conversation and any
+          // half-finished lead capture, so the scripted lines always land in
+          // a fresh chat (greeting "" just means "use the default greeting").
+          window.SymbioWidget.configure({ greeting: "" });
           window.SymbioWidget.open();
           await tourWait(900);
           const firstService = $("[data-biz-services] h3");

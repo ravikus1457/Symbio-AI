@@ -1,0 +1,136 @@
+/* =========================================================================
+   East Bay Hindu Temple — custom CSS for Wix Studio
+   Paste this into:  Wix Studio Editor → Code (</>) → CSS  (the global CSS page).
+   Then, on any element you want styled, open it → Inspector → CSS → add the
+   matching "Custom class" (e.g. ebht-niche). These classes recreate the key
+   visual treatments of the design natively, so the page stays responsive and
+   SEO-friendly instead of living inside iframes.
+
+   Colours are ALSO best set in Site Styles → Colors (see README). These
+   variables mirror them for use in custom CSS.
+   ========================================================================= */
+
+:root {
+  --ebht-red: #8a1220;
+  --ebht-red-deep: #5e0a13;
+  --ebht-gold: #c89b3c;
+  --ebht-gold-bright: #f1cf7a;
+  --ebht-gold-deep: #9a7322;
+  --ebht-saffron: #e8861e;
+  --ebht-cream: #fdf6e8;
+  --ebht-ink: #33160f;
+  --ebht-ink-soft: #6a4536;
+  --ebht-grad-red: linear-gradient(135deg, #7c0f1c 0%, #5e0a13 55%, #3f060d 100%);
+  --ebht-grad-gold: linear-gradient(135deg, #f1cf7a 0%, #c89b3c 50%, #9a7322 100%);
+  --ebht-grad-saffron: linear-gradient(135deg, #f4a623, #e8861e 60%, #c25e12);
+}
+
+/* Eyebrow / section kicker — apply to a small heading above a title */
+.ebht-eyebrow {
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ebht-gold-deep);
+  font-size: 0.8rem;
+}
+
+/* Gold "festoon" frame — apply to an image/container for the temple, priest,
+   or any feature photo. Gives the gold border + soft warm shadow. */
+.ebht-frame {
+  padding: 12px;
+  border-radius: 24px;
+  background: var(--ebht-grad-gold);
+  box-shadow: 0 36px 70px -32px rgba(70, 20, 10, 0.5);
+}
+.ebht-frame img,
+.ebht-frame > * {
+  border-radius: 16px;
+}
+
+/* Deity niche — apply to each deity card. The arch + gold inner outline is
+   drawn with CSS, so even a plain image inside looks enshrined. */
+.ebht-niche {
+  border-radius: 24px;
+  overflow: hidden;
+  background: var(--ebht-cream);
+  border: 1px solid rgba(122, 60, 30, 0.16);
+  box-shadow: 0 1px 6px rgba(70, 20, 10, 0.1);
+  transition: transform 0.28s ease, box-shadow 0.28s ease;
+}
+.ebht-niche:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 36px 70px -32px rgba(70, 20, 10, 0.5);
+}
+/* Put this on the IMAGE area inside the niche */
+.ebht-niche-arch {
+  position: relative;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(244, 166, 35, 0.3), transparent 62%),
+    var(--ebht-grad-red);
+  border-bottom: 4px solid var(--ebht-gold);
+}
+.ebht-niche-arch::before {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  border: 2px solid rgba(241, 207, 122, 0.55);
+  border-radius: 50% 50% 8px 8px / 38% 38% 8px 8px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Seva / service card */
+.ebht-card {
+  background: var(--ebht-cream);
+  border: 1px solid rgba(122, 60, 30, 0.16);
+  border-radius: 16px;
+  box-shadow: 0 1px 6px rgba(70, 20, 10, 0.1);
+  transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+}
+.ebht-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--ebht-gold);
+  box-shadow: 0 16px 36px -20px rgba(70, 20, 10, 0.4);
+}
+
+/* Festival row — apply to each festival item */
+.ebht-festival {
+  background: var(--ebht-cream);
+  border: 1px solid rgba(122, 60, 30, 0.16);
+  border-left: 4px solid var(--ebht-saffron);
+  border-radius: 16px;
+  transition: transform 0.28s ease, box-shadow 0.28s ease;
+}
+.ebht-festival:hover {
+  transform: translateX(4px);
+  box-shadow: 0 16px 36px -20px rgba(70, 20, 10, 0.4);
+}
+
+/* Buttons — apply to Wix buttons if you want the exact look (or just set these
+   colours in Site Styles button design). */
+.ebht-btn-primary {
+  background: var(--ebht-grad-saffron) !important;
+  color: #3a1402 !important;
+  border-radius: 999px !important;
+  box-shadow: 0 14px 30px -14px rgba(154, 115, 34, 0.55);
+}
+.ebht-btn-gold {
+  background: var(--ebht-grad-gold) !important;
+  color: #3a2603 !important;
+  border-radius: 999px !important;
+}
+
+/* Section backgrounds */
+.ebht-section-red {
+  background: var(--ebht-grad-red);
+  color: #fdeccd;
+}
+.ebht-section-cream {
+  background: linear-gradient(180deg, #fdf6e8 0%, #f7ead0 100%);
+}
+
+/* Devanagari accent text (deity names / shlokas in Hindi) */
+.ebht-deva {
+  font-family: "Tiro Devanagari Hindi", "Mukta", serif;
+  color: var(--ebht-gold-deep);
+}

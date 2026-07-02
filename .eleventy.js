@@ -16,8 +16,11 @@ export default function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy({ "src/chatbot-demo.html": "chatbot-demo.html" });
 
   // Client subsites are self-contained static builds (their own HTML/CSS/JS),
-  // shipped verbatim under /clients/<name>/ — e.g. the Bay Area Auto Customz site.
+  // shipped verbatim under /clients/<name>/. They live in two places for
+  // historical reasons — src/clients/ (Bay Area Auto Customz) and the repo-root
+  // clients/ (East Bay Hindu Temple) — and both publish into dist/clients/.
   eleventyConfig.addPassthroughCopy({ "src/clients": "clients" });
+  eleventyConfig.addPassthroughCopy({ clients: "clients" });
 
   // Rebuild when CSS/JS change even though they are passthrough-copied.
   eleventyConfig.setServerPassthroughCopyBehavior("passthrough");

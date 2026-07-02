@@ -1,0 +1,109 @@
+<!doctype html>
+<!--
+  East Bay Hindu Temple — TIMINGS embed for Wix Studio (live "open now" + today highlight)
+  Wix Studio → Add (+) → Embed Code → "Embed HTML" → paste this file.
+  Suggested size: full content width, height ~620px desktop / ~1040px mobile, scrollbars OFF.
+  To change hours, edit the HOURS object in <script> AND the table rows to match.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Mukta:wght@500;600;700&family=Tiro+Devanagari+Hindi&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * { box-sizing: border-box; }
+      html, body { margin: 0; }
+      body {
+        font-family: "Mukta", system-ui, sans-serif; color: #fdeccd;
+        background: linear-gradient(135deg, #7c0f1c 0%, #5e0a13 55%, #3f060d 100%);
+        padding: clamp(1.5rem, 4vw, 3rem);
+      }
+      .wrap { max-width: 980px; margin: 0 auto; }
+      .head { text-align: center; margin-bottom: 1.8rem; }
+      .eyebrow { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: #f1cf7a; }
+      h2 { font-family: "Cormorant Garamond", serif; font-size: clamp(2rem, 4.4vw, 3rem); color: #fff; margin: 0.4rem 0; }
+      .status { display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 700; margin-top: 0.5rem; }
+      .status::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: #9a7868; }
+      .status.is-open::before { background: #6fd07f; animation: pulse 2.4s infinite; }
+      .status.is-closed::before { background: #e88; }
+      @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(111,208,127,.55)} 70%{box-shadow:0 0 0 8px rgba(111,208,127,0)} 100%{box-shadow:0 0 0 0 rgba(111,208,127,0)} }
+      .grid { display: grid; gap: 1.4rem; }
+      @media (min-width: 760px) { .grid { grid-template-columns: 1.1fr 0.9fr; } }
+      .card { background: #fdf6e8; border-radius: 24px; overflow: hidden; box-shadow: 0 16px 36px -20px rgba(70,20,10,.5); }
+      table { width: 100%; border-collapse: collapse; }
+      caption { background: linear-gradient(135deg, #7c0f1c, #5e0a13); color: #fff; font-family: "Cormorant Garamond", serif; font-size: 1.4rem; padding: 1rem; font-weight: 700; }
+      th, td { text-align: left; padding: 0.8rem 1.2rem; border-bottom: 1px solid rgba(122,60,30,.16); font-size: 0.95rem; color: #33160f; }
+      th { color: #6a4536; font-weight: 600; width: 48%; }
+      td { font-weight: 700; }
+      td.closed { color: #9a7868; font-weight: 500; }
+      tr.today { background: rgba(244,166,35,.18); }
+      tr.today th::after { content: "Today"; margin-left: .5rem; font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: #fff; background: #e8861e; padding: .12rem .45rem; border-radius: 999px; }
+      .aarti { background: rgba(253,246,232,.08); border: 1px solid rgba(241,207,122,.28); border-radius: 24px; padding: 1.6rem; }
+      .aarti h3 { font-family: "Cormorant Garamond", serif; color: #fff; margin: 0 0 1rem; font-size: 1.5rem; }
+      .aarti li { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding: .7rem 0; border-bottom: 1px dashed rgba(241,207,122,.4); list-style: none; }
+      .aarti ul { margin: 0; padding: 0; }
+      .aarti li:last-child { border-bottom: 0; }
+      .aarti .name { font-weight: 600; color: #fff; }
+      .aarti .deva { font-family: "Tiro Devanagari Hindi", serif; color: #f1cf7a; }
+      .aarti .time { font-family: "Cormorant Garamond", serif; font-size: 1.15rem; color: #f1cf7a; font-weight: 700; white-space: nowrap; }
+      .note { color: rgba(253,236,205,.78); font-size: .9rem; margin-top: 1rem; }
+      .note a { color: #f1cf7a; font-weight: 700; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="head">
+        <div class="eyebrow">Timings · समय</div>
+        <h2>Darshan &amp; Aarti Timings</h2>
+        <div class="status" data-status>Checking hours…</div>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <table>
+            <caption>Weekly Darshan Hours</caption>
+            <tbody>
+              <tr data-day="1"><th>Monday</th><td>10:00 AM – 4:00 PM</td></tr>
+              <tr data-day="2"><th>Tuesday</th><td>10:00 AM – 8:00 PM</td></tr>
+              <tr data-day="3"><th>Wednesday</th><td class="closed">Closed</td></tr>
+              <tr data-day="4"><th>Thursday</th><td class="closed">Closed</td></tr>
+              <tr data-day="5"><th>Friday</th><td>10:00 AM – 4:00 PM</td></tr>
+              <tr data-day="6"><th>Saturday</th><td>10:00 AM – 4:00 PM</td></tr>
+              <tr data-day="0"><th>Sunday</th><td>10:00 AM – 4:00 PM</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="aarti">
+          <h3>Daily Aarti</h3>
+          <ul>
+            <li><span class="name">Mangala Aarti <span class="deva">मंगला आरती</span></span><span class="time">Morning</span></li>
+            <li><span class="name">Madhyahna Aarti <span class="deva">मध्याह्न</span></span><span class="time">Midday</span></li>
+            <li><span class="name">Sandhya Aarti <span class="deva">संध्या</span></span><span class="time">Evening</span></li>
+            <li><span class="name">Tuesday Hanuman Chalisa</span><span class="time">Evening</span></li>
+          </ul>
+          <p class="note">Confirm exact aarti times with the temple: <a href="tel:+19258120581">(925) 812-0581</a></p>
+        </div>
+      </div>
+    </div>
+    <script>
+      (function () {
+        // Opening hours by day (0=Sun..6=Sat). null = closed. [openHour, closeHour] 24h.
+        var HOURS = { 0:[10,16], 1:[10,16], 2:[10,20], 3:null, 4:null, 5:[10,16], 6:[10,16] };
+        function fmt(h){ var p=h>=12?"PM":"AM"; var x=h%12; if(x===0)x=12; return x+" "+p; }
+        var now=new Date(), day=now.getDay(), hr=now.getHours()+now.getMinutes()/60, t=HOURS[day];
+        var open = t && hr>=t[0] && hr<t[1], label;
+        if(open) label="Open now · until "+fmt(t[1]);
+        else if(t && hr<t[0]) label="Opens today at "+fmt(t[0]);
+        else { label="Closed now"; var nm=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+          for(var i=1;i<=7;i++){ var d=(day+i)%7; if(HOURS[d]){ label="Closed now · opens "+nm[d]+" "+fmt(HOURS[d][0]); break; } } }
+        var s=document.querySelector("[data-status]"); s.textContent=label;
+        s.className="status "+(open?"is-open":"is-closed");
+        var row=document.querySelector('[data-day="'+day+'"]'); if(row) row.classList.add("today");
+      })();
+    </script>
+  </body>
+</html>

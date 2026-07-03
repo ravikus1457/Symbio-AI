@@ -751,152 +751,77 @@ canvas#headliner {
   margin-top: 1.2rem;
 }
 
-/* ----------------------------------------------------- before / after */
-.compare {
-  position: relative;
-  min-height: 460px;
+/* ------------------------------------------------- see it in motion */
+.motion {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: 1.2rem;
+  align-items: start;
+}
+
+.motion__stage {
   overflow: hidden;
   border: 1px solid rgba(255, 221, 138, 0.22);
   border-radius: var(--radius-xl);
-  background: linear-gradient(180deg, #0a0a0a, #050505);
+  background: #050505;
   box-shadow: var(--shadow);
 }
 
-.compare__label {
-  position: absolute;
-  top: 1rem;
-  z-index: 5;
-  padding: 0.45rem 0.8rem;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: rgba(8, 8, 8, 0.6);
-  backdrop-filter: blur(10px);
-  font-weight: 700;
-  font-size: 0.8rem;
-}
-
-.compare__label--before {
-  left: 1rem;
-}
-
-.compare__label--after {
-  right: 1rem;
-  color: var(--gold-bright);
-}
-
-.compare__scene {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-}
-
-.compare__scene--before {
-  background: radial-gradient(circle at 50% 6%, rgba(255, 255, 255, 0.06), transparent 40%), linear-gradient(180deg, #16140f, #060606);
-}
-
-.compare__scene--after {
-  width: var(--after, 52%);
-  border-right: 1px solid rgba(255, 221, 138, 0.6);
-  background: radial-gradient(circle at 50% 4%, rgba(255, 221, 138, 0.18), transparent 44%), linear-gradient(180deg, #16120a, #040404);
-}
-
-.compare__roof {
-  position: absolute;
-  left: 9%;
-  right: 9%;
-  top: 9%;
-  height: 46%;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 50% 50% 16% 16% / 72% 72% 22% 22%;
-  background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.8));
-  box-shadow: inset 0 -40px 90px rgba(0, 0, 0, 0.8);
-}
-
-.compare__roof--stars i {
-  position: absolute;
-  left: var(--x);
-  top: var(--y);
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #fff5c4;
-  box-shadow: 0 0 18px 4px rgba(255, 221, 138, 0.65);
-  animation: twinkle 2.4s ease-in-out infinite;
-  animation-delay: var(--d);
-}
-
-.compare__roof--stars b {
-  position: absolute;
-  right: 14%;
-  top: 30%;
-  width: 9rem;
-  height: 3px;
-  transform: rotate(-20deg);
-  border-radius: 999px;
-  background: linear-gradient(90deg, transparent, #fff5c4, transparent);
-  box-shadow: 0 0 26px rgba(255, 221, 138, 0.8);
-  animation: meteor 4.4s ease-in-out infinite;
-}
-
-.compare__dash {
-  position: absolute;
-  left: 8%;
-  right: 8%;
-  bottom: 14%;
-  height: 6rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 1.2rem 1.2rem 4rem 4rem;
-  background: linear-gradient(180deg, #1b1813, #060606);
-}
-
-.compare__dash--gold {
-  border-color: rgba(255, 221, 138, 0.22);
-  box-shadow: inset 0 16px 40px rgba(215, 168, 79, 0.16);
-}
-
-.compare__range {
-  position: absolute;
-  inset: 0;
-  z-index: 8;
+.motion__video {
+  display: block;
   width: 100%;
-  height: 100%;
-  margin: 0;
-  opacity: 0;
-  cursor: ew-resize;
+  height: auto;
+  max-height: min(72vh, 760px);
+  object-fit: contain;
+  background: #050505;
 }
 
-.compare__handle {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: var(--after, 52%);
-  z-index: 6;
-  width: 1px;
-  transform: translateX(-50%);
-  background: rgba(255, 221, 138, 0.7);
-  pointer-events: none;
-}
-
-.compare__handle span {
-  position: absolute;
-  top: 50%;
-  left: 50%;
+.motion__list {
   display: grid;
-  place-items: center;
-  width: 3.6rem;
-  height: 3.6rem;
-  transform: translate(-50%, -50%);
-  border: 1px solid rgba(255, 221, 138, 0.6);
-  border-radius: 50%;
-  background: rgba(10, 9, 6, 0.85);
-  box-shadow: 0 0 30px rgba(215, 168, 79, 0.35);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
 }
 
-.compare__handle span::before {
-  content: "↔";
+.motion__pick {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: rgba(10, 9, 7, 0.85);
+  cursor: pointer;
+  text-align: left;
+  transition: transform 160ms ease, border-color 160ms ease;
+}
+
+.motion__pick:hover,
+.motion__pick:focus-visible {
+  transform: translateY(-2px);
+  border-color: rgba(255, 221, 138, 0.5);
+  outline: none;
+}
+
+.motion__pick.is-active {
+  border-color: rgba(255, 221, 138, 0.65);
+  box-shadow: 0 0 24px rgba(215, 168, 79, 0.18);
+}
+
+.motion__pick img {
+  width: 100%;
+  height: 9.5rem;
+  object-fit: cover;
+}
+
+.motion__pick span {
+  padding: 0.65rem 0.9rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: rgba(245, 241, 232, 0.85);
+}
+
+.motion__pick.is-active span {
   color: var(--gold-bright);
-  font-size: 1.1rem;
-  font-weight: 900;
 }
 
 /* ------------------------------------------------------------- gallery */
@@ -1198,7 +1123,8 @@ img.tile__media {
   flex-direction: column;
 }
 
-.ambient__promo a {
+/* the sign-image link only — the figcaption link must stay inline */
+.ambient__promo > a {
   display: block;
   line-height: 0;
 }
@@ -1880,6 +1806,27 @@ img.tile__media {
   padding: 0 1rem 0.6rem;
 }
 
+/* inline action offered by the assistant (e.g. "fill the quote form") */
+.chat-action {
+  align-self: flex-start;
+  margin-top: -0.2rem;
+  padding: 0.55rem 0.95rem;
+  border: 1px solid rgba(255, 221, 138, 0.5);
+  border-radius: 999px;
+  background: rgba(255, 221, 138, 0.1);
+  color: var(--gold-bright);
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.chat-action:hover,
+.chat-action:focus-visible {
+  background: rgba(255, 221, 138, 0.2);
+  border-color: var(--gold-bright);
+}
+
 .chatbot__chips .chip {
   min-height: 2rem;
   padding: 0.4rem 0.7rem;
@@ -2085,7 +2032,8 @@ img.tile__media {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .ambient {
+  .ambient,
+  .motion {
     grid-template-columns: 1fr;
   }
 
@@ -2120,6 +2068,7 @@ img.tile__media {
   .hero__proof,
   .gallery,
   .shots,
+  .motion__list,
   .services,
   .kits,
   .reviews,

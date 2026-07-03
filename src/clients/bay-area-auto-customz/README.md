@@ -72,8 +72,10 @@ accessible lightbox (prev/next, Esc, focus trap, focus restore) built in
 
 ## See it in motion (`#motion`)
 
-Five real shop clips (H.264 MP4, muted, looped) with a main player and a
-tap-to-switch reel list — replaces the old CSS-art before/after slider.
+Five real shop clips (H.264 MP4, muted, looped) as a strip of vertical 9:16
+reel cards that play in place on tap — starting one pauses the others. One
+row on desktop, a swipeable snap strip on smaller screens. Replaces the old
+CSS-art before/after slider.
 
 ## Booking & chatbot
 

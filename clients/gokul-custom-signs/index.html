@@ -1,0 +1,696 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gokul Custom Signs — Signs, Banners &amp; Print | Florin Rd, Sacramento</title>
+<meta name="description" content="Gokul Custom Signs &amp; Printing Press — custom signs, banners, t-shirts, business cards, wedding &amp; invitation cards, and print services on Florin Road, South Sacramento. Call (916) 308-1607 for a free quote.">
+<style>
+  /* ---------- tokens ---------- */
+  :root {
+    --paper:    #f6f4ee;   /* print-stock white           */
+    --panel:    #ffffff;   /* raised card                 */
+    --ink:      #17263f;   /* ink navy (text)             */
+    --ink-soft: #55617a;   /* navy-biased grey            */
+    --line:     #dcd8cc;   /* hairline on paper           */
+    --red:      #c4361c;   /* signal / enamel red         */
+    --red-deep: #9c2a14;
+    --gold:     #efa02c;   /* marigold / hi-vis           */
+    --gold-ink: #7a4c08;   /* readable gold on light      */
+    --navy:     #14243d;   /* enamel blue panels          */
+    --navy-2:   #1d3252;
+    --on-navy:  #eef0f4;
+    --open:     #1d7a3f;   /* semantic: open now          */
+    --closed:   #8a3030;   /* semantic: closed            */
+    --shadow:   0 1px 2px rgb(23 38 63 / .08), 0 8px 24px rgb(23 38 63 / .07);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:    #101a2b;
+      --panel:    #182643;
+      --ink:      #edeef2;
+      --ink-soft: #9aa6bd;
+      --line:     #2a3a58;
+      --red:      #e05a3e;
+      --red-deep: #c4361c;
+      --gold:     #f2ae45;
+      --gold-ink: #f2ae45;
+      --navy:     #0b1424;
+      --navy-2:   #14243d;
+      --on-navy:  #edeef2;
+      --open:     #4fbf7c;
+      --closed:   #e08585;
+      --shadow:   0 1px 2px rgb(0 0 0 / .4), 0 10px 28px rgb(0 0 0 / .35);
+    }
+  }
+  :root[data-theme="light"] {
+    --paper:    #f6f4ee; --panel: #ffffff; --ink: #17263f; --ink-soft: #55617a;
+    --line:     #dcd8cc; --red: #c4361c;  --red-deep: #9c2a14; --gold: #efa02c;
+    --gold-ink: #7a4c08; --navy: #14243d; --navy-2: #1d3252;   --on-navy: #eef0f4;
+    --open:     #1d7a3f; --closed: #8a3030;
+    --shadow:   0 1px 2px rgb(23 38 63 / .08), 0 8px 24px rgb(23 38 63 / .07);
+  }
+  :root[data-theme="dark"] {
+    --paper:    #101a2b; --panel: #182643; --ink: #edeef2; --ink-soft: #9aa6bd;
+    --line:     #2a3a58; --red: #e05a3e;  --red-deep: #c4361c; --gold: #f2ae45;
+    --gold-ink: #f2ae45; --navy: #0b1424; --navy-2: #14243d;   --on-navy: #edeef2;
+    --open:     #4fbf7c; --closed: #e08585;
+    --shadow:   0 1px 2px rgb(0 0 0 / .4), 0 10px 28px rgb(0 0 0 / .35);
+  }
+
+  /* ---------- base ---------- */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font: 400 1rem/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  }
+  img { max-width: 100%; }
+  a { color: inherit; }
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+    outline: 3px solid var(--gold);
+    outline-offset: 2px;
+  }
+
+  .display {
+    font-family: Impact, Haettenschweiler, "Arial Narrow Bold", "Franklin Gothic Bold", sans-serif;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: .015em;
+    line-height: .95;
+    text-wrap: balance;
+  }
+  .eyebrow {
+    font-size: .78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .18em;
+    color: var(--red);
+  }
+  .wrap { max-width: 68rem; margin-inline: auto; padding-inline: 1.25rem; }
+  section { padding-block: 4.5rem; }
+
+  /* ---------- utility bar ---------- */
+  .utility {
+    background: var(--navy);
+    color: var(--on-navy);
+    font-size: .85rem;
+  }
+  .utility .wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem 1.5rem;
+    align-items: center;
+    padding-block: .45rem;
+  }
+  .utility a { text-decoration: none; }
+  .utility a:hover { text-decoration: underline; }
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    font-weight: 700;
+    margin-left: auto;
+  }
+  .status .dot {
+    width: .55rem; height: .55rem;
+    border-radius: 50%;
+    background: currentcolor;
+  }
+  .status.open   { color: var(--open); }
+  .status.closed { color: var(--closed); }
+
+  /* ---------- header / nav ---------- */
+  header.site {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--paper);
+    border-bottom: 3px solid var(--red);
+  }
+  header.site .wrap {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-block: .7rem;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    text-decoration: none;
+  }
+  .brand-mark {
+    width: 2.4rem; height: 2.4rem;
+    flex: none;
+    display: grid;
+    place-items: center;
+    background: var(--red);
+    color: #fff;
+    font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+    font-size: 1.35rem;
+    box-shadow: 3px 3px 0 var(--gold);
+  }
+  .brand-name { line-height: 1.15; }
+  .brand-name b { display: block; font-size: 1.05rem; letter-spacing: .02em; }
+  .brand-name span { font-size: .72rem; color: var(--ink-soft); text-transform: uppercase; letter-spacing: .14em; }
+  nav.main { margin-left: auto; display: flex; gap: 1.4rem; align-items: center; }
+  nav.main a {
+    text-decoration: none;
+    font-size: .92rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+  }
+  nav.main a:hover { color: var(--red); }
+  .btn {
+    display: inline-block;
+    padding: .65rem 1.3rem;
+    background: var(--red);
+    color: #fff;
+    font-weight: 700;
+    text-decoration: none;
+    border: none;
+    font-size: .95rem;
+    cursor: pointer;
+    box-shadow: 3px 3px 0 var(--gold);
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .btn:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--gold); }
+  .btn.ghost {
+    background: transparent;
+    color: var(--ink);
+    box-shadow: none;
+    border: 2px solid var(--ink);
+  }
+  .btn.ghost:hover { border-color: var(--red); color: var(--red); }
+  @media (max-width: 46rem) {
+    nav.main a:not(.btn) { display: none; }
+  }
+
+  /* ---------- hero ---------- */
+  .hero {
+    background:
+      radial-gradient(60rem 30rem at 85% -20%, var(--navy-2), transparent 60%),
+      var(--navy);
+    color: var(--on-navy);
+    padding-block: 5.5rem 5rem;
+    overflow: hidden;
+  }
+  .hero .eyebrow { color: var(--gold); }
+  .hero h1 {
+    font-size: clamp(3rem, 9vw, 6.5rem);
+    margin-block: .6rem .3rem;
+    color: #fff;
+    text-shadow:
+      3px 3px 0 var(--red-deep),
+      6px 6px 0 rgb(0 0 0 / .35);
+  }
+  .hero h1 .accent { color: var(--gold); }
+  .hero .tag {
+    font-size: clamp(1.02rem, 2.2vw, 1.25rem);
+    max-width: 34em;
+    color: var(--on-navy);
+    opacity: .92;
+  }
+  .hero .cta-row { display: flex; flex-wrap: wrap; gap: .9rem; margin-top: 2rem; }
+  .hero .btn.ghost { color: var(--on-navy); border-color: var(--on-navy); }
+  .hero .btn.ghost:hover { color: var(--gold); border-color: var(--gold); }
+  .hero-strip {
+    margin-top: 3.2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .6rem 2rem;
+    font-size: .82rem;
+    text-transform: uppercase;
+    letter-spacing: .15em;
+    color: var(--gold);
+  }
+  .hero-strip span { white-space: nowrap; }
+
+  /* ---------- services letterboard ---------- */
+  .section-head { max-width: 44em; margin-bottom: 2.5rem; }
+  .section-head h2 { font-size: clamp(1.9rem, 4.5vw, 2.7rem); margin-block: .35rem .6rem; }
+  .section-head p { color: var(--ink-soft); }
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: 1.1rem;
+  }
+  .svc {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-top: 5px solid var(--red);
+    padding: 1.4rem 1.4rem 1.5rem;
+    box-shadow: var(--shadow);
+  }
+  .svc:nth-child(even) { border-top-color: var(--gold); }
+  .svc h3 { font-size: 1.28rem; margin-bottom: .45rem; }
+  .svc p { font-size: .93rem; color: var(--ink-soft); }
+  .svc ul { list-style: none; margin-top: .8rem; font-size: .88rem; }
+  .svc li { padding-left: 1.1rem; position: relative; color: var(--ink-soft); }
+  .svc li::before { content: "—"; position: absolute; left: 0; color: var(--red); }
+
+  /* ---------- why us ---------- */
+  .why { background: var(--panel); border-block: 1px solid var(--line); }
+  .why-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: 2rem 2.5rem;
+  }
+  .why-item h3 { font-size: 1.15rem; margin-bottom: .35rem; }
+  .why-item h3::before {
+    content: "";
+    display: block;
+    width: 2.2rem; height: .3rem;
+    background: var(--gold);
+    margin-bottom: .7rem;
+  }
+  .why-item p { font-size: .93rem; color: var(--ink-soft); }
+
+  /* ---------- wedding feature ---------- */
+  .wedding {
+    background:
+      radial-gradient(50rem 26rem at 10% 120%, rgb(239 160 44 / .18), transparent 60%),
+      var(--navy);
+    color: var(--on-navy);
+  }
+  .wedding .wrap { display: grid; grid-template-columns: 1.15fr .85fr; gap: 3rem; align-items: center; }
+  @media (max-width: 52rem) { .wedding .wrap { grid-template-columns: 1fr; } }
+  .wedding .eyebrow { color: var(--gold); }
+  .wedding h2 { font-size: clamp(2rem, 5vw, 3rem); color: #fff; margin-block: .4rem .8rem; }
+  .wedding p { opacity: .92; max-width: 36em; }
+  .wedding .cta-row { margin-top: 1.6rem; }
+  .card-stack { display: grid; gap: .9rem; }
+  .invite {
+    background: var(--panel);
+    color: var(--ink);
+    padding: 1.1rem 1.3rem;
+    border-left: 5px solid var(--gold);
+    box-shadow: var(--shadow);
+    font-size: .93rem;
+  }
+  .invite b { display: block; font-size: 1.02rem; }
+  .invite span { color: var(--ink-soft); }
+  .invite:nth-child(2) { transform: translateX(1.4rem); }
+  @media (max-width: 52rem) { .invite:nth-child(2) { transform: none; } }
+
+  /* ---------- quote ---------- */
+  .quote-grid { display: grid; grid-template-columns: .9fr 1.1fr; gap: 3rem; }
+  @media (max-width: 52rem) { .quote-grid { grid-template-columns: 1fr; } }
+  form.quote {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    padding: 1.8rem;
+    box-shadow: var(--shadow);
+    display: grid;
+    gap: 1rem;
+  }
+  .field { display: grid; gap: .3rem; }
+  .field label { font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; }
+  .field input, .field select, .field textarea {
+    font: inherit;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: .65rem .75rem;
+  }
+  .field textarea { min-height: 6.5rem; resize: vertical; }
+  .form-note { font-size: .82rem; color: var(--ink-soft); }
+  #quote-done {
+    display: none;
+    background: var(--paper);
+    border-left: 4px solid var(--open);
+    padding: .8rem 1rem;
+    font-size: .92rem;
+  }
+  .phone-big {
+    font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+    font-size: clamp(1.9rem, 4.5vw, 2.6rem);
+    letter-spacing: .02em;
+    text-decoration: none;
+    color: var(--red);
+    display: inline-block;
+    margin-top: .4rem;
+  }
+
+  /* ---------- visit ---------- */
+  .visit { background: var(--panel); border-top: 1px solid var(--line); }
+  .visit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
+  @media (max-width: 52rem) { .visit-grid { grid-template-columns: 1fr; } }
+  table.hours { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  table.hours td { padding: .5rem .2rem; border-bottom: 1px solid var(--line); font-size: .95rem; }
+  table.hours td:last-child { text-align: right; color: var(--ink-soft); }
+  table.hours tr.today td { font-weight: 700; color: var(--ink); background: rgb(239 160 44 / .12); }
+  table.hours tr.today td:first-child::after {
+    content: "today";
+    font-size: .68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--gold-ink);
+    margin-left: .55rem;
+  }
+  .addr { font-style: normal; line-height: 1.8; }
+  .addr b { font-size: 1.1rem; }
+  .map-link { font-weight: 700; color: var(--red); }
+
+  /* ---------- footer ---------- */
+  footer.site {
+    background: var(--navy);
+    color: var(--on-navy);
+    padding-block: 2.2rem;
+    font-size: .88rem;
+  }
+  footer.site .wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .8rem 2rem;
+    align-items: center;
+  }
+  footer.site a { color: var(--gold); }
+  footer.site .credit { margin-left: auto; opacity: .75; }
+
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    clip-path: inset(50%);
+    overflow: hidden;
+    white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+
+<div class="utility">
+  <div class="wrap">
+    <span>5504 Florin Rd, Sacramento, CA 95823</span>
+    <a href="tel:+19163081607">(916) 308-1607</a>
+    <span class="status" id="open-status"><span class="dot" aria-hidden="true"></span><span id="open-text">Hours: Mon–Fri 10–6 · Sat 11–4</span></span>
+  </div>
+</div>
+
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="#top">
+      <span class="brand-mark" aria-hidden="true">G</span>
+      <span class="brand-name">
+        <b>Gokul Custom Signs</b>
+        <span>Printing Press &amp; Sign Service</span>
+      </span>
+    </a>
+    <nav class="main" aria-label="Main">
+      <a href="#services">Services</a>
+      <a href="#wedding">Wedding Cards</a>
+      <a href="#visit">Visit Us</a>
+      <a class="btn" href="#quote">Get a Free Quote</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow">Family-run · Florin Road, South Sacramento</p>
+      <h1 class="display">Your business,<br>in <span class="accent">big letters.</span></h1>
+      <p class="tag">Custom signs, banners, t-shirts, business cards, and wedding invitations —
+        designed and printed by your neighbors on Florin Road. Walk in with an idea,
+        walk out with a plan.</p>
+      <div class="cta-row">
+        <a class="btn" href="#quote">Get a Free Quote</a>
+        <a class="btn ghost" href="tel:+19163081607">Call (916) 308-1607</a>
+      </div>
+      <p class="hero-strip" aria-label="Services summary">
+        <span>Signs &amp; Banners</span>
+        <span>T-Shirts &amp; Apparel</span>
+        <span>Business Cards</span>
+        <span>Wedding &amp; Invitation Cards</span>
+        <span>Copies · Fax · Notary</span>
+      </p>
+    </div>
+  </section>
+
+  <section id="services">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">What we make</p>
+        <h2 class="display">One shop for print &amp; signage</h2>
+        <p>From a single banner for Saturday's grand opening to a full set of
+          menus, cards, and window graphics — we handle design, print, and finishing
+          under one roof.</p>
+      </div>
+      <div class="services-grid">
+        <div class="svc">
+          <h3 class="display">Signs &amp; Banners</h3>
+          <p>Storefront signs, vinyl banners, yard signs, and window graphics that
+            get you noticed from the street.</p>
+          <ul>
+            <li>Grand openings &amp; sales</li>
+            <li>Indoor &amp; outdoor vinyl</li>
+            <li>Custom sizes</li>
+          </ul>
+        </div>
+        <div class="svc">
+          <h3 class="display">T-Shirts &amp; Apparel</h3>
+          <p>Custom-printed shirts for your crew, your team, your event, or your
+            family reunion.</p>
+          <ul>
+            <li>Business uniforms</li>
+            <li>Events &amp; fundraisers</li>
+            <li>Small batches welcome</li>
+          </ul>
+        </div>
+        <div class="svc">
+          <h3 class="display">Business Cards &amp; Flyers</h3>
+          <p>Cards, postcards, flyers, and menus — full color, sharp, and ready
+            fast.</p>
+          <ul>
+            <li>Full-color printing</li>
+            <li>Design help included</li>
+            <li>Restaurant menus</li>
+          </ul>
+        </div>
+        <div class="svc">
+          <h3 class="display">Wedding &amp; Invitation Cards</h3>
+          <p>Wedding, engagement, and birthday invitations printed with care —
+            see our dedicated card service below.</p>
+          <ul>
+            <li>Wedding &amp; engagement</li>
+            <li>Birthdays &amp; pujas</li>
+            <li>Bilingual printing</li>
+          </ul>
+        </div>
+        <div class="svc">
+          <h3 class="display">Business Books</h3>
+          <p>Invoice books, receipt books, and order books, customized with your
+            business details.</p>
+          <ul>
+            <li>Carbonless copies</li>
+            <li>Numbered pages</li>
+            <li>Your logo &amp; info</li>
+          </ul>
+        </div>
+        <div class="svc">
+          <h3 class="display">Copies · Fax · Notary</h3>
+          <p>Everyday essentials, right in the neighborhood — color copies, fax
+            service, and notary on site.</p>
+          <ul>
+            <li>Color &amp; B/W copies</li>
+            <li>Send &amp; receive fax</li>
+            <li>Notary service</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="why">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Why Gokul</p>
+        <h2 class="display">A print shop that knows your name</h2>
+      </div>
+      <div class="why-grid">
+        <div class="why-item">
+          <h3>Talk to the owner, not a call center</h3>
+          <p>You explain the job once, to the person who actually prints it.
+            Changes take a conversation, not a support ticket.</p>
+        </div>
+        <div class="why-item">
+          <h3>One roof, start to finish</h3>
+          <p>Design, printing, and finishing happen in the same shop — so quotes
+            are quick and deadlines are honest.</p>
+        </div>
+        <div class="why-item">
+          <h3>Part of the neighborhood</h3>
+          <p>We're on Florin Road, serving South Sacramento's businesses,
+            families, and community events year-round.</p>
+        </div>
+        <div class="why-item">
+          <h3>Small jobs welcome</h3>
+          <p>No minimums that force you to over-order. One banner or one box of
+            cards — every job gets full attention.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wedding" id="wedding">
+    <div class="wrap">
+      <div>
+        <p class="eyebrow">Weddings &amp; celebrations</p>
+        <h2 class="display">Invitation cards for every occasion</h2>
+        <p>Wedding cards, engagement announcements, and birthday invitations —
+          printed locally, so you can hold a proof in your hands before the full
+          run. We print bilingual invitations and understand the details that
+          matter for traditional ceremonies.</p>
+        <div class="cta-row">
+          <a class="btn" href="#quote">Plan your cards</a>
+        </div>
+      </div>
+      <div class="card-stack" aria-hidden="true">
+        <div class="invite">
+          <b>Wedding Invitations</b>
+          <span>Traditional &amp; modern styles · bilingual printing</span>
+        </div>
+        <div class="invite">
+          <b>Engagement Cards</b>
+          <span>Matched sets with your wedding suite</span>
+        </div>
+        <div class="invite">
+          <b>Birthday &amp; Puja Invitations</b>
+          <span>Fast turnaround for family celebrations</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="quote">
+    <div class="wrap quote-grid">
+      <div>
+        <p class="eyebrow">Free quote</p>
+        <h2 class="display">Tell us what you need</h2>
+        <p>Send the basics and we'll get back to you with a price — usually the
+          same business day. Prefer to talk it through?</p>
+        <a class="phone-big" href="tel:+19163081607">(916) 308-1607</a>
+        <p class="form-note">Or stop by the shop — bring a sketch, a photo, or
+          just the idea.</p>
+      </div>
+      <form class="quote" id="quote-form">
+        <div class="field">
+          <label for="q-name">Your name</label>
+          <input id="q-name" name="name" type="text" autocomplete="name" required>
+        </div>
+        <div class="field">
+          <label for="q-phone">Phone or email</label>
+          <input id="q-phone" name="contact" type="text" autocomplete="tel" required>
+        </div>
+        <div class="field">
+          <label for="q-type">What do you need?</label>
+          <select id="q-type" name="type">
+            <option>Sign or banner</option>
+            <option>T-shirts / apparel</option>
+            <option>Business cards / flyers</option>
+            <option>Wedding or invitation cards</option>
+            <option>Invoice / receipt / order books</option>
+            <option>Something else</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="q-detail">Tell us about the job</label>
+          <textarea id="q-detail" name="detail" placeholder="Size, quantity, when you need it by…"></textarea>
+        </div>
+        <button class="btn" type="submit">Request my quote</button>
+        <p id="quote-done" role="status">Thanks — your request is in. We'll call
+          or email you back, usually the same business day.</p>
+      </form>
+    </div>
+  </section>
+
+  <section class="visit" id="visit">
+    <div class="wrap visit-grid">
+      <div>
+        <p class="eyebrow">Visit the shop</p>
+        <h2 class="display">Find us on Florin Road</h2>
+        <address class="addr">
+          <b>Gokul Custom Signs &amp; Printing Press</b><br>
+          5504 Florin Rd<br>
+          Sacramento, CA 95823<br>
+          <a href="tel:+19163081607">(916) 308-1607</a><br>
+          <a class="map-link" href="https://www.google.com/maps/search/?api=1&amp;query=5504+Florin+Rd+Sacramento+CA+95823" rel="noopener">Open in Google Maps →</a>
+        </address>
+      </div>
+      <div>
+        <h3 class="eyebrow" style="margin-bottom:.8rem">Shop hours</h3>
+        <table class="hours" id="hours-table">
+          <tbody>
+            <tr data-day="1"><td>Monday</td><td>10:00 AM – 6:00 PM</td></tr>
+            <tr data-day="2"><td>Tuesday</td><td>10:00 AM – 6:00 PM</td></tr>
+            <tr data-day="3"><td>Wednesday</td><td>10:00 AM – 6:00 PM</td></tr>
+            <tr data-day="4"><td>Thursday</td><td>10:00 AM – 6:00 PM</td></tr>
+            <tr data-day="5"><td>Friday</td><td>10:00 AM – 6:00 PM</td></tr>
+            <tr data-day="6"><td>Saturday</td><td>11:00 AM – 4:00 PM</td></tr>
+            <tr data-day="0"><td>Sunday</td><td>Closed</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <span>© <span id="yr">2026</span> Gokul Custom Signs · Sacramento, CA</span>
+    <a href="https://www.facebook.com/gokulcustomsigns" rel="noopener">Facebook</a>
+    <span class="credit">Website concept by Symbio AI</span>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    // --- open-now status from the shop's hours (Pacific time) ---
+    var hours = { 0: null, 1: [10, 18], 2: [10, 18], 3: [10, 18], 4: [10, 18], 5: [10, 18], 6: [11, 16] };
+    var now;
+    try {
+      now = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" }));
+    } catch (e) {
+      now = new Date();
+    }
+    var day = now.getDay();
+    var t = now.getHours() + now.getMinutes() / 60;
+    var todayHours = hours[day];
+    var open = !!(todayHours && t >= todayHours[0] && t < todayHours[1]);
+    var badge = document.getElementById("open-status");
+    var text = document.getElementById("open-text");
+    if (open) {
+      badge.classList.add("open");
+      text.textContent = "Open now · until " + (todayHours[1] > 12 ? todayHours[1] - 12 : todayHours[1]) + ":00 PM";
+    } else {
+      badge.classList.add("closed");
+      text.textContent = "Closed now · Mon–Fri 10–6, Sat 11–4";
+    }
+
+    // --- highlight today's row in the hours table ---
+    var row = document.querySelector('#hours-table tr[data-day="' + day + '"]');
+    if (row) row.classList.add("today");
+
+    // --- footer year ---
+    document.getElementById("yr").textContent = String(now.getFullYear());
+
+    // --- quote form (demo: shows confirmation; production would post to email/SMS) ---
+    document.getElementById("quote-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      document.getElementById("quote-done").style.display = "block";
+      this.reset();
+    });
+  })();
+</script>
+
+</body>
+</html>

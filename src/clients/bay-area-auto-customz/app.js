@@ -1,9 +1,11 @@
 /* =========================================================================
    Bay Area Auto Customz — interactive site logic
-   - Starlight designer: preview kit sizes (200–800 fibers) AND plot your own
-     stars one by one, in gold / white / blue / RGB, with shooting stars.
-   - Before/after slider, booking (no backend — opens text/email prefilled),
-     DIY-kit + service shortcuts, and a tailored assistant.
+   - Starlight designer: preview kit sizes (200–800 fibers) in three layout
+     patterns AND plot your own stars, in purple / white / blue / RGB,
+     with shooting stars.
+   - Shop-video reel switcher, gallery lightbox, booking (no backend — opens
+     text/email prefilled), DIY-kit + service shortcuts, and an assistant
+     that remembers your vehicle and can prefill the quote form.
    Built for Bay Area Auto Customz by Symbio AI.
    ========================================================================= */
 (() => {
@@ -24,7 +26,7 @@
 
   const KIT_SIZES = [200, 300, 400, 500, 600, 800];
   const COLORS = {
-    gold: "#ffd36a",
+    purple: "#c08bff",
     white: "#f6fbff",
     blue: "#7bdcff",
   };
@@ -66,7 +68,9 @@
       trails: [],
       mode: "kit", // "kit" | "design"
       tool: "star", // "star" | "paint" | "erase"
-      color: "gold",
+      pattern: "scatter", // "scatter" | "galaxy" | "edge"
+      lastKitCount: 0,
+      color: "purple",
       sizeStep: Number(els.size ? els.size.value : 2),
       twinkle: Number(els.twinkle ? els.twinkle.value : 55),
       painting: false,
@@ -96,7 +100,7 @@
 
     function resolveColor() {
       if (state.color === "rgb") return RGB_PALETTE[Math.floor(random(0, RGB_PALETTE.length))];
-      return COLORS[state.color] || COLORS.gold;
+      return COLORS[state.color] || COLORS.purple;
     }
 
     function pointFromEvent(ev) {
@@ -164,8 +168,9 @@
       return { x: ROOF.cx + Math.cos(ang) * ROOF.rx * rad, y: ROOF.cy + Math.sin(ang) * ROOF.ry * rad };
     }
 
-    function fillKit(n, pattern = "scatter") {
+    function fillKit(n, pattern = state.pattern) {
       clearStars(true);
+      state.lastKitCount = n;
       for (let i = 0; i < n; i += 1) {
         addStar(randomRoofPoint(pattern, i, n), { skipLine: true });
       }
@@ -182,7 +187,7 @@
           y: random(ROOF.cy - ROOF.ry * 0.5, ROOF.cy + ROOF.ry * 0.2),
           angle: random(-0.55, -0.18),
           length: random(110, 200),
-          color: state.color === "rgb" ? "#fff3c0" : resolveColor(),
+          color: state.color === "rgb" ? "#f6fbff" : resolveColor(),
           phase: random(0, Math.PI * 2),
         });
       }
@@ -415,6 +420,19 @@
       });
     });
 
+    $$("[data-pattern]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        $$("[data-pattern]").forEach((b) => b.classList.remove("is-active"));
+        btn.classList.add("is-active");
+        state.pattern = btn.dataset.pattern;
+        // re-lay the current kit in the new pattern
+        if (state.lastKitCount && state.stars.length) {
+          fillKit(state.lastKitCount);
+          if (els.shooting && els.shooting.checked) addShootingStars();
+        }
+      });
+    });
+
     $$("[data-color]").forEach((btn) => {
       btn.addEventListener("click", () => {
         $$("[data-color]").forEach((b) => b.classList.remove("is-active"));
@@ -485,12 +503,14 @@
     if (randomBtn) {
       randomBtn.addEventListener("click", () => {
         const patterns = ["scatter", "galaxy", "edge"];
-        const colors = ["gold", "white", "blue", "rgb"];
+        const colors = ["purple", "white", "blue", "rgb"];
         const pick = (arr) => arr[Math.floor(random(0, arr.length))];
         state.color = pick(colors);
         $$("[data-color]").forEach((b) => b.classList.toggle("is-active", b.dataset.color === state.color));
+        state.pattern = pick(patterns);
+        $$("[data-pattern]").forEach((b) => b.classList.toggle("is-active", b.dataset.pattern === state.pattern));
         const n = pick(KIT_SIZES);
-        fillKit(n, pick(patterns));
+        fillKit(n);
         const wantShoot = Math.random() > 0.5;
         if (els.shooting) els.shooting.checked = wantShoot;
         if (wantShoot) addShootingStars();
@@ -530,13 +550,22 @@
     update();
   }
 
-  /* ============================ BEFORE / AFTER ========================== */
-  const compare = $("[data-compare]");
-  const compareRange = $("[data-compare-range]");
-  if (compare && compareRange) {
-    const set = (v) => compare.style.setProperty("--after", `${v}%`);
-    set(compareRange.value);
-    compareRange.addEventListener("input", () => set(compareRange.value));
+  /* ============================ SEE IT IN MOTION ======================== */
+  const motionVideo = $("[data-motion-video]");
+  if (motionVideo) {
+    $$("[data-motion-src]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        $$("[data-motion-src]").forEach((b) => b.classList.toggle("is-active", b === btn));
+        motionVideo.poster = btn.dataset.motionPoster;
+        motionVideo.src = btn.dataset.motionSrc;
+        motionVideo.muted = true;
+        // autoplay-when-ready is more reliable than racing play() against load
+        motionVideo.autoplay = true;
+        motionVideo.load();
+        const p = motionVideo.play();
+        if (p && p.catch) p.catch(() => {});
+      });
+    });
   }
 
   /* ============================ SERVICES ↔ STUDIO ======================= */
@@ -562,10 +591,15 @@
   const serviceSelect = bookingForm ? bookingForm.querySelector('[name="service"]') : null;
   const detailsField = bookingForm ? bookingForm.querySelector('[name="details"]') : null;
 
-  function prefillBooking({ service, details, scroll, focus } = {}) {
+  const vehicleField = bookingForm ? bookingForm.querySelector('[name="vehicle"]') : null;
+
+  function prefillBooking({ service, details, vehicle, scroll, focus } = {}) {
     if (service && serviceSelect) {
       const opt = $$("option", serviceSelect).find((o) => o.value === service || o.textContent === service);
       if (opt) serviceSelect.value = opt.value;
+    }
+    if (vehicle && vehicleField) {
+      vehicleField.value = vehicle;
     }
     if (details && detailsField) {
       detailsField.value = detailsField.value ? `${detailsField.value}\n${details}` : details;
@@ -765,11 +799,11 @@
     pricing:
       `Most work is custom-quoted by vehicle and the look you want — a starlight headliner depends on the fiber count (try the designer above to preview 200–800 stars), and lighting or butterfly doors are quoted per build. Send your vehicle and the look and we'll get you an exact number. Call or text ${BUSINESS.phone}.`,
     starlight:
-      "Starlight headliners are our specialty — individual fiber-optic stars in gold, white, blue, or an RGB mix, with custom density and patterns. Use the designer above to preview a 300 or 500-fiber kit, or plot your own constellation, then hit \"Use this design for my quote.\"",
+      "Starlight headliners are our specialty — individual fiber-optic stars in purple, ice white, blue, or an RGB mix, with custom density and patterns. Use the designer above to preview a 300 or 500-fiber kit, or plot your own constellation, then hit \"Use this design for my quote.\"",
     shooting:
       "Shooting stars add animated meteor streaks across the headliner for that high-end look. Toggle \"Add shooting stars\" in the designer to see it, and we'll quote it as an add-on to your starlight install.",
     interior:
-      "Interior / ambient lighting covers doors, dash, footwells, and accent zones — 16M colors, 200+ modes, music sync, and wireless app + remote control, with clean hidden wiring. Check the Ambient lighting kits section on this page, then tell us the vehicle and the zones you want lit.",
+      "Interior / ambient lighting covers doors, dash, footwells, and accent zones — 16M colors, 200+ modes, music sync, and wireless app + remote control, with clean hidden wiring. Check the Ambient lighting kits section on this page (there's video of it in motion above), then tell us the zones you want lit.",
     exterior:
       "We do exterior lighting too — underglow and accent lighting tuned to your build. Send the vehicle and what you're going for and we'll quote it.",
     headliner:
@@ -792,28 +826,168 @@
       `Happy to help. For the most accurate answer, tell me your vehicle and the look you want, or call/text ${BUSINESS.phone}. You can also try the starlight designer above to preview your headliner.`,
   };
 
+  /* ---- language helpers: tolerate plurals & word forms ----------------- */
+  function normalizeText(raw) {
+    return raw
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  // crude singularizer so "starlights", "kits", "doors" hit the same intents
+  function singularize(t) {
+    return t.replace(/\b([a-z]{3,})s\b/g, "$1");
+  }
+
+  /* ---- vehicle extraction ---------------------------------------------- */
+  const MAKES = [
+    "acura", "audi", "bmw", "benz", "mercedes", "lexus", "toyota", "supra", "tacoma", "tundra",
+    "honda", "civic", "accord", "infiniti", "nissan", "altima", "maxima", "tesla", "ford",
+    "mustang", "chevy", "chevrolet", "camaro", "corvette", "silverado", "tahoe", "dodge",
+    "charger", "challenger", "jeep", "ram", "gmc", "cadillac", "escalade", "kia", "hyundai",
+    "genesis", "subaru", "wrx", "mazda", "miata", "vw", "volkswagen", "porsche", "lamborghini",
+    "ferrari", "maserati", "rivian", "lucid", "hellcat", "scat",
+  ];
+  const VEHICLE_STOP = new Set([
+    "and", "want", "wants", "wanting", "need", "needs", "with", "for", "looking", "that",
+    "the", "a", "an", "to", "in", "on", "my", "i", "have", "has", "had", "get", "got",
+    "like", "would", "love", "do", "you", "can", "please", "is", "it",
+  ]);
+
+  function extractVehicle(raw) {
+    const tokens = normalizeText(raw).split(" ");
+    const isYear = (w) => /^(19[89]\d|20[0-4]\d)$/.test(w);
+    const isMake = (w) => MAKES.includes(w);
+    // e92, m3, 540i, w205, gt3rs — letter+digit mixes only (never bare numbers)
+    const isModelish = (w) => /^[a-z]{1,3}\d{1,4}[a-z]{0,3}$/.test(w) || /^\d{2,4}[a-z]{1,3}$/.test(w);
+    let start = -1;
+    let end = -1;
+    let strong = false;
+    tokens.forEach((w, i) => {
+      if (isYear(w) || isMake(w) || isModelish(w)) {
+        if (start < 0) start = i;
+        end = i;
+        if (isMake(w) || isModelish(w)) strong = true;
+      }
+    });
+    if (start < 0 || !strong) return null; // a bare year is not a vehicle
+    const parts = [];
+    for (let i = start; i <= Math.min(end, start + 5) && parts.length < 4; i += 1) {
+      if (!VEHICLE_STOP.has(tokens[i])) parts.push(tokens[i]);
+    }
+    const v = parts.join(" ").trim();
+    return v.length >= 2 ? v : null;
+  }
+
+  const VEHICLE_ALLCAPS = new Set(["bmw", "gmc", "vw", "amg", "srt", "wrx"]);
+  function prettyVehicle(v) {
+    return v
+      .split(" ")
+      .map((w) => {
+        if (VEHICLE_ALLCAPS.has(w) || /^[a-z]{1,3}\d/.test(w)) return w.toUpperCase();
+        return w.charAt(0).toUpperCase() + w.slice(1);
+      })
+      .join(" ");
+  }
+
+  /* ---- intent engine ---------------------------------------------------- */
+  const SERVICE_LABELS = {
+    starlight: "Starlight headliner",
+    shooting: "Starlight + shooting stars",
+    interior: "Interior / ambient lighting",
+    exterior: "Exterior lighting",
+    headliner: "Custom / Alcantara headliner",
+    doors: "Butterfly doors",
+    kits: "DIY kit",
+  };
+
   function classify(textRaw) {
-    const t = textRaw.toLowerCase();
+    const t = ` ${singularize(normalizeText(textRaw))} `;
     const has = (re) => re.test(t);
     if (has(/\b(price|pricing|cost|quote|how much|expensive|deposit|pay)\b/)) return "pricing";
     if (has(/\b(book|booking|appointment|schedule|reserve|install date|contact|call|text)\b/)) return "booking";
     if (has(/\b(kit|diy|ship|shipping|buy|purchase|order)\b/)) return "kits";
-    if (has(/\b(butterfly|lambo|vertical door|doors)\b/)) return "doors";
-    if (has(/\b(shoot|meteor|falling star)\b/)) return "shooting";
+    if (has(/\b(butterfly|lambo|vertical|suicide) ?door\b|\bbutterfly\b/)) return "doors";
+    if (has(/\b(shoot\w* star|meteor|falling star)\b/)) return "shooting";
     if (has(/\b(exterior|underglow|under glow|outside)\b/)) return "exterior";
-    if (has(/\b(alcantara|suede|headliner replace|reupholster|trim)\b/)) return "headliner";
-    if (has(/\b(interior|ambient|footwell|door light|dash light|rgb)\b/)) return "interior";
-    if (has(/\b(star|starlight|fiber|fibre|headliner|twinkle|ceiling|night sky)\b/)) return "starlight";
-    if (has(/\b(design|visualizer|preview|demo|simulate|try)\b/)) return "visualizer";
-    if (has(/\b(where|location|address|walnut creek|bay area|east bay)\b/)) return "location";
+    if (has(/\b(alcantara|suede|reupholster|re upholster|trim wrap)\b/)) return "headliner";
+    if (has(/\b(interior|ambient|footwell|door light\w*|dash light\w*|rgb|led strip)\b/)) return "interior";
+    if (has(/\b(star|starlight|starlit|fiber|fibre|headliner|twinkle|ceiling|night sky|roof light\w*)\b/)) return "starlight";
+    if (has(/\b(design\w*|visualizer|preview|demo|simulate|try it)\b/)) return "visualizer";
+    if (has(/\b(where|location|address|located|walnut creek|bay area|east bay)\b/)) return "location";
     if (has(/\b(hour|open|close|today|when)\b/)) return "hours";
-    if (has(/\b(review|rating|google|stars rating|trust)\b/)) return "reviews";
-    if (has(/\b(hi|hey|hello|yo|sup)\b/)) return "greeting";
+    if (has(/\b(review|rating|google|trust)\b/)) return "reviews";
+    if (has(/\b(hi|hey|hello|yo|sup|whats up)\b/)) return "greeting";
     return "default";
   }
 
-  function answer(topic) {
-    setTimeout(() => addMessage("bot", ANSWERS[topic] || ANSWERS.default), 280);
+  // a service can ride along with another intent ("how much is ambient for my civic")
+  function detectService(textRaw) {
+    const t = ` ${singularize(normalizeText(textRaw))} `;
+    const has = (re) => re.test(t);
+    if (has(/\b(butterfly|lambo|vertical|suicide) ?door\b|\bbutterfly\b/)) return "doors";
+    if (has(/\b(shoot\w* star|meteor|falling star)\b/)) return "shooting";
+    if (has(/\b(exterior|underglow|under glow)\b/)) return "exterior";
+    if (has(/\b(alcantara|suede|reupholster|re upholster)\b/)) return "headliner";
+    if (has(/\b(interior|ambient|footwell|door light\w*|dash light\w*|led strip)\b/)) return "interior";
+    if (has(/\b(star|starlight|starlit|fiber|fibre|headliner|twinkle|ceiling|night sky)\b/)) return "starlight";
+    if (has(/\b(kit|diy)\b/)) return "kits";
+    return null;
+  }
+
+  /* ---- conversation memory + reply composition -------------------------- */
+  const chatMemory = { vehicle: null, service: null };
+
+  function offerQuoteAction() {
+    if (!chatLog || !chatMemory.vehicle || !chatMemory.service) return;
+    const old = $(".chat-action", chatLog);
+    if (old) old.remove();
+    const vehicle = prettyVehicle(chatMemory.vehicle);
+    const label = SERVICE_LABELS[chatMemory.service];
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "chat-action";
+    btn.textContent = `Fill the quote form — ${vehicle} · ${label}`;
+    btn.addEventListener("click", () => {
+      prefillBooking({
+        service: label,
+        vehicle,
+        details: `From the assistant: interested in ${label.toLowerCase()}.`,
+        scroll: true,
+        focus: true,
+      });
+      btn.remove();
+      addMessage("bot", "Done — the quote form below is filled in. Add your name and contact, then hit send.");
+    });
+    chatLog.appendChild(btn);
+    chatLog.scrollTop = chatLog.scrollHeight;
+  }
+
+  function respond(rawText) {
+    const found = extractVehicle(rawText);
+    if (found) chatMemory.vehicle = found;
+    const topic = classify(rawText);
+    const service = detectService(rawText);
+    if (service) chatMemory.service = service;
+
+    const v = chatMemory.vehicle ? prettyVehicle(chatMemory.vehicle) : null;
+    let reply = ANSWERS[topic] || ANSWERS.default;
+
+    if (topic === "default" && v) {
+      reply = chatMemory.service
+        ? `Got it — ${SERVICE_LABELS[chatMemory.service].toLowerCase()} for the ${v}. Use the button below to start your quote, or call/text ${BUSINESS.phone}.`
+        : `Nice — a ${v}. What look are you going for: starlight headliner, ambient interior lighting, exterior lighting, or butterfly doors?`;
+    } else if (v && SERVICE_LABELS[topic]) {
+      reply = `${v} — great canvas for that. ${reply}`;
+    } else if (v && topic === "pricing" && chatMemory.service) {
+      reply = `For the ${v}, ${SERVICE_LABELS[chatMemory.service].toLowerCase()} is quoted by build — send the details and we'll reply with an exact number. ${reply}`;
+    }
+
+    setTimeout(() => {
+      addMessage("bot", reply);
+      offerQuoteAction();
+    }, 280);
   }
 
   $$("[data-chat-toggle]").forEach((b) => b.addEventListener("click", toggleChat));
@@ -821,7 +995,7 @@
     b.addEventListener("click", () => {
       openChat();
       addMessage("user", b.textContent);
-      answer(b.dataset.q);
+      respond(b.textContent);
     });
   });
 
@@ -833,7 +1007,7 @@
       if (!text) return;
       addMessage("user", text);
       input.value = "";
-      answer(classify(text));
+      respond(text);
     });
   }
 

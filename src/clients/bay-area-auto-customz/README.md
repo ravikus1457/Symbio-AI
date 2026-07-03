@@ -63,16 +63,25 @@ accessible lightbox (prev/next, Esc, focus trap, focus restore) built in
 ## Key feature — the starlight designer (`#studio`)
 
 - **Kit preview:** tap 200 / 300 / 400 / 500 / 600 / 800 to see exactly how each
-  fiber count looks on a blank black headliner.
+  fiber count looks on a blank black headliner, in three layout patterns
+  (night sky / galaxy swirl / halo edge).
 - **Design your own:** place stars one by one, paint trails, erase, and build a
-  custom pattern. Choose gold / ice-white / blue / RGB-mix, star size, twinkle
-  speed, and shooting stars.
+  custom pattern. Choose purple / ice-white / blue / RGB-mix (purple — Sergio's
+  signature look — is the default), star size, twinkle speed, and shooting stars.
 - **Save preview PNG** and **Use this design for my quote** (prefills booking).
+
+## See it in motion (`#motion`)
+
+Five real shop clips (H.264 MP4, muted, looped) with a main player and a
+tap-to-switch reel list — replaces the old CSS-art before/after slider.
 
 ## Booking & chatbot
 
 Both work with **no backend**. Booking composes a prefilled text/email/call so
 the customer reaches Sergio in one tap. The assistant answers starlight,
-lighting, doors, kit, pricing, location, hours, and booking questions and points
-to the designer and the quote form. To make booking deliver to a CRM/inbox,
-wire the form submit in `app.js` to an endpoint.
+lighting, doors, kit, pricing, location, hours, and booking questions — and it's
+context-aware: it tolerates plurals/word forms ("starlights"), extracts the
+customer's vehicle ("2012 E92 M3"), remembers it across the conversation, and
+offers a one-tap **"Fill the quote form"** action that prefills vehicle +
+service in the booking form. To make booking deliver to a CRM/inbox, wire the
+form submit in `app.js` to an endpoint.

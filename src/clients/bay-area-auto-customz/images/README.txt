@@ -25,17 +25,27 @@ STARLIGHT (Our work — #work)
   starlight-white-ice.jpg          ice-white starlight (featured)
   starlight-mercedes-wide.jpg      doors-open reveal, white Mercedes (featured)
   starlight-mercedes-cabin.jpg     rear-cabin star coverage
+  starlight-console-white.jpg      console glow + starlight
   starlight-roof-console.jpg       from the driver's door
   starlight-roof-doors.jpg         roof-to-pillar coverage
-  starlight-headliner-violet.jpg   violet star field
-  starlight-console-white.jpg      console glow + starlight (also in #ambient)
+  starlight-camaro-blue.jpg        ice-blue starlight, Camaro
 
 AMBIENT INSTALLS (#ambient "Ambient installs" grid)
   ambient-bmw-green.jpg     green trim + blue footwells, BMW
   ambient-bmw-red.jpg       full rainbow sweep, red-interior BMW
   ambient-bmw-door.jpg      teal door-to-dash lines, white BMW
-  ambient-door-speaker.jpg  Corvette door + speaker glow (also featured in #work)
-  ambient-door-corvette.jpg Corvette door accent line
+  ambient-door-speaker.jpg  Corvette door + speaker glow (featured in #work)
+
+SHOP VIDEO REELS (#motion "See it in motion" — H.264 MP4, muted, ~1-2MB each)
+  reel-purple-door.mp4 / -poster.jpg    purple mode, door & speaker glow
+  reel-purple-cabin.mp4 / -poster.jpg   purple mode, full cabin
+  reel-red-cabin.mp4 / -poster.jpg      red mode, cabin sweep
+  reel-blue-cabin.mp4 / -poster.jpg     ice blue, dash & doors
+  reel-starlight-red.mp4 / -poster.jpg  starlight roof + red ambient
+  To add a reel: transcode to H.264 MP4 (720px wide, yuv420p, faststart,
+  no audio), export a poster JPEG, then copy a .motion__pick button in
+  index.html. Near-duplicate photos were removed intentionally — every
+  photo appears on the site exactly once.
 
 ADDING MORE
   Export ~1200-1600px wide, keep under ~400KB, drop it here, then copy a

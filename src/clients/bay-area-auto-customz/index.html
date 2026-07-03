@@ -215,9 +215,18 @@
               </div>
 
               <div class="field">
+                <span class="field__label">Layout pattern</span>
+                <div class="chips" role="group" aria-label="Star layout pattern">
+                  <button class="chip is-active" type="button" data-pattern="scatter">Night sky</button>
+                  <button class="chip" type="button" data-pattern="galaxy">Galaxy swirl</button>
+                  <button class="chip" type="button" data-pattern="edge">Halo edge</button>
+                </div>
+              </div>
+
+              <div class="field">
                 <span class="field__label">Star color</span>
                 <div class="chips chips--swatches" role="group" aria-label="Star color">
-                  <button class="swatch is-active" type="button" data-color="gold" style="--sw: #ffd36a">Gold</button>
+                  <button class="swatch is-active" type="button" data-color="purple" style="--sw: #c08bff">Purple</button>
                   <button class="swatch" type="button" data-color="white" style="--sw: #f6fbff">Ice white</button>
                   <button class="swatch" type="button" data-color="blue" style="--sw: #7bdcff">Blue</button>
                   <button class="swatch swatch--rgb" type="button" data-color="rgb">RGB mix</button>
@@ -252,45 +261,82 @@
           </div>
         </section>
 
-        <!-- ===================== BEFORE / AFTER ===================== -->
-        <section class="section" id="transformation">
+        <!-- ====================== SEE IT IN MOTION ====================== -->
+        <!-- Real clips from Sergio's shop (transcoded to web MP4, muted). -->
+        <section class="section" id="motion">
           <div class="section__intro">
-            <span class="eyebrow">Before / after</span>
-            <h2>The difference at night is the whole point.</h2>
-            <p>Drag to reveal a stock headliner turning into a finished starlight cabin.</p>
+            <span class="eyebrow">See it in motion</span>
+            <h2>Photos don&rsquo;t do it justice.</h2>
+            <p>
+              Real clips straight from the shop — color cycles, starlight twinkle, and ambient
+              lines wrapping the cabin. Tap a clip to switch.
+            </p>
           </div>
-          <div class="compare" data-compare>
-            <div class="compare__label compare__label--before">Stock</div>
-            <div class="compare__label compare__label--after">Starlight</div>
-            <div class="compare__scene compare__scene--before">
-              <div class="compare__roof"></div>
-              <div class="compare__dash"></div>
+
+          <div class="motion">
+            <div class="motion__stage">
+              <video
+                class="motion__video"
+                data-motion-video
+                controls
+                muted
+                loop
+                playsinline
+                preload="metadata"
+                poster="images/reel-purple-door-poster.jpg"
+                src="images/reel-purple-door.mp4"
+                width="720"
+                height="1280"
+                aria-label="Shop clip: ambient lighting in motion"
+              ></video>
             </div>
-            <div class="compare__scene compare__scene--after" data-after>
-              <div class="compare__roof compare__roof--stars">
-                <i style="--x: 15%; --y: 22%; --d: 0.1s"></i>
-                <i style="--x: 24%; --y: 44%; --d: 1.1s"></i>
-                <i style="--x: 31%; --y: 30%; --d: 0.7s"></i>
-                <i style="--x: 39%; --y: 58%; --d: 1.5s"></i>
-                <i style="--x: 47%; --y: 24%; --d: 0.3s"></i>
-                <i style="--x: 54%; --y: 42%; --d: 1.7s"></i>
-                <i style="--x: 63%; --y: 30%; --d: 0.8s"></i>
-                <i style="--x: 72%; --y: 52%; --d: 1.3s"></i>
-                <i style="--x: 81%; --y: 35%; --d: 0.5s"></i>
-                <b></b>
-              </div>
-              <div class="compare__dash compare__dash--gold"></div>
+            <div class="motion__list" role="group" aria-label="Choose a clip">
+              <button
+                class="motion__pick is-active"
+                type="button"
+                data-motion-src="images/reel-purple-door.mp4"
+                data-motion-poster="images/reel-purple-door-poster.jpg"
+              >
+                <img src="images/reel-purple-door-poster.jpg" alt="" loading="lazy" width="720" height="1280" />
+                <span>Purple mode — door &amp; speaker glow</span>
+              </button>
+              <button
+                class="motion__pick"
+                type="button"
+                data-motion-src="images/reel-purple-cabin.mp4"
+                data-motion-poster="images/reel-purple-cabin-poster.jpg"
+              >
+                <img src="images/reel-purple-cabin-poster.jpg" alt="" loading="lazy" width="720" height="1280" />
+                <span>Purple mode — full cabin</span>
+              </button>
+              <button
+                class="motion__pick"
+                type="button"
+                data-motion-src="images/reel-red-cabin.mp4"
+                data-motion-poster="images/reel-red-cabin-poster.jpg"
+              >
+                <img src="images/reel-red-cabin-poster.jpg" alt="" loading="lazy" width="720" height="1280" />
+                <span>Red mode — cabin sweep</span>
+              </button>
+              <button
+                class="motion__pick"
+                type="button"
+                data-motion-src="images/reel-blue-cabin.mp4"
+                data-motion-poster="images/reel-blue-cabin-poster.jpg"
+              >
+                <img src="images/reel-blue-cabin-poster.jpg" alt="" loading="lazy" width="720" height="1280" />
+                <span>Ice blue — dash &amp; doors</span>
+              </button>
+              <button
+                class="motion__pick"
+                type="button"
+                data-motion-src="images/reel-starlight-red.mp4"
+                data-motion-poster="images/reel-starlight-red-poster.jpg"
+              >
+                <img src="images/reel-starlight-red-poster.jpg" alt="" loading="lazy" width="720" height="1280" />
+                <span>Starlight roof + red ambient</span>
+              </button>
             </div>
-            <input
-              class="compare__range"
-              type="range"
-              min="4"
-              max="96"
-              value="52"
-              data-compare-range
-              aria-label="Drag to compare stock and starlight"
-            />
-            <div class="compare__handle" data-compare-handle aria-hidden="true"><span></span></div>
           </div>
         </section>
 
@@ -434,26 +480,14 @@
             <figure class="shot">
               <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
                 <img
-                  src="images/starlight-headliner-violet.jpg"
-                  alt="Violet starlight headliner across the full cabin of a Mercedes"
+                  src="images/starlight-camaro-blue.jpg"
+                  alt="Ice-blue starlight headliner over blue leather seats in a Camaro"
                   loading="lazy"
                   width="1400"
                   height="1867"
                 />
               </button>
-              <figcaption>Violet star field</figcaption>
-            </figure>
-            <figure class="shot">
-              <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
-                <img
-                  src="images/ambient-door-corvette.jpg"
-                  alt="Blue ambient light line running along a Corvette door panel with red stitching"
-                  loading="lazy"
-                  width="1400"
-                  height="1867"
-                />
-              </button>
-              <figcaption>Corvette door accent</figcaption>
+              <figcaption>Ice-blue starlight — Camaro</figcaption>
             </figure>
           </div>
 
@@ -636,42 +670,6 @@
                   />
                 </button>
                 <figcaption>Teal door-to-dash lines — BMW</figcaption>
-              </figure>
-              <figure class="shot">
-                <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
-                  <img
-                    src="images/ambient-door-speaker.jpg"
-                    alt="Blue ambient light outlining a Corvette door panel and lighting up the speaker grille"
-                    loading="lazy"
-                    width="1400"
-                    height="1867"
-                  />
-                </button>
-                <figcaption>Door &amp; speaker glow — Corvette</figcaption>
-              </figure>
-              <figure class="shot">
-                <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
-                  <img
-                    src="images/ambient-door-corvette.jpg"
-                    alt="Blue ambient light line running along a Corvette door panel with red stitching"
-                    loading="lazy"
-                    width="1400"
-                    height="1867"
-                  />
-                </button>
-                <figcaption>Door accent line — Corvette</figcaption>
-              </figure>
-              <figure class="shot">
-                <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
-                  <img
-                    src="images/starlight-console-white.jpg"
-                    alt="Ambient console and dash glow paired with a starlight roof in a Mercedes"
-                    loading="lazy"
-                    width="1400"
-                    height="1867"
-                  />
-                </button>
-                <figcaption>Pairs with a starlight roof — Mercedes</figcaption>
               </figure>
             </div>
           </div>

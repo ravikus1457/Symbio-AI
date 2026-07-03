@@ -262,81 +262,128 @@
         </section>
 
         <!-- ====================== SEE IT IN MOTION ====================== -->
-        <!-- Real clips from Sergio's shop (transcoded to web MP4, muted). -->
+        <!-- Real clips from Sergio's shop (web MP4, muted, played in place). -->
         <section class="section" id="motion">
           <div class="section__intro">
             <span class="eyebrow">See it in motion</span>
             <h2>Photos don&rsquo;t do it justice.</h2>
             <p>
               Real clips straight from the shop — color cycles, starlight twinkle, and ambient
-              lines wrapping the cabin. Tap a clip to switch.
+              lines wrapping the cabin. Tap a clip to play it.
             </p>
           </div>
 
-          <div class="motion">
-            <div class="motion__stage">
+          <div class="reels">
+            <figure class="reel" data-reel>
               <video
-                class="motion__video"
-                data-motion-video
-                controls
+                class="reel__video"
+                src="images/reel-purple-door.mp4"
+                poster="images/reel-purple-door-poster.jpg"
                 muted
                 loop
                 playsinline
-                preload="metadata"
-                poster="images/reel-purple-door-poster.jpg"
-                src="images/reel-purple-door.mp4"
+                preload="none"
                 width="720"
                 height="1280"
-                aria-label="Shop clip: ambient lighting in motion"
               ></video>
-            </div>
-            <div class="motion__list" role="group" aria-label="Choose a clip">
               <button
-                class="motion__pick is-active"
+                class="reel__toggle"
                 type="button"
-                data-motion-src="images/reel-purple-door.mp4"
-                data-motion-poster="images/reel-purple-door-poster.jpg"
-              >
-                <img src="images/reel-purple-door-poster.jpg" alt="" loading="lazy" width="720" height="1280" />
-                <span>Purple mode — door &amp; speaker glow</span>
-              </button>
+                data-reel-toggle
+                aria-pressed="false"
+                aria-label="Play clip: purple mode, door and speaker glow"
+              ></button>
+              <span class="reel__badge" aria-hidden="true">&#9654;</span>
+              <figcaption class="reel__caption">Purple mode &mdash; door &amp; speaker</figcaption>
+            </figure>
+            <figure class="reel" data-reel>
+              <video
+                class="reel__video"
+                src="images/reel-purple-cabin.mp4"
+                poster="images/reel-purple-cabin-poster.jpg"
+                muted
+                loop
+                playsinline
+                preload="none"
+                width="720"
+                height="1280"
+              ></video>
               <button
-                class="motion__pick"
+                class="reel__toggle"
                 type="button"
-                data-motion-src="images/reel-purple-cabin.mp4"
-                data-motion-poster="images/reel-purple-cabin-poster.jpg"
-              >
-                <img src="images/reel-purple-cabin-poster.jpg" alt="" loading="lazy" width="720" height="1280" />
-                <span>Purple mode — full cabin</span>
-              </button>
+                data-reel-toggle
+                aria-pressed="false"
+                aria-label="Play clip: purple mode, full cabin"
+              ></button>
+              <span class="reel__badge" aria-hidden="true">&#9654;</span>
+              <figcaption class="reel__caption">Purple mode &mdash; full cabin</figcaption>
+            </figure>
+            <figure class="reel" data-reel>
+              <video
+                class="reel__video"
+                src="images/reel-red-cabin.mp4"
+                poster="images/reel-red-cabin-poster.jpg"
+                muted
+                loop
+                playsinline
+                preload="none"
+                width="720"
+                height="1280"
+              ></video>
               <button
-                class="motion__pick"
+                class="reel__toggle"
                 type="button"
-                data-motion-src="images/reel-red-cabin.mp4"
-                data-motion-poster="images/reel-red-cabin-poster.jpg"
-              >
-                <img src="images/reel-red-cabin-poster.jpg" alt="" loading="lazy" width="720" height="1280" />
-                <span>Red mode — cabin sweep</span>
-              </button>
+                data-reel-toggle
+                aria-pressed="false"
+                aria-label="Play clip: red mode, cabin sweep"
+              ></button>
+              <span class="reel__badge" aria-hidden="true">&#9654;</span>
+              <figcaption class="reel__caption">Red mode &mdash; cabin sweep</figcaption>
+            </figure>
+            <figure class="reel" data-reel>
+              <video
+                class="reel__video"
+                src="images/reel-blue-cabin.mp4"
+                poster="images/reel-blue-cabin-poster.jpg"
+                muted
+                loop
+                playsinline
+                preload="none"
+                width="720"
+                height="1280"
+              ></video>
               <button
-                class="motion__pick"
+                class="reel__toggle"
                 type="button"
-                data-motion-src="images/reel-blue-cabin.mp4"
-                data-motion-poster="images/reel-blue-cabin-poster.jpg"
-              >
-                <img src="images/reel-blue-cabin-poster.jpg" alt="" loading="lazy" width="720" height="1280" />
-                <span>Ice blue — dash &amp; doors</span>
-              </button>
+                data-reel-toggle
+                aria-pressed="false"
+                aria-label="Play clip: ice blue, dash and doors"
+              ></button>
+              <span class="reel__badge" aria-hidden="true">&#9654;</span>
+              <figcaption class="reel__caption">Ice blue &mdash; dash &amp; doors</figcaption>
+            </figure>
+            <figure class="reel" data-reel>
+              <video
+                class="reel__video"
+                src="images/reel-starlight-red.mp4"
+                poster="images/reel-starlight-red-poster.jpg"
+                muted
+                loop
+                playsinline
+                preload="none"
+                width="720"
+                height="1280"
+              ></video>
               <button
-                class="motion__pick"
+                class="reel__toggle"
                 type="button"
-                data-motion-src="images/reel-starlight-red.mp4"
-                data-motion-poster="images/reel-starlight-red-poster.jpg"
-              >
-                <img src="images/reel-starlight-red-poster.jpg" alt="" loading="lazy" width="720" height="1280" />
-                <span>Starlight roof + red ambient</span>
-              </button>
-            </div>
+                data-reel-toggle
+                aria-pressed="false"
+                aria-label="Play clip: starlight roof with red ambient"
+              ></button>
+              <span class="reel__badge" aria-hidden="true">&#9654;</span>
+              <figcaption class="reel__caption">Starlight + red ambient</figcaption>
+            </figure>
           </div>
         </section>
 

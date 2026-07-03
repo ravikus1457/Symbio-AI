@@ -551,22 +551,38 @@
   }
 
   /* ============================ SEE IT IN MOTION ======================== */
-  const motionVideo = $("[data-motion-video]");
-  if (motionVideo) {
-    $$("[data-motion-src]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        $$("[data-motion-src]").forEach((b) => b.classList.toggle("is-active", b === btn));
-        motionVideo.poster = btn.dataset.motionPoster;
-        motionVideo.src = btn.dataset.motionSrc;
-        motionVideo.muted = true;
-        // autoplay-when-ready is more reliable than racing play() against load
-        motionVideo.autoplay = true;
-        motionVideo.load();
-        const p = motionVideo.play();
-        if (p && p.catch) p.catch(() => {});
+  // Reel cards play in place; starting one pauses the others. The playing
+  // state follows the real media events so the UI never lies about playback.
+  const reels = $$("[data-reel]");
+  reels.forEach((reel) => {
+    const video = $(".reel__video", reel);
+    const toggle = $("[data-reel-toggle]", reel);
+    if (!video || !toggle) return;
+
+    video.addEventListener("play", () => {
+      reel.classList.add("is-playing");
+      toggle.setAttribute("aria-pressed", "true");
+      reels.forEach((other) => {
+        if (other === reel) return;
+        const v = $(".reel__video", other);
+        if (v && !v.paused) v.pause();
       });
     });
-  }
+    video.addEventListener("pause", () => {
+      reel.classList.remove("is-playing");
+      toggle.setAttribute("aria-pressed", "false");
+    });
+
+    toggle.addEventListener("click", () => {
+      if (video.paused) {
+        video.muted = true;
+        const p = video.play();
+        if (p && p.catch) p.catch(() => {});
+      } else {
+        video.pause();
+      }
+    });
+  });
 
   /* ============================ SERVICES ↔ STUDIO ======================= */
   $$('.service[role="button"]').forEach((card) => {

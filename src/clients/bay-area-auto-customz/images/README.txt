@@ -43,8 +43,8 @@ SHOP VIDEO REELS (#motion "See it in motion" — H.264 MP4, muted, ~1-2MB each)
   reel-blue-cabin.mp4 / -poster.jpg     ice blue, dash & doors
   reel-starlight-red.mp4 / -poster.jpg  starlight roof + red ambient
   To add a reel: transcode to H.264 MP4 (720px wide, yuv420p, faststart,
-  no audio), export a poster JPEG, then copy a .motion__pick button in
-  index.html. Near-duplicate photos were removed intentionally — every
+  no audio), export a poster JPEG, then copy a <figure class="reel"> block
+  in index.html. Near-duplicate photos were removed intentionally — every
   photo appears on the site exactly once.
 
 ADDING MORE

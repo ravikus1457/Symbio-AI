@@ -55,10 +55,25 @@
     PANEL.cx = PANEL.x + PANEL.w / 2;
     PANEL.cy = PANEL.y + PANEL.h / 2;
     // Sunroof glass panel toward the front — no stars land here.
-    const SUNROOF = { w: PANEL.w * 0.36, h: PANEL.h * 0.46 };
+    const SUNROOF = { w: PANEL.w * 0.36, h: PANEL.h * 0.42 };
     SUNROOF.x = PANEL.cx - SUNROOF.w / 2;
-    SUNROOF.y = PANEL.y + PANEL.h * 0.13;
+    SUNROOF.y = PANEL.y + PANEL.h * 0.17;
     SUNROOF.r = Math.min(SUNROOF.w, SUNROOF.h) * 0.14;
+
+    // The rest of a real headliner's hardware — sun visors + overhead map-light
+    // console up front, grab handles on the sides. Stars avoid all of these,
+    // exactly like a real fiber-optic install goes around them.
+    const featRect = (fx, fy, fw, fh, rr) => {
+      const R = { x: PANEL.x + PANEL.w * fx, y: PANEL.y + PANEL.h * fy, w: PANEL.w * fw, h: PANEL.h * fh };
+      R.r = Math.min(R.w, R.h) * (rr == null ? 0.32 : rr);
+      return R;
+    };
+    const VISOR_L = featRect(0.06, 0.035, 0.25, 0.085, 0.26);
+    const VISOR_R = featRect(0.69, 0.035, 0.25, 0.085, 0.26);
+    const CONSOLE = featRect(0.435, 0.03, 0.13, 0.075, 0.4); // overhead map lights
+    const HANDLE_L = featRect(0.02, 0.55, 0.095, 0.05, 0.5);
+    const HANDLE_R = featRect(0.885, 0.55, 0.095, 0.05, 0.5);
+    const STARFREE = [SUNROOF, VISOR_L, VISOR_R, CONSOLE, HANDLE_L, HANDLE_R];
 
     // Draw hundreds–thousands of stars smoothly by baking the static field to
     // an offscreen canvas and only animating a small twinkle subset on top.
@@ -167,7 +182,9 @@
     }
 
     function insidePanel(p) {
-      return inRoundRect(p, PANEL) && !inRoundRect(p, SUNROOF);
+      if (!inRoundRect(p, PANEL)) return false;
+      for (const R of STARFREE) if (inRoundRect(p, R)) return false;
+      return true;
     }
 
     function makeStar(p, opts = {}) {
@@ -354,7 +371,37 @@
       c.lineWidth = 2;
       c.strokeStyle = "rgba(150, 180, 220, 0.16)";
       c.stroke();
+      // visors + overhead console (raised suede panels) and grab handles (slots)
+      drawMolding(c, VISOR_L, "raised");
+      drawMolding(c, VISOR_R, "raised");
+      drawMolding(c, CONSOLE, "raised");
+      c.fillStyle = "rgba(255, 222, 150, 0.5)"; // map-light lenses
+      for (const fx of [0.34, 0.66]) {
+        c.beginPath();
+        c.arc(CONSOLE.x + CONSOLE.w * fx, CONSOLE.y + CONSOLE.h * 0.5, Math.min(CONSOLE.w, CONSOLE.h) * 0.12, 0, Math.PI * 2);
+        c.fill();
+      }
+      drawMolding(c, HANDLE_L, "slot");
+      drawMolding(c, HANDLE_R, "slot");
       c.restore();
+    }
+
+    // Recessed / raised headliner hardware: a soft molded fill + a faint gold
+    // seam, plus a top highlight on raised panels so they catch light.
+    function drawMolding(c, R, kind) {
+      roundRectPath(c, R);
+      if (kind === "raised") {
+        const g = c.createLinearGradient(0, R.y, 0, R.y + R.h);
+        g.addColorStop(0, "rgba(58, 48, 32, 0.6)");
+        g.addColorStop(1, "rgba(16, 13, 8, 0.6)");
+        c.fillStyle = g;
+      } else {
+        c.fillStyle = "rgba(0, 0, 0, 0.45)"; // recessed slot (grab handle)
+      }
+      c.fill();
+      c.lineWidth = 1.4;
+      c.strokeStyle = "rgba(255, 221, 138, 0.16)";
+      c.stroke();
     }
 
     function bakeBase() {

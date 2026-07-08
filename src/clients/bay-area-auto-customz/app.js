@@ -69,6 +69,14 @@
     const fctx = field.getContext("2d");
     let fieldDirty = true;
 
+    // The background + headliner panel never change, so bake them once instead
+    // of rebuilding two gradients and 44 perforation strokes every frame.
+    const base = document.createElement("canvas");
+    base.width = W;
+    base.height = H;
+    const bctx = base.getContext("2d");
+    let baseReady = false;
+
     function roundRectPath(c, R) {
       const rr = Math.min(R.r, R.w / 2, R.h / 2);
       c.beginPath();
@@ -198,7 +206,8 @@
       for (let tries = 0; tries < 48; tries += 1) {
         let p;
         if (pattern === "galaxy") {
-          const t = (i + 1) / n;
+          // start the spiral outside the sunroof so inner stars don't all reject
+          const t = 0.14 + 0.86 * ((i + 1) / n);
           const ang = t * Math.PI * 6 + random(-0.3, 0.3);
           p = {
             x: PANEL.cx + Math.cos(ang) * hw * t * random(0.82, 1.02),
@@ -213,7 +222,12 @@
         }
         if (insidePanel(p)) return p;
       }
-      return { x: PANEL.x + PANEL.w * 0.12, y: PANEL.cy }; // guaranteed-inside fallback
+      // Scatter fallback — never stack rejected stars on one pixel over the sunroof.
+      for (let s = 0; s < 48; s += 1) {
+        const p = { x: random(PANEL.x, PANEL.x + PANEL.w), y: random(PANEL.y, PANEL.y + PANEL.h) };
+        if (insidePanel(p)) return p;
+      }
+      return { x: PANEL.x + PANEL.w * 0.12, y: PANEL.cy };
     }
 
     function fillKit(n, pattern = state.pattern) {
@@ -279,50 +293,56 @@
     }
 
     /* ----------------------------------------------------------- drawing */
-    function drawBackground() {
-      ctx.clearRect(0, 0, W, H);
+    function drawBackground(c) {
+      c.clearRect(0, 0, W, H);
       // base + faint warm center
-      const bg = ctx.createRadialGradient(W * 0.5, H * 0.05, 30, W * 0.5, H * 0.5, W * 0.62);
+      const bg = c.createRadialGradient(W * 0.5, H * 0.05, 30, W * 0.5, H * 0.5, W * 0.62);
       bg.addColorStop(0, "rgba(60, 48, 26, 0.45)");
       bg.addColorStop(0.45, "rgba(10, 9, 7, 0.98)");
       bg.addColorStop(1, "#030303");
-      ctx.fillStyle = bg;
-      ctx.fillRect(0, 0, W, H);
+      c.fillStyle = bg;
+      c.fillRect(0, 0, W, H);
     }
 
-    function drawHeadlinerPanel() {
-      ctx.save();
-      roundRectPath(ctx, PANEL);
-      ctx.clip();
+    function drawHeadlinerPanel(c) {
+      c.save();
+      roundRectPath(c, PANEL);
+      c.clip();
       // suede base
-      const roof = ctx.createLinearGradient(0, PANEL.y, 0, PANEL.y + PANEL.h);
+      const roof = c.createLinearGradient(0, PANEL.y, 0, PANEL.y + PANEL.h);
       roof.addColorStop(0, "#18120a");
       roof.addColorStop(0.55, "#0b0a08");
       roof.addColorStop(1, "#040404");
-      ctx.fillStyle = roof;
-      ctx.fillRect(0, 0, W, H);
+      c.fillStyle = roof;
+      c.fillRect(0, 0, W, H);
       // faint suede perforation lines
-      ctx.globalAlpha = 0.1;
-      ctx.strokeStyle = "#d7a84f";
-      ctx.lineWidth = 1;
+      c.globalAlpha = 0.1;
+      c.strokeStyle = "#d7a84f";
+      c.lineWidth = 1;
       for (let x = -H; x < W; x += 44) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x + H * 0.5, H);
-        ctx.stroke();
+        c.beginPath();
+        c.moveTo(x, 0);
+        c.lineTo(x + H * 0.5, H);
+        c.stroke();
       }
-      ctx.globalAlpha = 1;
+      c.globalAlpha = 1;
       // sunroof glass panel (kept star-free, like a real headliner)
-      roundRectPath(ctx, SUNROOF);
-      const glass = ctx.createLinearGradient(SUNROOF.x, SUNROOF.y, SUNROOF.x, SUNROOF.y + SUNROOF.h);
+      roundRectPath(c, SUNROOF);
+      const glass = c.createLinearGradient(SUNROOF.x, SUNROOF.y, SUNROOF.x, SUNROOF.y + SUNROOF.h);
       glass.addColorStop(0, "#080b12");
       glass.addColorStop(1, "#03040a");
-      ctx.fillStyle = glass;
-      ctx.fill();
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = "rgba(150, 180, 220, 0.16)";
-      ctx.stroke();
-      ctx.restore();
+      c.fillStyle = glass;
+      c.fill();
+      c.lineWidth = 2;
+      c.strokeStyle = "rgba(150, 180, 220, 0.16)";
+      c.stroke();
+      c.restore();
+    }
+
+    function bakeBase() {
+      drawBackground(bctx);
+      drawHeadlinerPanel(bctx);
+      baseReady = true;
     }
 
     function drawHeadlinerRim() {
@@ -355,8 +375,9 @@
     }
 
     function render(time) {
-      drawBackground();
-      drawHeadlinerPanel();
+      if (!baseReady) bakeBase();
+      ctx.clearRect(0, 0, W, H);
+      ctx.drawImage(base, 0, 0);
 
       ctx.save();
       roundRectPath(ctx, PANEL);
@@ -442,12 +463,22 @@
 
     let rafId = 0;
     let needsRender = true;
+    let onScreen = true;
     function requestRender() {
       needsRender = true;
     }
     function loop(t) {
       render(t);
       rafId = requestAnimationFrame(loop);
+    }
+    function startLoop() {
+      if (rafId) return;
+      rafId = requestAnimationFrame(loop);
+    }
+    function stopLoop() {
+      if (!rafId) return;
+      cancelAnimationFrame(rafId);
+      rafId = 0;
     }
     if (reduceMotion) {
       // No continuous animation; re-render on demand.
@@ -460,7 +491,20 @@
       };
       rafId = requestAnimationFrame(tick);
     } else {
-      rafId = requestAnimationFrame(loop);
+      startLoop();
+      // Pause the 60fps loop while the canvas is scrolled off-screen — no sense
+      // burning battery animating stars nobody can see (matters on phones).
+      if ("IntersectionObserver" in window) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            onScreen = entries[0].isIntersecting;
+            if (onScreen) startLoop();
+            else stopLoop();
+          },
+          { threshold: 0 }
+        );
+        io.observe(canvas);
+      }
     }
 
     /* ------------------------------------------------------ canvas input */
@@ -642,6 +686,15 @@
       },
     };
 
+    // Mirror the visual "is-active" selection to assistive tech as aria-pressed,
+    // so screen-reader users know which kit / pattern / color is chosen. One
+    // observer per control keeps it in sync no matter which handler flips it.
+    $$("[data-mode],[data-kit-count],[data-tool],[data-pattern],[data-color]").forEach((btn) => {
+      const sync = () => btn.setAttribute("aria-pressed", btn.classList.contains("is-active") ? "true" : "false");
+      sync();
+      new MutationObserver(sync).observe(btn, { attributes: true, attributeFilter: ["class"] });
+    });
+
     update();
   }
 
@@ -649,10 +702,34 @@
   // Reel cards play in place; starting one pauses the others. The playing
   // state follows the real media events so the UI never lies about playback.
   const reels = $$("[data-reel]");
+
+  // Load each reel's poster JPEG only as it nears the viewport, so all 11 don't
+  // download on first paint (the video bytes are already deferred via preload="none").
+  const posterObs =
+    "IntersectionObserver" in window
+      ? new IntersectionObserver(
+          (entries, obs) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+              const v = $(".reel__video", entry.target);
+              if (v && v.dataset.poster) {
+                v.poster = v.dataset.poster;
+                v.removeAttribute("data-poster");
+              }
+              obs.unobserve(entry.target);
+            });
+          },
+          { rootMargin: "300px" }
+        )
+      : null;
+
   reels.forEach((reel) => {
     const video = $(".reel__video", reel);
     const toggle = $("[data-reel-toggle]", reel);
     if (!video || !toggle) return;
+
+    if (posterObs) posterObs.observe(reel);
+    else if (video.dataset.poster) video.poster = video.dataset.poster;
 
     video.addEventListener("play", () => {
       reel.classList.add("is-playing");
@@ -708,6 +785,14 @@
         grid.innerHTML = "";
         posts.forEach((p) => grid.appendChild(buildFeedCard(p)));
         if (status) status.hidden = true;
+        // Now that posts are genuinely live, the copy can promise it.
+        const title = $("[data-feed-title]");
+        const sub = $("[data-feed-sub]");
+        if (title) title.textContent = "Our latest work, updated automatically.";
+        if (sub) {
+          sub.textContent =
+            "Pulled live from our Instagram and TikTok — new builds land here the moment we post. Tap any post to open it.";
+        }
       })
       .catch(() => {
         // Leave the fallback cards untouched — never show a broken section.
@@ -856,7 +941,6 @@
       const message = lines.join("\n");
       const enc = encodeURIComponent(message);
       const smsHref = `sms:${BUSINESS.tel}?&body=${enc}`;
-      const mailHref = `mailto:?subject=${encodeURIComponent("Quote request — Bay Area Auto Customz")}&body=${enc}`;
 
       bookingOut.hidden = false;
       bookingOut.style.borderColor = "rgba(63,208,137,0.4)";
@@ -865,8 +949,8 @@
         `Thanks, ${escapeHtml(name)} — your request is ready to send. Pick how you'd like to reach us:` +
         `<span class="booking__send">` +
         `<a class="btn btn--gold btn--sm" href="${smsHref}">Send as text</a>` +
-        `<a class="btn btn--ghost btn--sm" href="${mailHref}">Send as email</a>` +
         `<a class="btn btn--ghost btn--sm" href="tel:${BUSINESS.tel}">Call now</a>` +
+        `<a class="btn btn--ghost btn--sm" href="${BUSINESS.instagram}" target="_blank" rel="noopener">DM Instagram</a>` +
         `</span>`;
     });
   }
@@ -987,15 +1071,27 @@
     greeted = true;
     addMessage("bot", ANSWERS.greeting);
   }
-  function openChat() {
+  const chatLaunch = $("[data-chat-launch]");
+  const chatClose = chatbot ? $(".chatbot__close", chatbot) : null;
+
+  // One place to open/close so aria-expanded and focus stay honest: focus moves
+  // into the panel on open and back to the launcher on close.
+  function setChatOpen(open) {
     if (!chatbot) return;
-    chatbot.hidden = false;
-    greetOnce();
+    chatbot.hidden = !open;
+    if (chatLaunch) chatLaunch.setAttribute("aria-expanded", open ? "true" : "false");
+    if (open) {
+      greetOnce();
+      if (chatClose) setTimeout(() => chatClose.focus(), 0);
+    } else if (chatLaunch) {
+      chatLaunch.focus();
+    }
+  }
+  function openChat() {
+    setChatOpen(true);
   }
   function toggleChat() {
-    if (!chatbot) return;
-    chatbot.hidden = !chatbot.hidden;
-    if (!chatbot.hidden) greetOnce();
+    setChatOpen(chatbot ? chatbot.hidden : true);
   }
   function addMessage(role, text) {
     if (!chatLog) return;
@@ -1048,9 +1144,11 @@
       .trim();
   }
 
-  // crude singularizer so "starlights", "kits", "doors" hit the same intents
+  // crude singularizer so "starlights", "kits", "doors" hit the same intents.
+  // The [^s] guard leaves "ss" words ("address", "glass") intact so intents
+  // that match on them (e.g. location/address) still fire.
   function singularize(t) {
-    return t.replace(/\b([a-z]{3,})s\b/g, "$1");
+    return t.replace(/\b([a-z]{2,}[^s])s\b/g, "$1");
   }
 
   /* ---- vehicle extraction ---------------------------------------------- */
@@ -1204,6 +1302,9 @@
   }
 
   $$("[data-chat-toggle]").forEach((b) => b.addEventListener("click", toggleChat));
+  document.addEventListener("keydown", (ev) => {
+    if (ev.key === "Escape" && chatbot && !chatbot.hidden) setChatOpen(false);
+  });
   $$("[data-q]").forEach((b) => {
     b.addEventListener("click", () => {
       openChat();

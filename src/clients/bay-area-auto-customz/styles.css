@@ -32,6 +32,8 @@
 
 html {
   scroll-behavior: smooth;
+  /* Offset anchor jumps so the sticky header doesn't cover section headings. */
+  scroll-padding-top: 5rem;
 }
 
 body {
@@ -142,10 +144,14 @@ h3 {
   transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease, background 160ms ease;
 }
 
-.btn:hover,
+.btn:hover {
+  transform: translateY(-2px);
+}
+
 .btn:focus-visible {
   transform: translateY(-2px);
-  outline: none;
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 3px;
 }
 
 .btn--gold {
@@ -1162,11 +1168,18 @@ img.tile__media {
   cursor: pointer;
 }
 
-.service:hover,
-.service:focus-visible {
+/* Only the interactive service cards (01/02 open the designer) get the lift,
+   so the static cards don't falsely signal they're clickable. */
+.service[role="button"]:hover {
   transform: translateY(-3px);
   border-color: rgba(255, 221, 138, 0.4);
-  outline: none;
+}
+
+.service[role="button"]:focus-visible {
+  transform: translateY(-3px);
+  border-color: rgba(255, 221, 138, 0.4);
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 2px;
 }
 
 .service::after {
@@ -1413,7 +1426,7 @@ img.tile__media {
 
 .kit:hover {
   transform: translateY(-3px);
-  border-color: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 221, 138, 0.4);
 }
 
 .kit__visual {
@@ -2248,9 +2261,19 @@ img.tile__media {
     gap: 0.6rem;
   }
 
-  canvas#headliner {
-    aspect-ratio: 4 / 3;
+  /* Taller wrapped header on phones needs a bigger anchor offset. */
+  html {
+    scroll-padding-top: 7rem;
   }
+
+  /* Bigger tap targets for the scrollable nav strip. */
+  .nav a {
+    display: inline-block;
+    padding: 0.5rem 0.15rem;
+    line-height: 1.2;
+  }
+  /* Keep the headliner's true 1200:740 ratio on phones so it isn't squished
+     (the canvas backing store is fixed at 1200x740). */
 }
 
 @media (prefers-reduced-motion: reduce) {

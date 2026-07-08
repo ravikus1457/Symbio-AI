@@ -9,24 +9,43 @@
     <title>Bay Area Auto Customz | Starlight Headliners &amp; Custom Auto Lighting</title>
     <meta
       name="description"
-      content="Bay Area Auto Customz — starlight headliners, shooting stars, interior &amp; exterior lighting, custom Alcantara headliners, and butterfly doors. 4.9 stars on Google. Design your starlight live, then book in the East Bay."
+      content="Starlight headliners, custom &amp; ambient auto lighting, and butterfly doors in the East Bay. 4.9 stars on Google — design your starlight and book online."
     />
 
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23070707'/%3E%3Ctext x='16' y='21' font-family='Arial' font-size='12' font-weight='900' fill='%23d7a84f' text-anchor='middle'%3EBAC%3C/text%3E%3C/svg%3E" type="image/svg+xml" />
 
+    <!-- Absolute URLs use the current live GitHub Pages address; update this base
+         if the site moves to a custom domain (e.g. https://bayareaautocustomz.com/). -->
+    <link rel="canonical" href="https://ravikus1457.github.io/Symbio-AI/clients/bay-area-auto-customz/" />
+    <link rel="apple-touch-icon" href="images/logo-badge-gold.jpg" />
+
     <meta property="og:type" content="business.business" />
     <meta property="og:site_name" content="Bay Area Auto Customz" />
+    <meta property="og:url" content="https://ravikus1457.github.io/Symbio-AI/clients/bay-area-auto-customz/" />
     <meta property="og:title" content="Bay Area Auto Customz | Starlight Headliners &amp; Custom Auto Lighting" />
     <meta property="og:description" content="Starlight headliners, custom lighting, Alcantara headliners, and butterfly doors. 4.9 stars on Google. Design your starlight live, then book." />
-    <meta property="og:image" content="images/logo-badge-gold.jpg" />
+    <meta property="og:image" content="https://ravikus1457.github.io/Symbio-AI/clients/bay-area-auto-customz/images/starlight-mercedes-wide.jpg" />
+    <meta property="og:image:width" content="1600" />
+    <meta property="og:image:height" content="1200" />
+    <meta property="og:image:alt" content="White Mercedes with its doors open and a starlight headliner lit up in the Bay Area Auto Customz shop" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://ravikus1457.github.io/Symbio-AI/clients/bay-area-auto-customz/images/starlight-mercedes-wide.jpg" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Load fonts without blocking first paint; swap to all media once ready. -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
       rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Space+Grotesk:wght@600;700&display=swap"
+      media="print"
+      onload="this.media='all'"
     />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Space+Grotesk:wght@600;700&display=swap"
+      />
+    </noscript>
     <link rel="stylesheet" href="styles.css" />
 
     <script type="application/ld+json">
@@ -37,12 +56,13 @@
         "description": "Starlight headliners, interior and exterior lighting, custom headliners, and butterfly doors.",
         "telephone": "+1-925-536-5086",
         "areaServed": "San Francisco Bay Area, CA",
-        "address": { "@type": "PostalAddress", "addressRegion": "CA", "addressLocality": "Walnut Creek" },
+        "url": "https://ravikus1457.github.io/Symbio-AI/clients/bay-area-auto-customz/",
+        "priceRange": "$$",
+        "address": { "@type": "PostalAddress", "addressRegion": "CA", "addressLocality": "Walnut Creek", "addressCountry": "US" },
         "sameAs": [
           "https://www.instagram.com/bayareaautocustomz/",
           "https://www.tiktok.com/@bayareaautocustomz"
-        ],
-        "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "reviewCount": "66" }
+        ]
       }
     </script>
   </head>
@@ -174,7 +194,7 @@
                   id="headliner"
                   width="1200"
                   height="740"
-                  aria-label="Interactive starlight headliner preview. Switch to design mode to place your own stars."
+                  aria-label="Starlight headliner preview. Use the kit-size buttons to preview star density."
                 ></canvas>
                 <p class="canvas-hint" data-hint>Pick a kit size on the right to preview the density.</p>
               </div>
@@ -286,7 +306,7 @@
               <video
                 class="reel__video"
                 src="images/reel-headliner-white.mp4"
-                poster="images/reel-headliner-white-poster.jpg"
+                data-poster="images/reel-headliner-white-poster.jpg"
                 muted
                 loop
                 playsinline
@@ -308,7 +328,7 @@
               <video
                 class="reel__video"
                 src="images/reel-shooting-star.mp4"
-                poster="images/reel-shooting-star-poster.jpg"
+                data-poster="images/reel-shooting-star-poster.jpg"
                 muted
                 loop
                 playsinline
@@ -330,7 +350,7 @@
               <video
                 class="reel__video"
                 src="images/reel-red-stars.mp4"
-                poster="images/reel-red-stars-poster.jpg"
+                data-poster="images/reel-red-stars-poster.jpg"
                 muted
                 loop
                 playsinline
@@ -352,7 +372,7 @@
               <video
                 class="reel__video"
                 src="images/reel-purple-door.mp4"
-                poster="images/reel-purple-door-poster.jpg"
+                data-poster="images/reel-purple-door-poster.jpg"
                 muted
                 loop
                 playsinline
@@ -374,7 +394,7 @@
               <video
                 class="reel__video"
                 src="images/reel-purple-cabin.mp4"
-                poster="images/reel-purple-cabin-poster.jpg"
+                data-poster="images/reel-purple-cabin-poster.jpg"
                 muted
                 loop
                 playsinline
@@ -396,7 +416,7 @@
               <video
                 class="reel__video"
                 src="images/reel-red-cabin.mp4"
-                poster="images/reel-red-cabin-poster.jpg"
+                data-poster="images/reel-red-cabin-poster.jpg"
                 muted
                 loop
                 playsinline
@@ -418,7 +438,7 @@
               <video
                 class="reel__video"
                 src="images/reel-blue-cabin.mp4"
-                poster="images/reel-blue-cabin-poster.jpg"
+                data-poster="images/reel-blue-cabin-poster.jpg"
                 muted
                 loop
                 playsinline
@@ -440,7 +460,7 @@
               <video
                 class="reel__video"
                 src="images/reel-starlight-red.mp4"
-                poster="images/reel-starlight-red-poster.jpg"
+                data-poster="images/reel-starlight-red-poster.jpg"
                 muted
                 loop
                 playsinline
@@ -462,7 +482,7 @@
               <video
                 class="reel__video"
                 src="images/reel-rgb-dash.mp4"
-                poster="images/reel-rgb-dash-poster.jpg"
+                data-poster="images/reel-rgb-dash-poster.jpg"
                 muted
                 loop
                 playsinline
@@ -484,7 +504,7 @@
               <video
                 class="reel__video"
                 src="images/reel-ambient-night.mp4"
-                poster="images/reel-ambient-night-poster.jpg"
+                data-poster="images/reel-ambient-night-poster.jpg"
                 muted
                 loop
                 playsinline
@@ -506,7 +526,7 @@
               <video
                 class="reel__video"
                 src="images/reel-purple-build.mp4"
-                poster="images/reel-purple-build-poster.jpg"
+                data-poster="images/reel-purple-build-poster.jpg"
                 muted
                 loop
                 playsinline
@@ -708,10 +728,10 @@
         <section class="section feed-section" id="feed">
           <div class="section__intro">
             <span class="eyebrow eyebrow--rgb">Straight from the feed</span>
-            <h2>Our latest work, updated automatically.</h2>
-            <p>
-              New builds land here the moment they go up on Instagram and TikTok — the site keeps
-              itself current so you&rsquo;re always seeing the freshest reveals. Tap any post to open it.
+            <h2 data-feed-title>Fresh from Instagram &amp; TikTok.</h2>
+            <p data-feed-sub>
+              A look at recent builds from our Instagram and TikTok — follow us there for the very
+              latest reveals. Tap any post to open it.
             </p>
           </div>
 
@@ -946,7 +966,8 @@
             </p>
           </div>
 
-          <!-- TODO(Sergio): confirm real kit pricing before launch — values below are placeholders. -->
+          <!-- Kit prices read "Ask for pricing" until Sergio confirms real numbers.
+               Swap each .kit__price to the real "from $XX" once known. -->
           <div class="kits">
             <article class="kit">
               <div class="kit__visual kit__visual--fiber" aria-hidden="true">
@@ -956,7 +977,7 @@
                 <h3>Fiber-optic starlight kit</h3>
                 <p>LED engine, fiber bundle, remote, and a starter install guide.</p>
                 <div class="kit__foot">
-                  <span class="kit__price">from $149</span>
+                  <span class="kit__price">Ask for pricing</span>
                   <button class="btn btn--gold btn--sm" type="button" data-kit="Fiber-optic starlight kit">Add to quote</button>
                 </div>
               </div>
@@ -967,7 +988,7 @@
                 <h3>RGB ambient lighting kit</h3>
                 <p>App- and remote-controlled strips for doors, dash, and footwells.</p>
                 <div class="kit__foot">
-                  <span class="kit__price">from $129</span>
+                  <span class="kit__price">Ask for pricing</span>
                   <button class="btn btn--gold btn--sm" type="button" data-kit="RGB ambient lighting kit">Add to quote</button>
                 </div>
               </div>
@@ -978,7 +999,7 @@
                 <h3>Shooting-star add-on</h3>
                 <p>Upgrade any starlight kit with animated meteor trails.</p>
                 <div class="kit__foot">
-                  <span class="kit__price">from $89</span>
+                  <span class="kit__price">Ask for pricing</span>
                   <button class="btn btn--gold btn--sm" type="button" data-kit="Shooting-star add-on">Add to quote</button>
                 </div>
               </div>
@@ -1010,17 +1031,17 @@
             <article class="review">
               <span class="review__stars" aria-hidden="true">★★★★★</span>
               <p>Clean install and the cabin looked completely different at night. Exactly what I wanted.</p>
-              <small>Approved review slot — add customer name &amp; vehicle</small>
+              <small>Representative of our 4.9★ Google reviews</small>
             </article>
             <article class="review">
               <span class="review__stars" aria-hidden="true">★★★★★</span>
               <p>Easy to book, quick to respond, and the starlight effect came out perfect.</p>
-              <small>Approved review slot — add customer name &amp; vehicle</small>
+              <small>Representative of our 4.9★ Google reviews</small>
             </article>
             <article class="review">
               <span class="review__stars" aria-hidden="true">★★★★★</span>
               <p>Professional work and clean wiring. The ambient lighting made the interior feel new.</p>
-              <small>Approved review slot — add customer name &amp; vehicle</small>
+              <small>Representative of our 4.9★ Google reviews</small>
             </article>
           </div>
         </section>
@@ -1055,7 +1076,7 @@
               </label>
               <label>
                 Phone or email
-                <input name="contact" type="text" placeholder="So we can send your quote" autocomplete="tel" required />
+                <input name="contact" type="text" placeholder="So we can send your quote" autocomplete="on" required />
               </label>
               <label>
                 Vehicle
@@ -1079,7 +1100,7 @@
                 <textarea name="details" rows="3" placeholder="Roof color, star density, shooting stars, timing..."></textarea>
               </label>
               <button class="btn btn--gold btn--block" type="submit">Send my quote request</button>
-              <div class="booking__out" data-booking-out hidden></div>
+              <div class="booking__out" data-booking-out role="status" aria-live="polite" hidden></div>
               <p class="booking__fine">No spam. Your details are only used to prepare your quote.</p>
             </form>
           </div>
@@ -1122,15 +1143,23 @@
       </footer>
 
       <!-- ========================== CHATBOT ========================== -->
-      <button class="chat-launch" type="button" data-chat-toggle aria-label="Open chat assistant">
+      <button
+        class="chat-launch"
+        type="button"
+        data-chat-toggle
+        data-chat-launch
+        aria-expanded="false"
+        aria-controls="chatbot-panel"
+        aria-label="Open chat assistant"
+      >
         <span class="chat-launch__dot" aria-hidden="true"></span>
         Ask us anything
       </button>
 
-      <aside class="chatbot" data-chatbot aria-label="Bay Area Auto Customz assistant" hidden>
+      <aside class="chatbot" id="chatbot-panel" data-chatbot role="dialog" aria-labelledby="chatbot-title" hidden>
         <div class="chatbot__head">
           <div>
-            <strong>Auto Customz Assistant</strong>
+            <strong id="chatbot-title">Auto Customz Assistant</strong>
             <span>Starlights · lighting · kits · booking</span>
           </div>
           <button class="chatbot__close" type="button" data-chat-toggle aria-label="Close chat">×</button>

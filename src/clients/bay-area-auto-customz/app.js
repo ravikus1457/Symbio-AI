@@ -866,6 +866,102 @@
     return a;
   }
 
+  /* ===================== LIVE GOOGLE REVIEWS ============================ */
+  // Google blocks scraping, so real reviews load from a reviews feed instead.
+  // Point [data-reviews-url] at a free Featurable Google-reviews JSON feed (or
+  // a Google Places API response, or any JSON with author/rating/text) and the
+  // real reviews + live 4.9/66 render and stay current. No URL → fallback cards.
+  const reviewsRoot = $("[data-reviews-feed]");
+  if (reviewsRoot) initReviews(reviewsRoot);
+
+  function initReviews(root) {
+    const url = (root.dataset.reviewsUrl || "").trim();
+    if (!url) return; // keep the representative fallback cards
+    const grid = $("[data-reviews-grid]", root);
+    const max = Number(root.dataset.reviewsMax) || 6;
+    if (!grid) return;
+
+    fetch(url, { headers: { Accept: "application/json" } })
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then((data) => {
+        const { reviews, score, count } = normalizeReviews(data);
+        const good = reviews.filter((rv) => rv.rating >= 4).slice(0, max);
+        if (!good.length) throw new Error("no reviews");
+        grid.innerHTML = "";
+        good.forEach((rv) => grid.appendChild(buildReviewCard(rv)));
+        if (score) $$("[data-review-score]").forEach((el) => (el.textContent = (Math.round(score * 10) / 10).toFixed(1)));
+        if (count) {
+          const c = $("[data-review-count]");
+          if (c) c.textContent = String(count);
+        }
+        const src = $("[data-reviews-source]");
+        if (src) {
+          src.hidden = false;
+          src.textContent = "Pulled live from our Google reviews.";
+        }
+      })
+      .catch(() => {}); // leave the fallback cards in place — never break the section
+  }
+
+  // Accept Featurable, Google Places (new + legacy), and plain arrays.
+  function normalizeReviews(data) {
+    const root = data || {};
+    const arr = Array.isArray(root)
+      ? root
+      : root.reviews || (root.result && root.result.reviews) || root.data || [];
+    const words = { ONE: 1, TWO: 2, THREE: 3, FOUR: 4, FIVE: 5 };
+    const reviews = (Array.isArray(arr) ? arr : [])
+      .map((r) => {
+        let rating = r.rating != null ? r.rating : r.starRating != null ? r.starRating : r.stars;
+        if (typeof rating === "string") rating = words[rating.toUpperCase()] || Number(rating) || 5;
+        const text = (r.text && (r.text.text || r.text)) || r.comment || r.reviewText || r.review || "";
+        const author =
+          r.author_name ||
+          (r.reviewer && r.reviewer.displayName) ||
+          (r.authorAttribution && r.authorAttribution.displayName) ||
+          r.author ||
+          r.name ||
+          "Google reviewer";
+        const when =
+          r.relative_time_description || r.relativePublishTimeDescription || r.date || r.createTime || "";
+        return {
+          rating: clamp(Math.round(Number(rating) || 5), 1, 5),
+          text: String(text).replace(/\s+/g, " ").trim(),
+          author: String(author).trim(),
+          when: String(when).trim(),
+        };
+      })
+      .filter((r) => r.text);
+    const score =
+      root.averageRating || root.rating || (root.result && root.result.rating) || null;
+    const count =
+      root.totalReviewCount ||
+      root.reviewCount ||
+      root.user_ratings_total ||
+      root.userRatingCount ||
+      (root.result && root.result.user_ratings_total) ||
+      null;
+    return { reviews, score: score ? Number(score) : null, count: count ? Number(count) : null };
+  }
+
+  function buildReviewCard(rv) {
+    const art = document.createElement("article");
+    art.className = "review";
+    const stars = document.createElement("span");
+    stars.className = "review__stars";
+    stars.setAttribute("aria-hidden", "true");
+    stars.textContent = "★".repeat(rv.rating) + "☆".repeat(5 - rv.rating);
+    const p = document.createElement("p");
+    p.textContent = rv.text.length > 240 ? `${rv.text.slice(0, 237).trimEnd()}…` : rv.text;
+    const small = document.createElement("small");
+    small.textContent = [`— ${rv.author}`, rv.when, "Google"].filter(Boolean).join(" · ");
+    art.append(stars, p, small);
+    return art;
+  }
+
   /* ============================ SERVICES ↔ STUDIO ======================= */
   $$('.service[role="button"]').forEach((card) => {
     const go = () => {

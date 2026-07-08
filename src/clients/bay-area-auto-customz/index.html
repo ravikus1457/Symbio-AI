@@ -1008,26 +1008,32 @@
         </section>
 
         <!-- ========================== REVIEWS ========================== -->
-        <section class="section" id="reviews">
+        <!--
+          Live Google reviews. Google can't be scraped directly (and their ToS
+          forbids it), so real reviews load here from a reviews feed. TO GO LIVE
+          (one-time, ~5 min): create a free Google-reviews widget at
+          https://featurable.com (connect the Bay Area Auto Customz Google
+          Business Profile), copy its JSON feed URL, and paste it into
+          data-reviews-url on the <section> below. The Places API works too —
+          any JSON with review author / rating / text is accepted (see
+          images/README.txt). Real reviews + the live 4.9/66 then render and
+          refresh on their own; until connected, the representative cards show.
+        -->
+        <section class="section" id="reviews" data-reviews-feed data-reviews-url="" data-reviews-max="6">
           <div class="reviews__top">
             <div class="section__intro section__intro--flush">
               <span class="eyebrow">What customers say</span>
-              <h2>Rated 4.9 on Google.</h2>
+              <h2>Rated <span data-review-score>4.9</span> on Google.</h2>
             </div>
             <div class="score">
-              <strong>4.9</strong>
+              <strong data-review-score>4.9</strong>
               <span class="score__stars" aria-hidden="true">★★★★★</span>
-              <em>66 Google reviews</em>
+              <em><span data-review-count>66</span> Google reviews</em>
               <a class="text-btn" href="https://www.google.com/search?q=Bay+Area+Auto+Customz+reviews" target="_blank" rel="noopener">Read all on Google</a>
             </div>
           </div>
 
-          <!--
-            REVIEW SLOTS — replace the placeholder quotes below with real,
-            customer-approved Google review snippets (and first name + vehicle).
-            The 4.9 / 66 aggregate above is the real Google number.
-          -->
-          <div class="reviews">
+          <div class="reviews" data-reviews-grid>
             <article class="review">
               <span class="review__stars" aria-hidden="true">★★★★★</span>
               <p>Clean install and the cabin looked completely different at night. Exactly what I wanted.</p>
@@ -1044,6 +1050,7 @@
               <small>Representative of our 4.9★ Google reviews</small>
             </article>
           </div>
+          <p class="reviews__source" data-reviews-source hidden></p>
         </section>
 
         <!-- ========================== BOOKING ========================== -->

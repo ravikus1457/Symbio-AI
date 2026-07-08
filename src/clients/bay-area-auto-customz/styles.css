@@ -1627,6 +1627,12 @@ img.tile__media {
   font-size: 0.78rem;
 }
 
+.reviews__source {
+  margin: 1rem 0 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
 /* ------------------------------------------------------------- booking */
 .booking {
   display: grid;

@@ -76,7 +76,21 @@ ADDING MORE
   a promo layout; the versions above are the ones used. To swap any sign,
   replace the file (keep the name) or point the <img> at a new one.
 
+LIVE GOOGLE REVIEWS (#reviews — real reviews, auto-updating)
+  Google blocks scraping (and their ToS forbids it), so real reviews load from
+  a reviews feed. Until one is connected, three representative cards show and
+  the 4.9/66 aggregate is displayed. To pull REAL Google reviews (one-time):
+    1. Go to https://featurable.com, create a free Google-reviews widget, and
+       connect the Bay Area Auto Customz Google Business Profile.
+    2. Copy the widget's JSON feed URL.
+    3. Paste it into data-reviews-url="" on <section id="reviews"> in index.html.
+  Real review text + author + the live star average/count then render and stay
+  current. app.js (normalizeReviews) also accepts a Google Places API response
+  (new or legacy) or any JSON array with author / rating / text per review, so
+  the Places API works too if a key is preferred.
+
 NOTES
-  The Google rating (4.9 / 66 reviews) is the real number. The review *quotes*
-  in #reviews are still placeholders — replace with customer-approved Google
-  snippets before launch. DIY-kit prices are placeholders (confirm w/ Sergio).
+  The Google rating (4.9 / 66 reviews) is Sergio's stated number; connect the
+  reviews feed above to show the live figure. The review *quotes* are
+  representative until the feed is connected (or swap in real approved
+  snippets). DIY-kit prices read "Ask for pricing" until Sergio confirms them.

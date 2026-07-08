@@ -2159,12 +2159,15 @@ img.tile__media {
 @media (max-width: 1040px) {
   .hero,
   .studio,
-  .booking,
-  .reviews__top {
+  .booking {
     grid-template-columns: 1fr;
   }
 
+  /* .reviews__top is a flexbox, so it stacks with flex-direction, not
+     grid-template-columns — otherwise the score card's min-width pushes the
+     page wider than the screen (horizontal scroll). */
   .reviews__top {
+    flex-direction: column;
     align-items: flex-start;
   }
 

@@ -122,6 +122,8 @@
       color: "purple",
       sizeStep: Number(els.size ? els.size.value : 2),
       twinkle: Number(els.twinkle ? els.twinkle.value : 55),
+      sizeScale: 1, // shrinks stars as density rises so they read as pinpoints
+      alphaScale: 1, // eases brightness at high density so it doesn't blow out
       painting: false,
       lastPoint: null,
       lastPaintAt: 0,
@@ -134,10 +136,13 @@
       const s = document.createElement("canvas");
       s.width = s.height = 64;
       const g = s.getContext("2d");
+      // Tight bright core + quick falloff reads like a real fiber point,
+      // not a soft cloud (so dense kits stay crisp instead of washing out).
       const grad = g.createRadialGradient(32, 32, 0, 32, 32, 32);
       grad.addColorStop(0, "#ffffff");
-      grad.addColorStop(0.28, hex);
-      grad.addColorStop(0.6, hex + "55");
+      grad.addColorStop(0.16, hex);
+      grad.addColorStop(0.42, hex + "4d");
+      grad.addColorStop(0.72, hex + "12");
       grad.addColorStop(1, "rgba(0,0,0,0)");
       g.fillStyle = grad;
       g.beginPath();
@@ -271,6 +276,9 @@
 
     function update() {
       const n = state.stars.length;
+      // Denser kits = smaller, slightly dimmer points, like real fiber stars.
+      state.sizeScale = clamp(1.05 - (n / 4000) * 0.55, 0.5, 1.05);
+      state.alphaScale = clamp(1.02 - (n / 4000) * 0.32, 0.64, 1);
       if (els.count) els.count.textContent = n === 0 ? "Blank headliner · 0 stars" : `${fmt(n)} star${n === 1 ? "" : "s"} placed`;
       if (els.summaryCount) els.summaryCount.textContent = `${fmt(n)} star${n === 1 ? "" : "s"}`;
 
@@ -326,6 +334,16 @@
         c.stroke();
       }
       c.globalAlpha = 1;
+      // soft depth — the fabric darkens toward the edges so it reads as a
+      // gently curved roof panel rather than a flat rectangle
+      const depth = c.createRadialGradient(
+        PANEL.cx, PANEL.cy, Math.min(PANEL.w, PANEL.h) * 0.12,
+        PANEL.cx, PANEL.cy, Math.max(PANEL.w, PANEL.h) * 0.62
+      );
+      depth.addColorStop(0, "rgba(0, 0, 0, 0)");
+      depth.addColorStop(1, "rgba(0, 0, 0, 0.5)");
+      c.fillStyle = depth;
+      c.fillRect(0, 0, W, H);
       // sunroof glass panel (kept star-free, like a real headliner)
       roundRectPath(c, SUNROOF);
       const glass = c.createLinearGradient(SUNROOF.x, SUNROOF.y, SUNROOF.x, SUNROOF.y + SUNROOF.h);
@@ -356,7 +374,7 @@
     }
 
     function drawStar(c, st, alpha) {
-      const draw = 3 + st.r * 2.6;
+      const draw = (3 + st.r * 2.6) * state.sizeScale;
       c.globalAlpha = alpha;
       c.drawImage(sprite(st.color), st.x - draw, st.y - draw, draw * 2, draw * 2);
     }
@@ -365,7 +383,7 @@
     function renderField() {
       fctx.clearRect(0, 0, W, H);
       fctx.globalCompositeOperation = "lighter";
-      for (const st of state.stars) drawStar(fctx, st, 0.4 + st.baseA * 0.55);
+      for (const st of state.stars) drawStar(fctx, st, (0.4 + st.baseA * 0.55) * state.alphaScale);
       fctx.globalCompositeOperation = "source-over";
       fctx.globalAlpha = 1;
       const cap = 160;

@@ -586,15 +586,18 @@ canvas#headliner {
 .canvas-hint {
   position: absolute;
   left: 50%;
-  bottom: 1rem;
-  transform: translateX(-50%);
+  top: 50%;
+  transform: translate(-50%, -50%);
+  max-width: min(78%, 22rem);
   margin: 0;
-  padding: 0.5rem 0.9rem;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.55);
+  padding: 0.6rem 1rem;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.62);
   border: 1px solid var(--line);
-  color: var(--muted);
-  font-size: 0.8rem;
+  color: rgba(245, 241, 232, 0.86);
+  font-size: 0.82rem;
+  line-height: 1.4;
+  text-align: center;
   pointer-events: none;
   backdrop-filter: blur(6px);
 }

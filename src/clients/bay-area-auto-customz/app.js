@@ -55,10 +55,10 @@
     PANEL.cx = PANEL.x + PANEL.w / 2;
     PANEL.cy = PANEL.y + PANEL.h / 2;
     // Sunroof glass panel toward the front — no stars land here.
-    const SUNROOF = { w: PANEL.w * 0.36, h: PANEL.h * 0.42 };
+    const SUNROOF = { w: PANEL.w * 0.29, h: PANEL.h * 0.34 };
     SUNROOF.x = PANEL.cx - SUNROOF.w / 2;
-    SUNROOF.y = PANEL.y + PANEL.h * 0.17;
-    SUNROOF.r = Math.min(SUNROOF.w, SUNROOF.h) * 0.14;
+    SUNROOF.y = PANEL.y + PANEL.h * 0.2;
+    SUNROOF.r = Math.min(SUNROOF.w, SUNROOF.h) * 0.16;
 
     // The rest of a real headliner's hardware — sun visors + overhead map-light
     // console up front, grab handles on the sides. Stars avoid all of these,
@@ -73,7 +73,8 @@
     const CONSOLE = featRect(0.435, 0.03, 0.13, 0.075, 0.4); // overhead map lights
     const HANDLE_L = featRect(0.02, 0.55, 0.095, 0.05, 0.5);
     const HANDLE_R = featRect(0.885, 0.55, 0.095, 0.05, 0.5);
-    const STARFREE = [SUNROOF, VISOR_L, VISOR_R, CONSOLE, HANDLE_L, HANDLE_R];
+    // Always-present hardware (the sunroof is optional — see state.sunroof).
+    const HARDWARE = [VISOR_L, VISOR_R, CONSOLE, HANDLE_L, HANDLE_R];
 
     // Draw hundreds–thousands of stars smoothly by baking the static field to
     // an offscreen canvas and only animating a small twinkle subset on top.
@@ -122,6 +123,7 @@
       size: $("[data-size]"),
       twinkle: $("[data-twinkle]"),
       shooting: $("[data-shooting]"),
+      sunroof: $("[data-sunroof]"),
       designTools: $("[data-design-tools]"),
     };
 
@@ -139,6 +141,7 @@
       twinkle: Number(els.twinkle ? els.twinkle.value : 55),
       sizeScale: 1, // shrinks stars as density rises so they read as pinpoints
       alphaScale: 1, // eases brightness at high density so it doesn't blow out
+      sunroof: els.sunroof ? els.sunroof.checked : true, // toggle the sunroof cut-out
       painting: false,
       lastPoint: null,
       lastPaintAt: 0,
@@ -183,7 +186,8 @@
 
     function insidePanel(p) {
       if (!inRoundRect(p, PANEL)) return false;
-      for (const R of STARFREE) if (inRoundRect(p, R)) return false;
+      if (state.sunroof && inRoundRect(p, SUNROOF)) return false;
+      for (const R of HARDWARE) if (inRoundRect(p, R)) return false;
       return true;
     }
 
@@ -361,16 +365,18 @@
       depth.addColorStop(1, "rgba(0, 0, 0, 0.5)");
       c.fillStyle = depth;
       c.fillRect(0, 0, W, H);
-      // sunroof glass panel (kept star-free, like a real headliner)
-      roundRectPath(c, SUNROOF);
-      const glass = c.createLinearGradient(SUNROOF.x, SUNROOF.y, SUNROOF.x, SUNROOF.y + SUNROOF.h);
-      glass.addColorStop(0, "#080b12");
-      glass.addColorStop(1, "#03040a");
-      c.fillStyle = glass;
-      c.fill();
-      c.lineWidth = 2;
-      c.strokeStyle = "rgba(150, 180, 220, 0.16)";
-      c.stroke();
+      // sunroof glass panel (optional; kept star-free, like a real headliner)
+      if (state.sunroof) {
+        roundRectPath(c, SUNROOF);
+        const glass = c.createLinearGradient(SUNROOF.x, SUNROOF.y, SUNROOF.x, SUNROOF.y + SUNROOF.h);
+        glass.addColorStop(0, "#080b12");
+        glass.addColorStop(1, "#03040a");
+        c.fillStyle = glass;
+        c.fill();
+        c.lineWidth = 2;
+        c.strokeStyle = "rgba(150, 180, 220, 0.16)";
+        c.stroke();
+      }
       // visors + overhead console (raised suede panels) and grab handles (slots)
       drawMolding(c, VISOR_L, "raised");
       drawMolding(c, VISOR_R, "raised");
@@ -666,6 +672,21 @@
         if (els.shooting.checked) addShootingStars();
         else state.trails = [];
         update();
+      });
+    }
+    if (els.sunroof) {
+      els.sunroof.addEventListener("change", () => {
+        state.sunroof = els.sunroof.checked;
+        baseReady = false; // re-bake the panel with / without the sunroof
+        // drop any stars now under the sunroof, then even out kit layouts
+        state.stars = state.stars.filter((s) => insidePanel(s));
+        if (state.mode === "kit" && state.lastKitCount) {
+          fillKit(state.lastKitCount);
+          if (els.shooting && els.shooting.checked) addShootingStars();
+        } else {
+          fieldDirty = true;
+          update();
+        }
       });
     }
 

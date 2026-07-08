@@ -270,13 +270,19 @@
     function addShootingStars(count = 3) {
       state.trails = [];
       for (let i = 0; i < count; i += 1) {
+        // each meteor starts low-left and streaks up-right, then repeats after
+        // a gap; store its path + timing so render() can animate it from `time`.
+        const angle = random(-0.5, -0.24);
+        const travel = random(PANEL.w * 0.45, PANEL.w * 0.68);
         state.trails.push({
-          x: random(PANEL.cx - PANEL.w * 0.32, PANEL.cx + PANEL.w * 0.34),
-          y: random(PANEL.y + PANEL.h * 0.08, PANEL.cy),
-          angle: random(-0.55, -0.18),
-          length: random(110, 200),
+          x0: random(PANEL.x + PANEL.w * 0.06, PANEL.cx - PANEL.w * 0.05),
+          y0: random(PANEL.cy + PANEL.h * 0.05, PANEL.y + PANEL.h * 0.82),
+          dx: Math.cos(angle) * travel,
+          dy: Math.sin(angle) * travel,
+          tail: random(95, 155),
+          cycle: random(2600, 4600), // ms for one streak + gap
+          offset: random(0, 4600), // stagger so they don't fire in unison
           color: state.color === "rgb" ? "#f6fbff" : resolveColor(),
-          phase: random(0, Math.PI * 2),
         });
       }
     }
@@ -470,24 +476,46 @@
         ctx.restore();
       }
 
-      // shooting-star trails
+      // shooting-star trails — a bright head + fading tail that travels along
+      // its path and repeats, so they actually streak instead of sitting still.
       for (const tr of state.trails) {
-        const pulse = reduceMotion ? 0.8 : 0.55 + Math.sin(time * 0.002 + tr.phase) * 0.35;
-        ctx.save();
-        ctx.translate(tr.x, tr.y);
-        ctx.rotate(tr.angle);
-        const grad = ctx.createLinearGradient(-tr.length, 0, tr.length * 0.2, 0);
+        let head, alpha;
+        if (reduceMotion) {
+          head = 0.6;
+          alpha = 0.9; // static streak when motion is reduced
+        } else {
+          const ph = ((time + tr.offset) % tr.cycle) / tr.cycle;
+          const active = 0.5; // half the cycle is the streak, half is the gap
+          if (ph > active) continue; // in the gap — nothing on screen
+          head = ph / active; // 0..1 progress along the path
+          alpha = Math.min(1, head / 0.12, (1 - head) / 0.18); // fade in/out
+        }
+        const len = Math.hypot(tr.dx, tr.dy) || 1;
+        const ux = tr.dx / len;
+        const uy = tr.dy / len;
+        const hx = tr.x0 + tr.dx * head;
+        const hy = tr.y0 + tr.dy * head;
+        const tx = hx - ux * tr.tail;
+        const ty = hy - uy * tr.tail;
+        const grad = ctx.createLinearGradient(tx, ty, hx, hy);
         grad.addColorStop(0, "rgba(0,0,0,0)");
-        grad.addColorStop(0.6, tr.color);
+        grad.addColorStop(0.7, tr.color);
         grad.addColorStop(1, "#ffffff");
+        ctx.save();
+        ctx.globalAlpha = clamp(alpha, 0, 1);
         ctx.strokeStyle = grad;
-        ctx.lineWidth = 2 + pulse * 2;
+        ctx.lineWidth = 2.4;
+        ctx.lineCap = "round";
         ctx.shadowColor = tr.color;
-        ctx.shadowBlur = 18;
+        ctx.shadowBlur = 16;
         ctx.beginPath();
-        ctx.moveTo(-tr.length, 0);
-        ctx.lineTo(tr.length * 0.22, 0);
+        ctx.moveTo(tx, ty);
+        ctx.lineTo(hx, hy);
         ctx.stroke();
+        ctx.fillStyle = "#ffffff"; // bright head
+        ctx.beginPath();
+        ctx.arc(hx, hy, 1.9, 0, Math.PI * 2);
+        ctx.fill();
         ctx.restore();
       }
 

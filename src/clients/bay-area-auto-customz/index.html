@@ -71,6 +71,7 @@
         <nav class="nav" aria-label="Primary">
           <a href="#studio">Design studio</a>
           <a href="#work">Our work</a>
+          <a href="#feed">Latest</a>
           <a href="#services">Services</a>
           <a href="#ambient">Ambient kits</a>
           <a href="#kits">DIY kits</a>
@@ -149,9 +150,9 @@
             <span class="eyebrow">Interactive starlight designer</span>
             <h2>See your headliner before we build it.</h2>
             <p>
-              Start with a blank black headliner. Tap a kit size to see exactly how a 300, 500, or
-              800-fiber install looks — or switch to design mode and plot stars one by one to map
-              your own constellation. Save the preview, then send it with your quote.
+              Start with a blank headliner shaped like the real thing. Tap a kit size to see exactly
+              how a 300, 750, or 2,000-star install looks — or switch to design mode and plot stars
+              one by one to map your own constellation. Save the preview, then send it with your quote.
             </p>
           </div>
 
@@ -194,14 +195,21 @@
               </div>
 
               <div class="field">
-                <span class="field__label">Kit size — number of fiber stars</span>
+                <span class="field__label">Kit size — number of fiber stars <em class="field__hint">300-star minimum</em></span>
                 <div class="chips chips--kits" role="group" aria-label="Kit size">
-                  <button class="chip" type="button" data-kit-count="200">200</button>
                   <button class="chip" type="button" data-kit-count="300">300</button>
                   <button class="chip" type="button" data-kit-count="400">400</button>
                   <button class="chip" type="button" data-kit-count="500">500</button>
-                  <button class="chip" type="button" data-kit-count="600">600</button>
-                  <button class="chip" type="button" data-kit-count="800">800</button>
+                  <button class="chip" type="button" data-kit-count="650">650</button>
+                  <button class="chip" type="button" data-kit-count="750">750</button>
+                  <button class="chip" type="button" data-kit-count="860">860</button>
+                  <button class="chip" type="button" data-kit-count="1100">1,100</button>
+                  <button class="chip" type="button" data-kit-count="1500">1,500</button>
+                  <button class="chip" type="button" data-kit-count="2000">2,000</button>
+                  <button class="chip" type="button" data-kit-count="2500">2,500</button>
+                  <button class="chip" type="button" data-kit-count="3000">3,000</button>
+                  <button class="chip" type="button" data-kit-count="3500">3,500</button>
+                  <button class="chip" type="button" data-kit-count="4000">4,000</button>
                 </div>
               </div>
 
@@ -274,6 +282,72 @@
           </div>
 
           <div class="reels">
+            <figure class="reel" data-reel>
+              <video
+                class="reel__video"
+                src="images/reel-headliner-white.mp4"
+                poster="images/reel-headliner-white-poster.jpg"
+                muted
+                loop
+                playsinline
+                preload="none"
+                width="720"
+                height="1280"
+              ></video>
+              <button
+                class="reel__toggle"
+                type="button"
+                data-reel-toggle
+                aria-pressed="false"
+                aria-label="Play clip: white starlight headliner over red leather seats"
+              ></button>
+              <span class="reel__badge" aria-hidden="true">&#9654;</span>
+              <figcaption class="reel__caption">Starlight headliner &mdash; white stars</figcaption>
+            </figure>
+            <figure class="reel" data-reel>
+              <video
+                class="reel__video"
+                src="images/reel-shooting-star.mp4"
+                poster="images/reel-shooting-star-poster.jpg"
+                muted
+                loop
+                playsinline
+                preload="none"
+                width="720"
+                height="1280"
+              ></video>
+              <button
+                class="reel__toggle"
+                type="button"
+                data-reel-toggle
+                aria-pressed="false"
+                aria-label="Play clip: shooting star streaking across a starlight headliner"
+              ></button>
+              <span class="reel__badge" aria-hidden="true">&#9654;</span>
+              <figcaption class="reel__caption">Shooting star across the roof</figcaption>
+            </figure>
+            <figure class="reel" data-reel>
+              <video
+                class="reel__video"
+                src="images/reel-red-stars.mp4"
+                poster="images/reel-red-stars-poster.jpg"
+                muted
+                loop
+                playsinline
+                preload="none"
+                width="720"
+                height="1280"
+              ></video>
+              <button
+                class="reel__toggle"
+                type="button"
+                data-reel-toggle
+                aria-pressed="false"
+                aria-label="Play clip: dense red starlight field on the headliner"
+              ></button>
+              <span class="reel__badge" aria-hidden="true">&#9654;</span>
+              <figcaption class="reel__caption">Red star field</figcaption>
+            </figure>
             <figure class="reel" data-reel>
               <video
                 class="reel__video"
@@ -383,6 +457,72 @@
               ></button>
               <span class="reel__badge" aria-hidden="true">&#9654;</span>
               <figcaption class="reel__caption">Starlight + red ambient</figcaption>
+            </figure>
+            <figure class="reel" data-reel>
+              <video
+                class="reel__video"
+                src="images/reel-rgb-dash.mp4"
+                poster="images/reel-rgb-dash-poster.jpg"
+                muted
+                loop
+                playsinline
+                preload="none"
+                width="720"
+                height="1280"
+              ></video>
+              <button
+                class="reel__toggle"
+                type="button"
+                data-reel-toggle
+                aria-pressed="false"
+                aria-label="Play clip: RGB ambient lighting across the dash and doors"
+              ></button>
+              <span class="reel__badge" aria-hidden="true">&#9654;</span>
+              <figcaption class="reel__caption">RGB ambient &mdash; dash &amp; doors</figcaption>
+            </figure>
+            <figure class="reel" data-reel>
+              <video
+                class="reel__video"
+                src="images/reel-ambient-night.mp4"
+                poster="images/reel-ambient-night-poster.jpg"
+                muted
+                loop
+                playsinline
+                preload="none"
+                width="720"
+                height="1280"
+              ></video>
+              <button
+                class="reel__toggle"
+                type="button"
+                data-reel-toggle
+                aria-pressed="false"
+                aria-label="Play clip: red ambient light strip glowing on the dash at night"
+              ></button>
+              <span class="reel__badge" aria-hidden="true">&#9654;</span>
+              <figcaption class="reel__caption">Red ambient &mdash; night dash</figcaption>
+            </figure>
+            <figure class="reel" data-reel>
+              <video
+                class="reel__video"
+                src="images/reel-purple-build.mp4"
+                poster="images/reel-purple-build-poster.jpg"
+                muted
+                loop
+                playsinline
+                preload="none"
+                width="720"
+                height="1280"
+              ></video>
+              <button
+                class="reel__toggle"
+                type="button"
+                data-reel-toggle
+                aria-pressed="false"
+                aria-label="Play clip: purple and white wrapped build walkaround with red interior lighting"
+              ></button>
+              <span class="reel__badge" aria-hidden="true">&#9654;</span>
+              <figcaption class="reel__caption">Purple &amp; white build</figcaption>
             </figure>
           </div>
         </section>
@@ -544,6 +684,79 @@
             </a>
             <a class="social-pill" href="https://www.tiktok.com/@bayareaautocustomz" target="_blank" rel="noopener">
               <span aria-hidden="true">♪</span> @bayareaautocustomz on TikTok
+            </a>
+          </div>
+        </section>
+
+        <!-- ====================== LIVE SOCIAL FEED ====================== -->
+        <!--
+          Auto-updating feed. When a live feed is connected (see below), the
+          newest Instagram/TikTok posts render here automatically — no code
+          changes when Sergio posts. Until then, the curated cards below show
+          so the section is always complete.
+
+          TO GO LIVE (one-time, ~5 min):
+            1. Create a free feed at https://behold.so and connect the
+               @bayareaautocustomz Instagram account.
+            2. Copy the feed's JSON URL (looks like
+               https://feeds.behold.so/XXXXXXXX).
+            3. Paste it into data-feed-url on the .feed element below.
+          The grid then shows the latest posts and refreshes on its own.
+          (Any service that returns a compatible JSON feed works too — see
+          images/README.txt.)
+        -->
+        <section class="section feed-section" id="feed">
+          <div class="section__intro">
+            <span class="eyebrow eyebrow--rgb">Straight from the feed</span>
+            <h2>Our latest work, updated automatically.</h2>
+            <p>
+              New builds land here the moment they go up on Instagram and TikTok — the site keeps
+              itself current so you&rsquo;re always seeing the freshest reveals. Tap any post to open it.
+            </p>
+          </div>
+
+          <div class="feed" data-social-feed data-feed-url="" data-feed-max="8">
+            <div class="feed__grid" data-feed-grid>
+              <a class="feed__card" href="https://www.instagram.com/bayareaautocustomz/" target="_blank" rel="noopener">
+                <img class="feed__media" src="images/reel-headliner-white-poster.jpg" alt="White starlight headliner over red leather seats" loading="lazy" width="720" height="1280" />
+                <span class="feed__type" aria-hidden="true">&#9654;</span>
+                <span class="feed__meta"><span class="feed__src">Instagram</span> White starlight headliner</span>
+              </a>
+              <a class="feed__card" href="https://www.tiktok.com/@bayareaautocustomz" target="_blank" rel="noopener">
+                <img class="feed__media" src="images/reel-shooting-star-poster.jpg" alt="Shooting star streaking across a starlight headliner" loading="lazy" width="720" height="1280" />
+                <span class="feed__type" aria-hidden="true">&#9654;</span>
+                <span class="feed__meta"><span class="feed__src">TikTok</span> Shooting star build</span>
+              </a>
+              <a class="feed__card" href="https://www.instagram.com/bayareaautocustomz/" target="_blank" rel="noopener">
+                <img class="feed__media" src="images/reel-red-stars-poster.jpg" alt="Dense red starlight field on a headliner" loading="lazy" width="720" height="1280" />
+                <span class="feed__type" aria-hidden="true">&#9654;</span>
+                <span class="feed__meta"><span class="feed__src">Instagram</span> Red star field</span>
+              </a>
+              <a class="feed__card" href="https://www.instagram.com/bayareaautocustomz/" target="_blank" rel="noopener">
+                <img class="feed__media" src="images/reel-rgb-dash-poster.jpg" alt="RGB ambient lighting across a dash and doors" loading="lazy" width="720" height="1280" />
+                <span class="feed__type" aria-hidden="true">&#9654;</span>
+                <span class="feed__meta"><span class="feed__src">Instagram</span> RGB ambient cabin</span>
+              </a>
+              <a class="feed__card" href="https://www.tiktok.com/@bayareaautocustomz" target="_blank" rel="noopener">
+                <img class="feed__media" src="images/reel-ambient-night-poster.jpg" alt="Red ambient light strip glowing on a dash at night" loading="lazy" width="720" height="1280" />
+                <span class="feed__type" aria-hidden="true">&#9654;</span>
+                <span class="feed__meta"><span class="feed__src">TikTok</span> Night ambient glow</span>
+              </a>
+              <a class="feed__card" href="https://www.instagram.com/bayareaautocustomz/" target="_blank" rel="noopener">
+                <img class="feed__media" src="images/reel-purple-build-poster.jpg" alt="Purple and white wrapped build with red interior lighting" loading="lazy" width="720" height="1280" />
+                <span class="feed__type" aria-hidden="true">&#9654;</span>
+                <span class="feed__meta"><span class="feed__src">Instagram</span> Purple &amp; white build</span>
+              </a>
+            </div>
+            <p class="feed__status" data-feed-status hidden></p>
+          </div>
+
+          <div class="social-row">
+            <a class="social-pill" href="https://www.instagram.com/bayareaautocustomz/" target="_blank" rel="noopener">
+              <span aria-hidden="true">◎</span> Follow @bayareaautocustomz on Instagram
+            </a>
+            <a class="social-pill" href="https://www.tiktok.com/@bayareaautocustomz" target="_blank" rel="noopener">
+              <span aria-hidden="true">♪</span> Follow @bayareaautocustomz on TikTok
             </a>
           </div>
         </section>

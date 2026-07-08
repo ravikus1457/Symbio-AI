@@ -638,6 +638,20 @@ canvas#headliner {
   color: rgba(245, 241, 232, 0.82);
 }
 
+.field__hint {
+  margin-left: 0.4rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 221, 138, 0.35);
+  background: rgba(255, 221, 138, 0.08);
+  color: var(--gold-bright, #ffdd8a);
+  font-size: 0.7rem;
+  font-style: normal;
+  font-weight: 700;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
 .chips {
   display: flex;
   flex-wrap: wrap;
@@ -752,11 +766,12 @@ canvas#headliner {
 }
 
 /* ------------------------------------------------- see it in motion */
-/* Five vertical reel cards (9:16, like the phone clips they are) that play
-   in place on tap. One row on desktop, a swipeable snap strip below 1040px. */
+/* Vertical reel cards (9:16, like the phone clips they are) that play in place
+   on tap. They wrap into tidy rows on desktop and become a swipeable snap strip
+   below 1040px, so any number of clips lays out cleanly. */
 .reels {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
   gap: 1rem;
 }
 
@@ -973,6 +988,101 @@ img.tile__media {
 
 .social-pill span {
   color: var(--gold-bright);
+}
+
+/* ------------------------------------------- live Instagram / TikTok feed */
+.feed {
+  position: relative;
+}
+
+.feed__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 1rem;
+}
+
+.feed__card {
+  position: relative;
+  display: block;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: #050505;
+  box-shadow: var(--shadow);
+  transition: transform 160ms ease, border-color 160ms ease;
+}
+
+.feed__card:hover,
+.feed__card:focus-visible {
+  transform: translateY(-2px);
+  border-color: rgba(255, 221, 138, 0.5);
+  outline: none;
+}
+
+.feed__media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 320ms ease;
+}
+
+.feed__card:hover .feed__media {
+  transform: scale(1.05);
+}
+
+.feed__type {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 221, 138, 0.5);
+  background: rgba(8, 8, 8, 0.6);
+  color: var(--gold-bright);
+  font-size: 0.7rem;
+  backdrop-filter: blur(4px);
+}
+
+.feed__meta {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 2rem 0.8rem 0.75rem;
+  background: linear-gradient(180deg, transparent, rgba(3, 3, 3, 0.92));
+  color: rgba(245, 241, 232, 0.94);
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.feed__src {
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold-bright);
+}
+
+.feed__status {
+  margin: 1rem 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.feed.is-loading .feed__grid {
+  opacity: 0.55;
 }
 
 /* real-photo zoom buttons + the extra shots grid ------------------------- */
@@ -2139,7 +2249,7 @@ img.tile__media {
   }
 
   canvas#headliner {
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 4 / 3;
   }
 }
 

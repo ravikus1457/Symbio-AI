@@ -1,8 +1,8 @@
 /* =========================================================================
    Bay Area Auto Customz — interactive site logic
-   - Starlight designer: preview kit sizes (200–800 fibers) in three layout
-     patterns AND plot your own stars, in purple / white / blue / RGB,
-     with shooting stars.
+   - Starlight designer: preview kit sizes (300–4,000 fibers) on a real
+     headliner shape in three layout patterns AND plot your own stars, in
+     purple / white / blue / RGB, with shooting stars.
    - Shop-video reel switcher, gallery lightbox, booking (no backend — opens
      text/email prefilled), DIY-kit + service shortcuts, and an assistant
      that remembers your vehicle and can prefill the quote form.
@@ -24,7 +24,9 @@
     tiktok: "https://www.tiktok.com/@bayareaautocustomz",
   };
 
-  const KIT_SIZES = [200, 300, 400, 500, 600, 800];
+  // Sergio's real kit sizes — 300-star minimum, up to 4,000.
+  const KIT_SIZES = [300, 400, 500, 650, 750, 860, 1100, 1500, 2000, 2500, 3000, 3500, 4000];
+  const fmt = (n) => n.toLocaleString("en-US");
   const COLORS = {
     purple: "#c08bff",
     white: "#f6fbff",
@@ -46,8 +48,46 @@
     const W = canvas.width;
     const H = canvas.height;
 
-    // Headliner ellipse (placement + clip region).
-    const ROOF = { cx: W * 0.5, cy: H * 0.46, rx: W * 0.43, ry: H * 0.32 };
+    // Headliner silhouette (placement + clip region) — a rounded roof panel
+    // with a sunroof cut-out, shaped like the real thing instead of an oval.
+    const PANEL = { x: W * 0.12, y: H * 0.135, w: W * 0.76, h: H * 0.6 };
+    PANEL.r = Math.min(PANEL.w, PANEL.h) * 0.3;
+    PANEL.cx = PANEL.x + PANEL.w / 2;
+    PANEL.cy = PANEL.y + PANEL.h / 2;
+    // Sunroof glass panel toward the front — no stars land here.
+    const SUNROOF = { w: PANEL.w * 0.36, h: PANEL.h * 0.46 };
+    SUNROOF.x = PANEL.cx - SUNROOF.w / 2;
+    SUNROOF.y = PANEL.y + PANEL.h * 0.13;
+    SUNROOF.r = Math.min(SUNROOF.w, SUNROOF.h) * 0.14;
+
+    // Draw hundreds–thousands of stars smoothly by baking the static field to
+    // an offscreen canvas and only animating a small twinkle subset on top.
+    const CACHE_ABOVE = 700;
+    const field = document.createElement("canvas");
+    field.width = W;
+    field.height = H;
+    const fctx = field.getContext("2d");
+    let fieldDirty = true;
+
+    function roundRectPath(c, R) {
+      const rr = Math.min(R.r, R.w / 2, R.h / 2);
+      c.beginPath();
+      c.moveTo(R.x + rr, R.y);
+      c.arcTo(R.x + R.w, R.y, R.x + R.w, R.y + R.h, rr);
+      c.arcTo(R.x + R.w, R.y + R.h, R.x, R.y + R.h, rr);
+      c.arcTo(R.x, R.y + R.h, R.x, R.y, rr);
+      c.arcTo(R.x, R.y, R.x + R.w, R.y, rr);
+      c.closePath();
+    }
+
+    function inRoundRect(p, R) {
+      const rr = Math.min(R.r, R.w / 2, R.h / 2);
+      if (p.x < R.x || p.x > R.x + R.w || p.y < R.y || p.y > R.y + R.h) return false;
+      const dx = Math.min(p.x - R.x, R.x + R.w - p.x);
+      const dy = Math.min(p.y - R.y, R.y + R.h - p.y);
+      if (dx >= rr || dy >= rr) return true; // outside the rounded corners
+      return (rr - dx) ** 2 + (rr - dy) ** 2 <= rr * rr;
+    }
 
     const els = {
       count: $("[data-count]"),
@@ -64,6 +104,7 @@
 
     const state = {
       stars: [],
+      twinkleStars: [],
       lines: [],
       trails: [],
       mode: "kit", // "kit" | "design"
@@ -112,9 +153,8 @@
       };
     }
 
-    function insideRoof(p) {
-      const n = ((p.x - ROOF.cx) ** 2) / ROOF.rx ** 2 + ((p.y - ROOF.cy) ** 2) / ROOF.ry ** 2;
-      return n <= 1;
+    function insidePanel(p) {
+      return inRoundRect(p, PANEL) && !inRoundRect(p, SUNROOF);
     }
 
     function makeStar(p, opts = {}) {
@@ -126,17 +166,19 @@
         color: opts.color || resolveColor(),
         phase: random(0, Math.PI * 2),
         pulse: random(0.3, 0.95),
+        baseA: random(0.62, 1),
       };
     }
 
     function addStar(p, opts = {}) {
-      if (!insideRoof(p)) return false;
+      if (!insidePanel(p)) return false;
       const star = makeStar(p, opts);
       state.stars.push(star);
       if (state.tool === "paint" && state.lastPoint && !opts.skipLine) {
         state.lines.push({ x1: state.lastPoint.x, y1: state.lastPoint.y, x2: star.x, y2: star.y, color: star.color });
       }
       state.lastPoint = { x: star.x, y: star.y };
+      fieldDirty = true;
       return true;
     }
 
@@ -145,36 +187,42 @@
       state.lines = state.lines.filter(
         (l) => Math.hypot(l.x1 - p.x, l.y1 - p.y) > 42 && Math.hypot(l.x2 - p.x, l.y2 - p.y) > 42
       );
+      fieldDirty = true;
     }
 
-    function randomRoofPoint(pattern, i, n) {
-      if (pattern === "galaxy") {
-        const t = i / n;
-        const ang = t * Math.PI * 6 + random(-0.3, 0.3);
-        const rad = t;
-        return {
-          x: ROOF.cx + Math.cos(ang) * ROOF.rx * rad * random(0.85, 1.05),
-          y: ROOF.cy + Math.sin(ang) * ROOF.ry * rad * random(0.85, 1.05),
-        };
+    // Pick a star position inside the headliner (never on the sunroof) for the
+    // chosen pattern, using rejection sampling so the shape is respected.
+    function randomPanelPoint(pattern, i, n) {
+      const hw = PANEL.w / 2;
+      const hh = PANEL.h / 2;
+      for (let tries = 0; tries < 48; tries += 1) {
+        let p;
+        if (pattern === "galaxy") {
+          const t = (i + 1) / n;
+          const ang = t * Math.PI * 6 + random(-0.3, 0.3);
+          p = {
+            x: PANEL.cx + Math.cos(ang) * hw * t * random(0.82, 1.02),
+            y: PANEL.cy + Math.sin(ang) * hh * t * random(0.82, 1.02),
+          };
+        } else if (pattern === "edge") {
+          const ang = random(0, Math.PI * 2);
+          const rad = Math.sqrt(random(0.42, 1));
+          p = { x: PANEL.cx + Math.cos(ang) * hw * rad * 1.02, y: PANEL.cy + Math.sin(ang) * hh * rad * 1.02 };
+        } else {
+          p = { x: random(PANEL.x, PANEL.x + PANEL.w), y: random(PANEL.y, PANEL.y + PANEL.h) };
+        }
+        if (insidePanel(p)) return p;
       }
-      if (pattern === "edge") {
-        const ang = random(0, Math.PI * 2);
-        const rad = Math.sqrt(random(0.35, 1));
-        return { x: ROOF.cx + Math.cos(ang) * ROOF.rx * rad, y: ROOF.cy + Math.sin(ang) * ROOF.ry * rad };
-      }
-      // uniform scatter (area-correct)
-      const ang = random(0, Math.PI * 2);
-      const rad = Math.sqrt(random(0, 1));
-      return { x: ROOF.cx + Math.cos(ang) * ROOF.rx * rad, y: ROOF.cy + Math.sin(ang) * ROOF.ry * rad };
+      return { x: PANEL.x + PANEL.w * 0.12, y: PANEL.cy }; // guaranteed-inside fallback
     }
 
     function fillKit(n, pattern = state.pattern) {
       clearStars(true);
       state.lastKitCount = n;
       for (let i = 0; i < n; i += 1) {
-        addStar(randomRoofPoint(pattern, i, n), { skipLine: true });
+        addStar(randomPanelPoint(pattern, i, n), { skipLine: true });
       }
-      const label = `${n}-fiber starlight`;
+      const label = `${fmt(n)}-star starlight`;
       if (els.pkg) els.pkg.textContent = label;
       update();
     }
@@ -183,8 +231,8 @@
       state.trails = [];
       for (let i = 0; i < count; i += 1) {
         state.trails.push({
-          x: random(ROOF.cx - ROOF.rx * 0.4, ROOF.cx + ROOF.rx * 0.5),
-          y: random(ROOF.cy - ROOF.ry * 0.5, ROOF.cy + ROOF.ry * 0.2),
+          x: random(PANEL.cx - PANEL.w * 0.32, PANEL.cx + PANEL.w * 0.34),
+          y: random(PANEL.y + PANEL.h * 0.08, PANEL.cy),
           angle: random(-0.55, -0.18),
           length: random(110, 200),
           color: state.color === "rgb" ? "#f6fbff" : resolveColor(),
@@ -198,6 +246,7 @@
       state.lines = [];
       state.trails = [];
       state.lastPoint = null;
+      fieldDirty = true;
       if (!keepLabel && els.pkg) els.pkg.textContent = "Custom starlight layout";
       update();
     }
@@ -208,8 +257,8 @@
 
     function update() {
       const n = state.stars.length;
-      if (els.count) els.count.textContent = n === 0 ? "Blank headliner · 0 stars" : `${n} star${n === 1 ? "" : "s"} placed`;
-      if (els.summaryCount) els.summaryCount.textContent = `${n} star${n === 1 ? "" : "s"}`;
+      if (els.count) els.count.textContent = n === 0 ? "Blank headliner · 0 stars" : `${fmt(n)} star${n === 1 ? "" : "s"} placed`;
+      if (els.summaryCount) els.summaryCount.textContent = `${fmt(n)} star${n === 1 ? "" : "s"}`;
 
       if (els.summaryNote) {
         if (n === 0) {
@@ -217,13 +266,13 @@
         } else {
           const ck = closestKit(n);
           const extra = state.trails.length ? " + shooting stars" : "";
-          els.summaryNote.textContent = `Closest kit: ${ck}-fiber${extra}. Final quote depends on vehicle & roof.`;
+          els.summaryNote.textContent = `Closest kit: ${fmt(ck)} stars${extra}. Final quote depends on vehicle & roof.`;
         }
       }
       if (els.kitReadout) {
         els.kitReadout.textContent = n === 0
           ? "Choose a kit size to begin."
-          : `Previewing ${n} fibers — about a ${closestKit(n)}-fiber install.`;
+          : `Previewing ${fmt(n)} stars — about a ${fmt(closestKit(n))}-star install.`;
       }
       if (els.hint) els.hint.hidden = n > 0;
       requestRender();
@@ -241,46 +290,76 @@
       ctx.fillRect(0, 0, W, H);
     }
 
-    function drawRoofPanel() {
+    function drawHeadlinerPanel() {
       ctx.save();
-      ctx.beginPath();
-      ctx.ellipse(ROOF.cx, ROOF.cy, ROOF.rx, ROOF.ry, 0, 0, Math.PI * 2);
+      roundRectPath(ctx, PANEL);
       ctx.clip();
-      const roof = ctx.createLinearGradient(0, 0, 0, H);
-      roof.addColorStop(0, "#16110a");
-      roof.addColorStop(0.6, "#070707");
-      roof.addColorStop(1, "#020202");
+      // suede base
+      const roof = ctx.createLinearGradient(0, PANEL.y, 0, PANEL.y + PANEL.h);
+      roof.addColorStop(0, "#18120a");
+      roof.addColorStop(0.55, "#0b0a08");
+      roof.addColorStop(1, "#040404");
       ctx.fillStyle = roof;
       ctx.fillRect(0, 0, W, H);
       // faint suede perforation lines
-      ctx.globalAlpha = 0.12;
+      ctx.globalAlpha = 0.1;
       ctx.strokeStyle = "#d7a84f";
       ctx.lineWidth = 1;
-      for (let x = -H; x < W; x += 46) {
+      for (let x = -H; x < W; x += 44) {
         ctx.beginPath();
         ctx.moveTo(x, 0);
         ctx.lineTo(x + H * 0.5, H);
         ctx.stroke();
       }
       ctx.globalAlpha = 1;
+      // sunroof glass panel (kept star-free, like a real headliner)
+      roundRectPath(ctx, SUNROOF);
+      const glass = ctx.createLinearGradient(SUNROOF.x, SUNROOF.y, SUNROOF.x, SUNROOF.y + SUNROOF.h);
+      glass.addColorStop(0, "#080b12");
+      glass.addColorStop(1, "#03040a");
+      ctx.fillStyle = glass;
+      ctx.fill();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "rgba(150, 180, 220, 0.16)";
+      ctx.stroke();
       ctx.restore();
     }
 
-    function drawRoofRim() {
-      ctx.strokeStyle = "rgba(255, 221, 138, 0.32)";
+    function drawHeadlinerRim() {
+      roundRectPath(ctx, PANEL);
+      ctx.strokeStyle = "rgba(255, 221, 138, 0.3)";
       ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.ellipse(ROOF.cx, ROOF.cy, ROOF.rx, ROOF.ry, 0, 0, Math.PI * 2);
       ctx.stroke();
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.05)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    function drawStar(c, st, alpha) {
+      const draw = 3 + st.r * 2.6;
+      c.globalAlpha = alpha;
+      c.drawImage(sprite(st.color), st.x - draw, st.y - draw, draw * 2, draw * 2);
+    }
+
+    // Bake the whole static star field once; refresh only when stars change.
+    function renderField() {
+      fctx.clearRect(0, 0, W, H);
+      fctx.globalCompositeOperation = "lighter";
+      for (const st of state.stars) drawStar(fctx, st, 0.4 + st.baseA * 0.55);
+      fctx.globalCompositeOperation = "source-over";
+      fctx.globalAlpha = 1;
+      const cap = 160;
+      const step = Math.max(1, Math.floor(state.stars.length / cap));
+      state.twinkleStars = state.stars.filter((_, idx) => idx % step === 0).slice(0, cap);
+      fieldDirty = false;
     }
 
     function render(time) {
       drawBackground();
-      drawRoofPanel();
+      drawHeadlinerPanel();
 
       ctx.save();
-      ctx.beginPath();
-      ctx.ellipse(ROOF.cx, ROOF.cy, ROOF.rx, ROOF.ry, 0, 0, Math.PI * 2);
+      roundRectPath(ctx, PANEL);
       ctx.clip();
 
       // constellation lines
@@ -320,29 +399,44 @@
         ctx.restore();
       }
 
-      // stars (sprite-based)
+      // stars — cached field + animated twinkle subset for big kits, or fully
+      // animated for small/hand-placed layouts.
       const speed = 0.0004 + state.twinkle / 60000;
       ctx.globalCompositeOperation = "lighter";
-      for (const st of state.stars) {
-        let a = 0.92;
-        if (!reduceMotion && state.twinkle > 0) {
-          a = clamp(0.55 + Math.sin(time * speed + st.phase) * st.pulse, 0.18, 1);
+      if (state.stars.length > CACHE_ABOVE) {
+        if (fieldDirty) renderField();
+        ctx.globalAlpha = 1;
+        ctx.drawImage(field, 0, 0);
+        if (!reduceMotion && state.twinkle > 0 && state.twinkleStars) {
+          for (const st of state.twinkleStars) {
+            const a = clamp(0.12 + Math.sin(time * speed + st.phase) * 0.5, 0, 0.8);
+            drawStar(ctx, st, a);
+          }
         }
-        const draw = 3 + st.r * 2.6;
-        ctx.globalAlpha = a;
-        ctx.drawImage(sprite(st.color), st.x - draw, st.y - draw, draw * 2, draw * 2);
+      } else {
+        for (const st of state.stars) {
+          let a = 0.92;
+          if (!reduceMotion && state.twinkle > 0) {
+            a = clamp(0.55 + Math.sin(time * speed + st.phase) * st.pulse, 0.18, 1);
+          }
+          drawStar(ctx, st, a);
+        }
       }
       ctx.globalCompositeOperation = "source-over";
       ctx.globalAlpha = 1;
       ctx.restore();
 
-      drawRoofRim();
+      drawHeadlinerRim();
 
-      // watermark label
+      // front / rear orientation labels + watermark
+      ctx.fillStyle = "rgba(245, 241, 232, 0.34)";
+      ctx.font = "700 13px Inter, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("FRONT", PANEL.cx, PANEL.y - 9);
+      ctx.fillText("REAR", PANEL.cx, PANEL.y + PANEL.h + 20);
       ctx.fillStyle = "rgba(255, 221, 138, 0.5)";
       ctx.font = "700 18px Inter, sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText("BAY AREA AUTO CUSTOMZ · STARLIGHT PREVIEW", W * 0.5, H * 0.95);
+      ctx.fillText("BAY AREA AUTO CUSTOMZ · STARLIGHT PREVIEW", W * 0.5, H * 0.965);
       ctx.textAlign = "left";
     }
 
@@ -442,6 +536,7 @@
         state.stars.forEach((s) => {
           s.color = resolveColor();
         });
+        fieldDirty = true;
         requestRender();
       });
     });
@@ -583,6 +678,108 @@
       }
     });
   });
+
+  /* ===================== LIVE SOCIAL FEED (IG / TikTok) ================= */
+  // Auto-updating feed. When [data-feed-url] points at a JSON feed (e.g. a free
+  // Behold Instagram feed, or any service returning a compatible feed), the
+  // newest posts render here on load and stay current as Sergio posts — no code
+  // changes needed. With no URL set, the curated fallback cards in the HTML stay
+  // put, so the section is never empty or broken.
+  const feedRoot = $("[data-social-feed]");
+  if (feedRoot) initSocialFeed(feedRoot);
+
+  function initSocialFeed(root) {
+    const url = (root.dataset.feedUrl || "").trim();
+    if (!url) return; // keep the built-in fallback cards
+    const grid = $("[data-feed-grid]", root);
+    const status = $("[data-feed-status]", root);
+    const max = Number(root.dataset.feedMax) || 8;
+    if (!grid) return;
+
+    root.classList.add("is-loading");
+    fetch(url, { headers: { Accept: "application/json" } })
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then((data) => {
+        const posts = normalizePosts(data).slice(0, max);
+        if (!posts.length) throw new Error("empty feed");
+        grid.innerHTML = "";
+        posts.forEach((p) => grid.appendChild(buildFeedCard(p)));
+        if (status) status.hidden = true;
+      })
+      .catch(() => {
+        // Leave the fallback cards untouched — never show a broken section.
+        if (status) {
+          status.hidden = false;
+          status.textContent = "Showing recent highlights — follow us for the very latest.";
+        }
+      })
+      .finally(() => root.classList.remove("is-loading"));
+  }
+
+  // Tolerate the common feed shapes (Behold, EmbedSocial, raw arrays, etc.).
+  function normalizePosts(data) {
+    const raw = Array.isArray(data)
+      ? data
+      : (data && (data.posts || data.data || data.media || data.items)) || [];
+    return raw
+      .map((p) => {
+        const permalink = p.permalink || p.link || p.url || p.postUrl;
+        const type = String(p.mediaType || p.media_type || p.type || "").toUpperCase();
+        const isVideo = type.includes("VIDEO") || type.includes("REEL");
+        const sizes = p.sizes || {};
+        const thumb =
+          p.thumbnailUrl ||
+          p.thumbnail_url ||
+          p.thumbnail ||
+          (sizes.small && sizes.small.mediaUrl) ||
+          (sizes.medium && sizes.medium.mediaUrl) ||
+          p.mediaUrl ||
+          p.media_url ||
+          p.displayUrl ||
+          p.image;
+        const caption = (p.caption || p.title || "").toString();
+        const source = /tiktok/i.test(permalink || "") ? "TikTok" : "Instagram";
+        return permalink && thumb ? { permalink, thumb, isVideo, caption, source } : null;
+      })
+      .filter(Boolean);
+  }
+
+  function buildFeedCard(p) {
+    const a = document.createElement("a");
+    a.className = "feed__card";
+    a.href = p.permalink;
+    a.target = "_blank";
+    a.rel = "noopener";
+
+    const img = document.createElement("img");
+    img.className = "feed__media";
+    img.src = p.thumb;
+    img.loading = "lazy";
+    const short = p.caption.replace(/\s+/g, " ").trim().slice(0, 80);
+    img.alt = short || `${p.source} post from Bay Area Auto Customz`;
+    a.appendChild(img);
+
+    if (p.isVideo) {
+      const t = document.createElement("span");
+      t.className = "feed__type";
+      t.setAttribute("aria-hidden", "true");
+      t.innerHTML = "&#9654;";
+      a.appendChild(t);
+    }
+
+    const meta = document.createElement("span");
+    meta.className = "feed__meta";
+    const src = document.createElement("span");
+    src.className = "feed__src";
+    src.textContent = p.source;
+    meta.appendChild(src);
+    meta.appendChild(document.createTextNode(short || "View post"));
+    a.appendChild(meta);
+    return a;
+  }
 
   /* ============================ SERVICES ↔ STUDIO ======================= */
   $$('.service[role="button"]').forEach((card) => {
@@ -813,9 +1010,9 @@
     greeting:
       "Hey! I can help with starlight headliners, shooting stars, interior & exterior lighting, custom headliners, butterfly doors, and DIY kits — plus pricing and booking. What are you thinking about?",
     pricing:
-      `Most work is custom-quoted by vehicle and the look you want — a starlight headliner depends on the fiber count (try the designer above to preview 200–800 stars), and lighting or butterfly doors are quoted per build. Send your vehicle and the look and we'll get you an exact number. Call or text ${BUSINESS.phone}.`,
+      `Most work is custom-quoted by vehicle and the look you want — a starlight headliner depends on the star count (we start at a 300-star kit and go up to 4,000; try the designer above to preview any size), and lighting or butterfly doors are quoted per build. Send your vehicle and the look and we'll get you an exact number. Call or text ${BUSINESS.phone}.`,
     starlight:
-      "Starlight headliners are our specialty — individual fiber-optic stars in purple, ice white, blue, or an RGB mix, with custom density and patterns. Use the designer above to preview a 300 or 500-fiber kit, or plot your own constellation, then hit \"Use this design for my quote.\"",
+      "Starlight headliners are our specialty — individual fiber-optic stars in purple, ice white, blue, or an RGB mix, with custom density and patterns. Kits start at 300 stars and go up to 4,000. Use the designer above to preview a size on a real headliner shape, or plot your own constellation, then hit \"Use this design for my quote.\"",
     shooting:
       "Shooting stars add animated meteor streaks across the headliner for that high-end look. Toggle \"Add shooting stars\" in the designer to see it, and we'll quote it as an add-on to your starlight install.",
     interior:
@@ -837,7 +1034,7 @@
     reviews:
       "We're rated 4.9 stars on Google across 66 reviews — see the Reviews section, and there's a link to read them all on Google.",
     visualizer:
-      "Scroll up to the designer: pick a kit size (200–800 fibers) to preview the density, switch to \"Design your own\" to place stars one by one, pick a color, add shooting stars, then save the preview or send it with your quote.",
+      "Scroll up to the designer: pick a kit size (300–4,000 stars) to preview the density on a real headliner shape, switch to \"Design your own\" to place stars one by one, pick a color, add shooting stars, then save the preview or send it with your quote.",
     default:
       `Happy to help. For the most accurate answer, tell me your vehicle and the look you want, or call/text ${BUSINESS.phone}. You can also try the starlight designer above to preview your headliner.`,
   };
@@ -1038,7 +1235,7 @@
       }
       const colorLabel = s.color === "rgb" ? "RGB mix" : s.color;
       const det =
-        `My starlight design: ${s.stars} stars (~${s.kit}-fiber kit), ${colorLabel} color` +
+        `My starlight design: ${fmt(s.stars)} stars (~${fmt(s.kit)}-star kit), ${colorLabel} color` +
         (s.shooting ? ", with shooting stars." : ".");
       prefillBooking({
         service: s.shooting ? "Starlight + shooting stars" : "Starlight headliner",

@@ -36,16 +36,36 @@ AMBIENT INSTALLS (#ambient "Ambient installs" grid)
   ambient-bmw-door.jpg      teal door-to-dash lines, white BMW
   ambient-door-speaker.jpg  Corvette door + speaker glow (featured in #work)
 
-SHOP VIDEO REELS (#motion "See it in motion" — H.264 MP4, muted, ~1-2MB each)
-  reel-purple-door.mp4 / -poster.jpg    purple mode, door & speaker glow
-  reel-purple-cabin.mp4 / -poster.jpg   purple mode, full cabin
-  reel-red-cabin.mp4 / -poster.jpg      red mode, cabin sweep
-  reel-blue-cabin.mp4 / -poster.jpg     ice blue, dash & doors
-  reel-starlight-red.mp4 / -poster.jpg  starlight roof + red ambient
+SHOP VIDEO REELS (#motion "See it in motion" — H.264 MP4, muted, ~1-3MB each)
+  reel-headliner-white.mp4 / -poster.jpg  white starlight headliner, red seats
+  reel-shooting-star.mp4 / -poster.jpg    shooting star across the roof
+  reel-red-stars.mp4 / -poster.jpg        dense red star field
+  reel-purple-door.mp4 / -poster.jpg      purple mode, door & speaker glow
+  reel-purple-cabin.mp4 / -poster.jpg     purple mode, full cabin
+  reel-red-cabin.mp4 / -poster.jpg        red mode, cabin sweep
+  reel-blue-cabin.mp4 / -poster.jpg       ice blue, dash & doors
+  reel-starlight-red.mp4 / -poster.jpg    starlight roof + red ambient
+  reel-rgb-dash.mp4 / -poster.jpg         RGB ambient, dash & doors
+  reel-ambient-night.mp4 / -poster.jpg    red ambient light strip at night
+  reel-purple-build.mp4 / -poster.jpg     purple & white build walkaround
+  The six -headliner/-shooting/-red-stars/-rgb-dash/-ambient-night/-purple-build
+  clips came from Sergio's phone (portrait iPhone .mov, rotation baked in).
   To add a reel: transcode to H.264 MP4 (720px wide, yuv420p, faststart,
   no audio), export a poster JPEG, then copy a <figure class="reel"> block
-  in index.html. Near-duplicate photos were removed intentionally — every
-  photo appears on the site exactly once.
+  in index.html. Reels wrap into rows automatically, so add as many as you like.
+
+LIVE SOCIAL FEED (#feed "Straight from the feed" — auto-updates on new posts)
+  The feed grid shows curated fallback cards until a live feed is connected.
+  To make it auto-update whenever Sergio posts (one-time, ~5 min):
+    1. Go to https://behold.so, create a free feed, connect the
+       @bayareaautocustomz Instagram account.
+    2. Copy the feed's JSON URL (e.g. https://feeds.behold.so/XXXXXXXX).
+    3. Paste it into data-feed-url="" on the <div class="feed"> in index.html.
+  The newest posts then render on every page load and stay current on their own.
+  app.js (normalizePosts) also accepts EmbedSocial / generic JSON feeds, so any
+  service that returns permalink + thumbnail per post works — handy if Sergio
+  wants a combined Instagram + TikTok feed. If the feed ever fails to load, the
+  fallback cards stay in place so the section never looks broken.
 
 ADDING MORE
   Export ~1200-1600px wide, keep under ~400KB, drop it here, then copy a

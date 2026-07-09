@@ -15,6 +15,9 @@ export default function (eleventyConfig) {
   // The chatbot demo is a self-contained, shareable file — ship it untouched.
   eleventyConfig.addPassthroughCopy({ "src/chatbot-demo.html": "chatbot-demo.html" });
 
+  // The Humanizer is a self-contained, offline single-file tool — ship it untouched.
+  eleventyConfig.addPassthroughCopy({ "src/humanizer.html": "humanizer.html" });
+
   // Client subsites are self-contained static builds (their own HTML/CSS/JS),
   // shipped verbatim under /clients/<name>/. They live in two places for
   // historical reasons — src/clients/ (Bay Area Auto Customz) and the repo-root

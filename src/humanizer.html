@@ -1,0 +1,2095 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Symbio AI — Humanizer (offline writing helper)</title>
+    <meta
+      name="description"
+      content="A free, offline writing helper that rewrites stiff, AI-sounding text so it reads naturally. Runs entirely on your computer — nothing is uploaded. Optional local-AI deep rewrite via Ollama."
+    />
+
+    <!-- Runs before first paint: applies the saved theme so there is no flash.
+         Shared localStorage key with the main site ("symbio-theme"). -->
+    <script>
+      (function () {
+        var d = document.documentElement;
+        try {
+          var t = localStorage.getItem("symbio-theme");
+          if (t === "light" || t === "dark") d.setAttribute("data-theme", t);
+        } catch (e) {
+          /* localStorage may be blocked (e.g. file:// with strict settings) — fall back to OS preference via CSS. */
+        }
+      })();
+    </script>
+
+    <style>
+      /* -------------------------------------------------------------------
+         Design tokens — mirrored from the Symbio site design system so this
+         standalone page looks native. Light values on :root; dark values via
+         OS preference and the [data-theme="dark"] override (toggle wins).
+         ------------------------------------------------------------------- */
+      :root {
+        --c-bg: #fff;
+        --c-bg-tint: #f4f7fe;
+        --c-surface: #fff;
+        --c-surface-2: #f4f6fb;
+        --c-surface-3: #eaeef7;
+        --c-text: #0b1220;
+        --c-text-muted: #515c70;
+        --c-text-faint: #7a8499;
+        --c-border: rgba(11, 18, 32, 0.1);
+        --c-border-strong: rgba(11, 18, 32, 0.18);
+        --c-accent: #2f6bff;
+        --c-accent-2: #7a4dff;
+        --c-accent-soft: rgba(47, 107, 255, 0.1);
+        --c-ring: rgba(47, 107, 255, 0.55);
+        --c-success: #14a06b;
+        --c-success-soft: rgba(20, 160, 107, 0.14);
+        --c-warn: #b7791f;
+        --c-warn-soft: rgba(183, 121, 31, 0.14);
+        --c-mark: rgba(122, 77, 255, 0.18);
+        --c-mark-border: rgba(122, 77, 255, 0.45);
+        --grad-accent: linear-gradient(135deg, #2f6bff, #7a4dff);
+        --shadow-sm: 0 1px 2px rgba(13, 24, 51, 0.06), 0 1px 3px rgba(13, 24, 51, 0.08);
+        --shadow-md: 0 12px 30px -16px rgba(13, 24, 51, 0.28);
+        --shadow-lg: 0 30px 60px -28px rgba(13, 24, 51, 0.4);
+        --font-sans:
+          -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Inter, Roboto, Helvetica,
+          Arial, sans-serif;
+        --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+        --radius-sm: 10px;
+        --radius: 16px;
+        --radius-lg: 24px;
+        --radius-pill: 999px;
+        --container: 1180px;
+        color-scheme: light;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --c-bg: #090d16;
+          --c-bg-tint: #0d1320;
+          --c-surface: #111726;
+          --c-surface-2: #161d2e;
+          --c-surface-3: #1d2638;
+          --c-text: #eef2fb;
+          --c-text-muted: #a3afc6;
+          --c-text-faint: #76829b;
+          --c-border: rgba(255, 255, 255, 0.1);
+          --c-border-strong: rgba(255, 255, 255, 0.2);
+          --c-accent: #4b8bff;
+          --c-accent-soft: rgba(75, 139, 255, 0.16);
+          --c-ring: rgba(94, 158, 255, 0.65);
+          --c-success: #2bd08a;
+          --c-success-soft: rgba(43, 208, 138, 0.16);
+          --c-warn: #e0b357;
+          --c-warn-soft: rgba(224, 179, 87, 0.16);
+          --c-mark: rgba(122, 77, 255, 0.3);
+          --c-mark-border: rgba(140, 100, 255, 0.6);
+          --shadow-md: 0 14px 34px -16px rgba(0, 0, 0, 0.7);
+          --shadow-lg: 0 34px 70px -28px rgba(0, 0, 0, 0.78);
+          color-scheme: dark;
+        }
+      }
+
+      :root[data-theme="dark"] {
+        --c-bg: #090d16;
+        --c-bg-tint: #0d1320;
+        --c-surface: #111726;
+        --c-surface-2: #161d2e;
+        --c-surface-3: #1d2638;
+        --c-text: #eef2fb;
+        --c-text-muted: #a3afc6;
+        --c-text-faint: #76829b;
+        --c-border: rgba(255, 255, 255, 0.1);
+        --c-border-strong: rgba(255, 255, 255, 0.2);
+        --c-accent: #4b8bff;
+        --c-accent-soft: rgba(75, 139, 255, 0.16);
+        --c-ring: rgba(94, 158, 255, 0.65);
+        --c-success: #2bd08a;
+        --c-success-soft: rgba(43, 208, 138, 0.16);
+        --c-warn: #e0b357;
+        --c-warn-soft: rgba(224, 179, 87, 0.16);
+        --c-mark: rgba(122, 77, 255, 0.3);
+        --c-mark-border: rgba(140, 100, 255, 0.6);
+        --shadow-md: 0 14px 34px -16px rgba(0, 0, 0, 0.7);
+        --shadow-lg: 0 34px 70px -28px rgba(0, 0, 0, 0.78);
+        color-scheme: dark;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+      }
+
+      body {
+        min-height: 100vh;
+        font-family: var(--font-sans);
+        font-size: 1rem;
+        line-height: 1.6;
+        color: var(--c-text);
+        background:
+          radial-gradient(1100px 600px at 90% -10%, var(--c-accent-soft), transparent 60%),
+          var(--c-bg);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      a {
+        color: var(--c-accent);
+        text-underline-offset: 2px;
+      }
+
+      .wrap {
+        max-width: var(--container);
+        margin: 0 auto;
+        padding: 0 clamp(1rem, 4vw, 2rem);
+      }
+
+      /* Header */
+      .top {
+        position: sticky;
+        top: 0;
+        z-index: 30;
+        backdrop-filter: saturate(1.2) blur(10px);
+        background: color-mix(in srgb, var(--c-bg) 78%, transparent);
+        border-bottom: 1px solid var(--c-border);
+      }
+      .top__row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 0;
+      }
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--c-text);
+        text-decoration: none;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        font-size: 1.15rem;
+      }
+      .brand svg {
+        width: 30px;
+        height: 30px;
+      }
+      .brand .accent {
+        color: var(--c-accent);
+      }
+      .top__actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .iconbtn {
+        display: inline-grid;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        border-radius: var(--radius-pill);
+        border: 1px solid var(--c-border);
+        background: var(--c-surface);
+        color: var(--c-text);
+        cursor: pointer;
+        font-size: 1.05rem;
+      }
+      .iconbtn:hover {
+        border-color: var(--c-border-strong);
+      }
+
+      /* Hero */
+      .hero {
+        padding: clamp(1.6rem, 4vw, 2.6rem) 0 0.5rem;
+      }
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: 0.72rem;
+        color: var(--c-accent);
+      }
+      .hero h1 {
+        font-size: clamp(1.8rem, 4vw, 2.7rem);
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        margin: 0.5rem 0 0.4rem;
+        text-wrap: balance;
+      }
+      .hero p.lede {
+        color: var(--c-text-muted);
+        max-width: 60ch;
+        font-size: 1.05rem;
+      }
+      .privacy {
+        margin-top: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 12px;
+        border-radius: var(--radius-pill);
+        background: var(--c-success-soft);
+        color: var(--c-success);
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+
+      /* Controls bar */
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 14px 22px;
+        margin: 1.4rem 0 1rem;
+        padding: 14px 16px;
+        background: var(--c-surface);
+        border: 1px solid var(--c-border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-sm);
+      }
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .field > .label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--c-text-faint);
+      }
+      .seg {
+        display: inline-flex;
+        padding: 3px;
+        gap: 3px;
+        background: var(--c-surface-2);
+        border: 1px solid var(--c-border);
+        border-radius: var(--radius-pill);
+      }
+      .seg button {
+        border: 0;
+        background: transparent;
+        color: var(--c-text-muted);
+        font: inherit;
+        font-size: 0.85rem;
+        font-weight: 600;
+        padding: 6px 14px;
+        border-radius: var(--radius-pill);
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .seg button[aria-pressed="true"] {
+        background: var(--c-surface);
+        color: var(--c-text);
+        box-shadow: var(--shadow-sm);
+      }
+      .seg button:focus-visible {
+        outline: 3px solid var(--c-ring);
+        outline-offset: 2px;
+      }
+      .controls .spacer {
+        flex: 1 1 auto;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        border: 1px solid transparent;
+        cursor: pointer;
+        font: inherit;
+        font-weight: 700;
+        padding: 0.72rem 1.3rem;
+        border-radius: var(--radius-pill);
+        background: var(--grad-accent);
+        color: #fff;
+        box-shadow: var(--shadow-md);
+        transition:
+          transform 0.14s ease,
+          filter 0.14s ease;
+      }
+      .btn:hover {
+        transform: translateY(-1px);
+        filter: brightness(1.05);
+      }
+      .btn:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+        transform: none;
+        filter: none;
+      }
+      .btn--ghost {
+        background: var(--c-surface);
+        color: var(--c-text);
+        border-color: var(--c-border);
+        box-shadow: none;
+      }
+      .btn--ghost:hover {
+        border-color: var(--c-border-strong);
+        filter: none;
+      }
+      .btn--sm {
+        padding: 0.5rem 0.95rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+
+      /* Editor grid */
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        align-items: stretch;
+      }
+      @media (max-width: 860px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .pane {
+        display: flex;
+        flex-direction: column;
+        background: var(--c-surface);
+        border: 1px solid var(--c-border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+        min-height: 340px;
+      }
+      .pane__head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--c-border);
+        background: var(--c-surface-2);
+      }
+      .pane__title {
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+      .pane__meta {
+        font-size: 0.78rem;
+        color: var(--c-text-faint);
+      }
+      .pane__actions {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      textarea#input {
+        flex: 1;
+        width: 100%;
+        resize: vertical;
+        min-height: 300px;
+        border: 0;
+        outline: none;
+        padding: 16px;
+        font-family: var(--font-sans);
+        font-size: 1rem;
+        line-height: 1.7;
+        color: var(--c-text);
+        background: transparent;
+      }
+      .output {
+        flex: 1;
+        padding: 16px;
+        font-size: 1rem;
+        line-height: 1.7;
+        white-space: pre-wrap;
+        overflow-wrap: break-word;
+        overflow-y: auto;
+        min-height: 300px;
+      }
+      .output:empty::before {
+        content: "Your cleaned-up text will appear here. Every change is highlighted so you can see and keep control of what was edited.";
+        color: var(--c-text-faint);
+      }
+      .output mark {
+        background: var(--c-mark);
+        border-bottom: 1.5px solid var(--c-mark-border);
+        border-radius: 3px;
+        color: inherit;
+        padding: 0 1px;
+      }
+      body.no-highlight .output mark {
+        background: transparent;
+        border-bottom: 0;
+      }
+
+      /* Scores */
+      .scores {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 12px;
+        margin: 16px 0 0;
+      }
+      .stat {
+        background: var(--c-surface);
+        border: 1px solid var(--c-border);
+        border-radius: var(--radius-sm);
+        padding: 12px 14px;
+      }
+      .stat__label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: var(--c-text-faint);
+      }
+      .stat__val {
+        font-size: 1.5rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        margin-top: 2px;
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+      }
+      .stat__val .to {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--c-text-muted);
+      }
+      .stat__val .good {
+        color: var(--c-success);
+      }
+      .stat__val .warn {
+        color: var(--c-warn);
+      }
+      .stat__hint {
+        font-size: 0.74rem;
+        color: var(--c-text-faint);
+        margin-top: 2px;
+      }
+      .bar {
+        height: 6px;
+        border-radius: 999px;
+        background: var(--c-surface-3);
+        overflow: hidden;
+        margin-top: 8px;
+      }
+      .bar > span {
+        display: block;
+        height: 100%;
+        border-radius: 999px;
+        background: var(--grad-accent);
+        transition: width 0.4s ease;
+      }
+
+      /* Collapsible sections */
+      details.card {
+        margin-top: 16px;
+        background: var(--c-surface);
+        border: 1px solid var(--c-border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+      }
+      details.card > summary {
+        cursor: pointer;
+        list-style: none;
+        padding: 14px 18px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      details.card > summary::-webkit-details-marker {
+        display: none;
+      }
+      details.card > summary .chev {
+        margin-left: auto;
+        transition: transform 0.2s ease;
+        color: var(--c-text-faint);
+      }
+      details.card[open] > summary .chev {
+        transform: rotate(180deg);
+      }
+      .card__body {
+        padding: 0 18px 18px;
+        color: var(--c-text-muted);
+      }
+      .card__body h4 {
+        color: var(--c-text);
+        margin: 14px 0 6px;
+        font-size: 0.95rem;
+      }
+      .card__body ol,
+      .card__body ul {
+        padding-left: 1.2rem;
+        margin: 6px 0;
+      }
+      .card__body li {
+        margin: 4px 0;
+      }
+      .card__body code {
+        font-family: var(--font-mono);
+        font-size: 0.85em;
+        background: var(--c-surface-2);
+        border: 1px solid var(--c-border);
+        padding: 1px 6px;
+        border-radius: 6px;
+        overflow-wrap: anywhere;
+      }
+      .card__body pre {
+        background: var(--c-surface-2);
+        border: 1px solid var(--c-border);
+        border-radius: var(--radius-sm);
+        padding: 12px 14px;
+        overflow-x: auto;
+        margin: 8px 0;
+      }
+      .card__body pre code {
+        border: 0;
+        background: transparent;
+        padding: 0;
+      }
+
+      /* Local-AI panel */
+      .ai-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 10px;
+      }
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        padding: 5px 12px;
+        border-radius: var(--radius-pill);
+        border: 1px solid var(--c-border);
+        background: var(--c-surface-2);
+        color: var(--c-text-muted);
+      }
+      .pill .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--c-text-faint);
+      }
+      .pill.is-ok {
+        color: var(--c-success);
+        background: var(--c-success-soft);
+        border-color: transparent;
+      }
+      .pill.is-ok .dot {
+        background: var(--c-success);
+      }
+      .pill.is-warn {
+        color: var(--c-warn);
+        background: var(--c-warn-soft);
+        border-color: transparent;
+      }
+      .pill.is-warn .dot {
+        background: var(--c-warn);
+      }
+      select,
+      input[type="range"] {
+        font: inherit;
+        accent-color: var(--c-accent);
+      }
+      select {
+        padding: 8px 12px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--c-border);
+        background: var(--c-surface);
+        color: var(--c-text);
+      }
+      .toast {
+        position: fixed;
+        left: 50%;
+        bottom: 24px;
+        transform: translateX(-50%) translateY(20px);
+        background: var(--c-text);
+        color: var(--c-bg);
+        padding: 10px 18px;
+        border-radius: var(--radius-pill);
+        font-weight: 600;
+        font-size: 0.9rem;
+        box-shadow: var(--shadow-lg);
+        opacity: 0;
+        pointer-events: none;
+        transition:
+          opacity 0.2s ease,
+          transform 0.2s ease;
+        z-index: 80;
+      }
+      .toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+      .note {
+        margin: 18px 0 40px;
+        padding: 14px 16px;
+        border-left: 3px solid var(--c-warn);
+        background: var(--c-warn-soft);
+        border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+        font-size: 0.9rem;
+        color: var(--c-text);
+      }
+      .foot {
+        padding: 24px 0 40px;
+        color: var(--c-text-faint);
+        font-size: 0.82rem;
+        text-align: center;
+        border-top: 1px solid var(--c-border);
+      }
+      .visually-hidden {
+        position: absolute !important;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="top">
+      <div class="wrap top__row">
+        <a class="brand" href="index.html">
+          <svg viewBox="0 0 100 100" fill="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="g" x1="30" y1="16" x2="70" y2="84" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#2F6BFF"></stop>
+                <stop offset="1" stop-color="#7A4DFF"></stop>
+              </linearGradient>
+            </defs>
+            <path d="M66,16 C40,27 40,43 54,50 C40,57 40,73 66,84" stroke="currentColor" stroke-width="6" stroke-linecap="round"></path>
+            <path d="M34,16 C60,27 60,43 46,50 C60,57 60,73 34,84" stroke="url(#g)" stroke-width="6" stroke-linecap="round"></path>
+            <path d="M54,50 C40,57 40,73 66,84" stroke="currentColor" stroke-width="6" stroke-linecap="round"></path>
+          </svg>
+          <span>Symbio<span class="accent">AI</span></span>
+        </a>
+        <div class="top__actions">
+          <button class="iconbtn" id="themeBtn" type="button" title="Switch light / dark" aria-label="Switch light or dark theme">
+            <span aria-hidden="true" id="themeIcon">☾</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <section class="hero">
+        <span class="eyebrow">Offline writing helper</span>
+        <h1>Make stiff, AI-sounding writing read like a person wrote it</h1>
+        <p class="lede">
+          Paste a draft and this cleans out the robotic phrasing — the clichés, the endless
+          &ldquo;Moreover&rdquo;s, the stock filler — so it reads in a plainer, more natural voice.
+          Every edit is highlighted so you stay in control of your own words.
+        </p>
+        <span class="privacy" title="No network requests are made by the built-in cleanup.">
+          <span aria-hidden="true">🔒</span> Runs on your computer. Your text is never uploaded.
+        </span>
+      </section>
+
+      <div class="controls" role="region" aria-label="Rewrite settings">
+        <div class="field">
+          <span class="label" id="strengthLabel">Strength</span>
+          <div class="seg" role="group" aria-labelledby="strengthLabel" id="strengthSeg">
+            <button type="button" data-val="light" aria-pressed="false">Light</button>
+            <button type="button" data-val="standard" aria-pressed="true">Standard</button>
+            <button type="button" data-val="aggressive" aria-pressed="false">Aggressive</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="label" id="registerLabel">Voice</span>
+          <div class="seg" role="group" aria-labelledby="registerLabel" id="registerSeg">
+            <button type="button" data-val="formal" aria-pressed="true">Formal (essays)</button>
+            <button type="button" data-val="casual" aria-pressed="false">Casual</button>
+          </div>
+        </div>
+        <div class="spacer"></div>
+        <button class="btn btn--ghost btn--sm" id="rerollBtn" type="button" title="Try a different set of word choices" disabled>
+          <span aria-hidden="true">🎲</span> Reroll
+        </button>
+        <button class="btn" id="runBtn" type="button">
+          <span aria-hidden="true">✨</span> Clean up the text
+        </button>
+      </div>
+
+      <div class="grid">
+        <section class="pane">
+          <div class="pane__head">
+            <span class="pane__title">Your draft</span>
+            <div class="pane__actions">
+              <span class="pane__meta" id="inMeta">0 words</span>
+              <button class="btn btn--ghost btn--sm" id="pasteBtn" type="button">Paste</button>
+              <button class="btn btn--ghost btn--sm" id="clearBtn" type="button">Clear</button>
+            </div>
+          </div>
+          <textarea
+            id="input"
+            placeholder="Paste your draft here…&#10;&#10;Tip: this works best on a paragraph or a few pages of prose. It cleans wording and phrasing — it will not invent facts or change your meaning."
+            spellcheck="true"
+          ></textarea>
+        </section>
+
+        <section class="pane">
+          <div class="pane__head">
+            <span class="pane__title">Cleaned up</span>
+            <div class="pane__actions">
+              <span class="pane__meta" id="outMeta">&nbsp;</span>
+              <button class="btn btn--ghost btn--sm" id="hlBtn" type="button" aria-pressed="true" title="Show or hide the change highlights">Highlights</button>
+              <button class="btn btn--ghost btn--sm" id="copyBtn" type="button" disabled>Copy</button>
+              <button class="btn btn--ghost btn--sm" id="dlBtn" type="button" disabled>Save</button>
+            </div>
+          </div>
+          <div class="output" id="output" aria-live="polite"></div>
+        </section>
+      </div>
+
+      <div class="scores" id="scores" hidden>
+        <div class="stat">
+          <div class="stat__label">AI-pattern score</div>
+          <div class="stat__val">
+            <span id="scoreBefore">—</span>
+            <span class="to">→</span>
+            <span id="scoreAfter" class="good">—</span>
+          </div>
+          <div class="bar"><span id="scoreBar" style="width: 0%"></span></div>
+          <div class="stat__hint">Lower is better. Counts common AI writing tells.</div>
+        </div>
+        <div class="stat">
+          <div class="stat__label">Readability (ease)</div>
+          <div class="stat__val">
+            <span id="readBefore">—</span>
+            <span class="to">→</span>
+            <span id="readAfter">—</span>
+          </div>
+          <div class="stat__hint">Flesch reading ease. 60+ is comfortable for most readers.</div>
+        </div>
+        <div class="stat">
+          <div class="stat__label">Edits made</div>
+          <div class="stat__val"><span id="editCount">0</span></div>
+          <div class="stat__hint" id="editHint">Words and phrases changed.</div>
+        </div>
+        <div class="stat">
+          <div class="stat__label">Length</div>
+          <div class="stat__val"><span id="lenAfter">0</span> <span class="to">words</span></div>
+          <div class="stat__hint" id="lenHint">Kept close to your original.</div>
+        </div>
+      </div>
+
+      <!-- Optional local-AI deep rewrite -->
+      <details class="card" id="aiCard">
+        <summary>
+          <span aria-hidden="true">🧠</span> Deep rewrite with a local AI (optional, free)
+          <span class="chev" aria-hidden="true">▾</span>
+        </summary>
+        <div class="card__body">
+          <p>
+            The cleanup above is instant and needs nothing installed. For a deeper rewrite — one that
+            re-shapes sentences, not just swaps words — you can run a free AI model
+            <strong>on your own computer</strong> with <a href="https://ollama.com" target="_blank" rel="noopener">Ollama</a>.
+            It still never sends your text anywhere online.
+          </p>
+          <div class="ai-row">
+            <span class="pill" id="aiStatus"><span class="dot"></span> Checking for a local model…</span>
+            <label class="field" for="modelSel" style="gap: 4px">
+              <span class="label">Model</span>
+              <select id="modelSel" disabled>
+                <option>—</option>
+              </select>
+            </label>
+            <label class="field" for="creativity" style="gap: 4px">
+              <span class="label">Creativity: <span id="creaVal">medium</span></span>
+              <input type="range" id="creativity" min="0" max="100" value="45" style="width: 150px" />
+            </label>
+            <button class="btn btn--sm" id="aiRunBtn" type="button" disabled>
+              <span aria-hidden="true">🧠</span> Deep rewrite
+            </button>
+            <button class="btn btn--ghost btn--sm" id="aiStopBtn" type="button" hidden>Stop</button>
+            <button class="btn btn--ghost btn--sm" id="aiRecheckBtn" type="button">Re-check</button>
+          </div>
+          <div id="aiHelp"></div>
+        </div>
+      </details>
+
+      <details class="card">
+        <summary>
+          <span aria-hidden="true">📘</span> How to install a local AI (one-time, ~10 minutes)
+          <span class="chev" aria-hidden="true">▾</span>
+        </summary>
+        <div class="card__body">
+          <ol>
+            <li>Go to <a href="https://ollama.com/download" target="_blank" rel="noopener">ollama.com/download</a> and install Ollama for your computer (Windows, Mac, or Linux). It is free and open-source.</li>
+            <li>
+              Open a terminal (on Windows: <em>Command Prompt</em>) and download a small writing model:
+              <pre><code>ollama pull gemma3:4b</code></pre>
+              On an 8&nbsp;GB laptop <code>gemma3:4b</code> or <code>qwen3:4b-instruct-2507</code> work well. With 16&nbsp;GB, <code>gemma3:12b</code> is noticeably better.
+            </li>
+            <li>
+              Ollama runs quietly in the background from then on. Come back to this page and click
+              <strong>Re-check</strong> — your model appears in the list.
+            </li>
+          </ol>
+          <h4>If it says &ldquo;blocked by the browser&rdquo;</h4>
+          <p>
+            That happens only when you open this file directly (a <code>file://</code> address). It is a one-line fix: let
+            the model accept requests from this page, then restart Ollama.
+          </p>
+          <ul>
+            <li><strong>Windows:</strong> search &ldquo;environment variables&rdquo; → <em>Edit environment variables for your account</em> → New → name <code>OLLAMA_ORIGINS</code>, value <code>*</code> → OK, then quit &amp; reopen Ollama.</li>
+            <li><strong>Mac:</strong> in Terminal run <code>launchctl setenv OLLAMA_ORIGINS "*"</code>, then quit &amp; reopen Ollama from the menu bar.</li>
+            <li><strong>Linux:</strong> <code>sudo systemctl edit ollama.service</code>, add <code>Environment="OLLAMA_ORIGINS=*"</code> under <code>[Service]</code>, then <code>sudo systemctl restart ollama</code>.</li>
+          </ul>
+          <p>The easiest way to avoid this entirely: serve the file over localhost. In the folder with this file run <code>python3 -m http.server 8080</code> and open <code>http://localhost:8080/humanizer.html</code> — no setup needed.</p>
+        </div>
+      </details>
+
+      <div class="note">
+        <strong>An honest note.</strong> This tool makes writing sound more natural — it is not a
+        &ldquo;beat the AI detector&rdquo; button, and no honest tool is. Detectors like Turnitin are
+        unreliable and often flag genuine human writing, but reordering words does not reliably fool
+        them, and passing AI work off as your own can carry real consequences. Use this to polish
+        <em>your own</em> drafts and to keep evidence of your writing process (draft history in
+        Google&nbsp;Docs or Word), not to disguise authorship.
+      </div>
+
+      <details class="card">
+        <summary>
+          <span aria-hidden="true">💡</span> What it changes (and what it never touches)
+          <span class="chev" aria-hidden="true">▾</span>
+        </summary>
+        <div class="card__body">
+          <h4>It rewrites</h4>
+          <ul>
+            <li>Overused AI words (<em>delve, leverage, tapestry, pivotal, robust…</em>) → plain synonyms.</li>
+            <li>Stock phrases (<em>&ldquo;it's important to note that&rdquo;, &ldquo;plays a crucial role in&rdquo;, &ldquo;in today's fast-paced world&rdquo;</em>) → trimmed or dropped.</li>
+            <li>Formulaic sentence openers (<em>Moreover, Furthermore, In conclusion…</em>) → softened or removed.</li>
+            <li>Tell-tale structure: em-dash pile-ups, stacked hedging (<em>&ldquo;may potentially&rdquo;</em>), &ldquo;not only… but also,&rdquo; participle tails (<em>&ldquo;…, highlighting its importance&rdquo;</em>), assistant leftovers (<em>&ldquo;Certainly!&rdquo;</em>), curly quotes and stray invisible characters.</li>
+            <li>Optionally, contractions in <em>Casual</em> voice (<em>&ldquo;do not&rdquo; → &ldquo;don't&rdquo;</em>). Off in <em>Formal</em>.</li>
+          </ul>
+          <h4>It protects</h4>
+          <ul>
+            <li>Anything in &ldquo;quotation marks&rdquo; (direct quotes stay word-for-word), <code>code</code>, URLs, and email addresses.</li>
+            <li>Your meaning, facts, names, and numbers — it changes wording, never claims.</li>
+          </ul>
+          <p>Not sure about an edit? Turn off <strong>Highlights</strong> to read it clean, or just retype any word — it is your draft. English only for the instant cleanup; other languages should use the local-AI deep rewrite.</p>
+        </div>
+      </details>
+    </main>
+
+    <footer class="foot wrap">
+      Built by Symbio AI · Free &amp; offline · Your words stay yours.
+    </footer>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script>
+      "use strict";
+      /* ===================================================================
+         Symbio Humanizer — offline rules engine + optional local-AI rewrite.
+         No dependencies, no network calls except the local Ollama path the
+         user explicitly opts into. Everything below runs in the browser.
+         =================================================================== */
+
+      /* ---- 1. Vetted lexicon --------------------------------------------
+         Sourced from a research pass over documented "AI writing tells".
+         WORD entries may carry guards:
+           skip:  regex tested on a small window around the match — if it hits,
+                  the match is left alone (guards proper nouns / other senses).
+           lower: only match the all-lowercase form (proper-noun collisions).
+           casual: only apply in Casual voice (too informal for essays).
+      ------------------------------------------------------------------- */
+      const WORDS = [
+        { w: "delve", r: ["dig into", "look into", "get into", "explore"] },
+        { w: "delving", r: ["digging into", "looking into", "exploring"] },
+        { w: "delved", r: ["dug into", "looked into", "explored"] },
+        { w: "leverage", r: ["use", "draw on", "make use of"], skip: /(the|of|a|gain\w*|more|financial|competitive|negotiat\w*|political)\s+leverage|leverage\s*[.,)]/i },
+        { w: "leveraging", r: ["using", "drawing on"] },
+        { w: "leverages", r: ["uses", "draws on"] },
+        { w: "leveraged", r: ["used", "drew on"], skip: /(highly|financially)\s+leveraged/i },
+        { w: "utilize", r: ["use"] },
+        { w: "utilizes", r: ["uses"] },
+        { w: "utilizing", r: ["using"] },
+        { w: "utilized", r: ["used"] },
+        { w: "utilization", r: ["use", "usage"] },
+        { w: "showcase", r: ["show", "highlight", "feature"], skip: /a\s+showcase|showcase\s*[.,)]/i },
+        { w: "showcases", r: ["shows", "highlights", "features"] },
+        { w: "showcasing", r: ["showing", "highlighting", "featuring"] },
+        { w: "showcased", r: ["shown", "highlighted", "featured"] },
+        { w: "pivotal", r: ["key", "central", "decisive"] },
+        { w: "multifaceted", r: ["complex", "many-sided", "layered"] },
+        { w: "tapestry", r: ["mix", "blend", "patchwork"] },
+        { w: "testament", r: ["proof", "sign", "evidence"], skip: /(will and testament|old testament|new testament)/i },
+        { w: "foster", r: ["encourage", "build", "support"], skip: /foster\s+(care|parent|child|children|home|famil)/i, lower: true },
+        { w: "fosters", r: ["encourages", "builds", "supports"] },
+        { w: "fostering", r: ["encouraging", "building", "supporting"] },
+        { w: "fostered", r: ["encouraged", "built", "supported"] },
+        { w: "robust", r: ["strong", "solid", "reliable"], skip: /robust\s+to\b/i },
+        { w: "seamless", r: ["smooth", "effortless", "painless"] },
+        { w: "seamlessly", r: ["smoothly", "easily", "without a hitch"] },
+        { w: "crucial", r: ["key", "critical", "important"] },
+        { w: "comprehensive", r: ["complete", "thorough", "full"] },
+        { w: "holistic", r: ["well-rounded", "big-picture", "overall"] },
+        { w: "realm", r: ["area", "field", "world"], skip: /realm\s+of\s+(possibilit|imagination)/i },
+        { w: "landscape", r: ["field", "scene", "market"], skip: /(landscape\s+(orientation|mode|architect|paint|photograph|garden)|physical\s+landscape)/i },
+        { w: "journey", r: ["process", "path", "experience"], skip: /(train|bus|car|road|plane|flight|sea)\s+journey|journey\s+(home|time|to\s+work)/i },
+        { w: "journeys", r: ["paths", "experiences"] },
+        { w: "unlock", r: ["open up", "tap into", "make possible"], skip: /unlock\s+(the\s+(phone|door|screen|achievement)|your\s+(phone|device|account))/i },
+        { w: "unlocks", r: ["opens up", "taps into"] },
+        { w: "unlocking", r: ["opening up", "tapping into"] },
+        { w: "elevate", r: ["improve", "raise", "boost"], skip: /elevate\s+the\s+(leg|arm|foot|limb)/i },
+        { w: "elevates", r: ["improves", "raises", "boosts"] },
+        { w: "elevating", r: ["improving", "raising", "boosting"] },
+        { w: "embark", r: ["start", "begin", "set out"], skip: /embark\s+(the|a\s+(ship|plane|boat))/i },
+        { w: "embarking", r: ["starting", "setting out"] },
+        { w: "underscore", r: ["highlight", "stress", "drive home"], skip: /underscore\s*[_(]|an?\s+underscore/i },
+        { w: "underscores", r: ["highlights", "stresses", "shows"] },
+        { w: "underscored", r: ["highlighted", "stressed"] },
+        { w: "underscoring", r: ["highlighting", "stressing"] },
+        { w: "vibrant", r: ["lively", "busy", "colorful"] },
+        { w: "intricate", r: ["complex", "detailed", "involved"] },
+        { w: "intricacies", r: ["details", "fine points", "complexities"] },
+        { w: "meticulous", r: ["careful", "thorough", "painstaking"] },
+        { w: "meticulously", r: ["carefully", "painstakingly"] },
+        { w: "myriad", r: ["countless", "many", "all kinds of"] },
+        { w: "plethora", r: ["plenty", "a lot", "loads"], casual: true },
+        { w: "paradigm", r: ["model", "approach", "framework"] },
+        { w: "synergy", r: ["teamwork", "combined effect", "cooperation"] },
+        { w: "facilitate", r: ["help", "make easier", "enable"], skip: /facilitate\s+the\s+(meeting|session|workshop|discussion)/i },
+        { w: "facilitates", r: ["helps", "enables"] },
+        { w: "streamline", r: ["simplify", "speed up", "tidy up"] },
+        { w: "streamlines", r: ["simplifies", "speeds up"] },
+        { w: "streamlined", r: ["simplified", "sped up"] },
+        { w: "bolster", r: ["boost", "strengthen", "shore up"] },
+        { w: "bolsters", r: ["boosts", "strengthens"] },
+        { w: "garner", r: ["earn", "gain", "attract"] },
+        { w: "garnered", r: ["earned", "gained", "attracted"] },
+        { w: "harness", r: ["use", "tap into", "put to work"], skip: /(a|the|climbing|safety|horse|body)\s+harness/i, lower: true },
+        { w: "harnessing", r: ["using", "tapping into"] },
+        { w: "cultivate", r: ["build", "develop", "grow"], skip: /cultivate\s+(crops|land|soil|plants)/i },
+        { w: "cultivating", r: ["building", "developing", "growing"] },
+        { w: "innovative", r: ["new", "original", "inventive"] },
+        { w: "transformative", r: ["far-reaching", "game-changing", "profound"] },
+        { w: "groundbreaking", r: ["new", "first of its kind", "major"] },
+        { w: "cutting-edge", r: ["latest", "newest", "advanced"] },
+        { w: "state-of-the-art", r: ["latest", "most advanced", "top-end"] },
+        { w: "revolutionize", r: ["change", "transform", "reshape"] },
+        { w: "revolutionizes", r: ["changes", "transforms", "reshapes"] },
+        { w: "unprecedented", r: ["new", "record", "never seen before"] },
+        { w: "paramount", r: ["most important", "critical"], lower: true },
+        { w: "imperative", r: ["essential", "necessary", "a must"], skip: /imperative\s+(mood|language|programming|form)/i },
+        { w: "vital", r: ["important", "essential", "key"], skip: /vital\s+(sign|organ)|vitals/i },
+        { w: "integral", r: ["essential", "core", "built-in"], skip: /integral\s+(calculus|of|sign)|definite\s+integral/i },
+        { w: "profound", r: ["deep", "major", "striking"] },
+        { w: "remarkable", r: ["striking", "impressive", "unusual"] },
+        { w: "significantly", r: ["much", "a lot", "noticeably"], skip: /statistically\s+significant/i },
+        { w: "substantial", r: ["large", "big", "real"] },
+        { w: "enhance", r: ["improve", "boost", "sharpen"] },
+        { w: "enhances", r: ["improves", "boosts"] },
+        { w: "enhancing", r: ["improving", "boosting"] },
+        { w: "enhanced", r: ["improved", "boosted"] },
+        { w: "amplify", r: ["boost", "increase", "turn up"], skip: /amplif\w*\s+(signal|sound|audio|voltage)/i },
+        { w: "augment", r: ["add to", "expand", "boost"], skip: /augmented\s+reality/i },
+        { w: "encompass", r: ["cover", "include", "take in"] },
+        { w: "encompasses", r: ["covers", "includes"] },
+        { w: "exemplify", r: ["show", "illustrate", "typify"] },
+        { w: "exemplifies", r: ["shows", "illustrates"] },
+        { w: "epitomize", r: ["sum up", "capture", "define"] },
+        { w: "epitomizes", r: ["sums up", "captures", "defines"] },
+        { w: "embody", r: ["capture", "represent", "stand for"] },
+        { w: "embodies", r: ["captures", "represents"] },
+        { w: "evoke", r: ["bring up", "call to mind", "stir"] },
+        { w: "evokes", r: ["brings up", "stirs"] },
+        { w: "resonate", r: ["connect", "ring true", "strike a chord"], skip: /resonat\w*\s+(frequency|at\s+\d)/i },
+        { w: "resonates", r: ["connects", "rings true"] },
+        { w: "captivate", r: ["grab", "hook", "charm"] },
+        { w: "captivating", r: ["gripping", "charming"] },
+        { w: "compelling", r: ["convincing", "strong", "gripping"], skip: /compelling\s+(interest|reason\s+of\s+law|state\s+interest)/i },
+        { w: "invaluable", r: ["extremely useful", "priceless", "a huge help"] },
+        { w: "indispensable", r: ["essential", "necessary"] },
+        { w: "unparalleled", r: ["unmatched", "one of a kind"] },
+        { w: "unwavering", r: ["steady", "firm", "constant"] },
+        { w: "steadfast", r: ["steady", "loyal", "firm"] },
+        { w: "commendable", r: ["impressive", "admirable", "solid"] },
+        { w: "adept", r: ["skilled", "good", "handy"] },
+        { w: "burgeoning", r: ["growing", "booming", "fast-growing"] },
+        { w: "flourish", r: ["thrive", "take off", "do well"], skip: /with\s+a\s+flourish|final\s+flourish/i },
+        { w: "flourishes", r: ["thrives", "does well"] },
+        { w: "flourishing", r: ["thriving", "booming"] },
+        { w: "ever-evolving", r: ["changing", "always changing", "shifting"] },
+        { w: "ever-changing", r: ["changing", "always shifting"] },
+        { w: "fast-paced", r: ["busy", "hectic", "quick-moving"] },
+        { w: "nuanced", r: ["subtle", "layered", "fine-grained"] },
+        { w: "interplay", r: ["interaction", "back-and-forth", "relationship"] },
+        { w: "juxtaposition", r: ["contrast", "side-by-side contrast"] },
+        { w: "dichotomy", r: ["split", "divide", "contrast"] },
+        { w: "spearhead", r: ["lead", "head up", "drive"] },
+        { w: "spearheaded", r: ["led", "headed up", "drove"] },
+        { w: "endeavor", r: ["effort", "attempt", "project"] },
+        { w: "endeavors", r: ["efforts", "attempts"] },
+        { w: "envision", r: ["imagine", "picture", "see"] },
+        { w: "envisions", r: ["imagines", "pictures"] },
+        { w: "culminate", r: ["end", "peak", "wind up"] },
+        { w: "culminates", r: ["ends", "peaks"] },
+        { w: "culminating", r: ["ending", "peaking"] },
+        { w: "catalyst", r: ["spark", "trigger", "driver"], skip: /catalyst\w*\s+(reaction|converter)|chemical\s+catalyst/i },
+        { w: "cornerstone", r: ["foundation", "core", "backbone"] },
+        { w: "linchpin", r: ["key piece", "backbone"] },
+        { w: "beacon", r: ["model", "standout", "guiding light"], skip: /(bluetooth|radio|light|nav\w*)\s+beacon|beacon\s+(hill|light)/i },
+        { w: "quintessential", r: ["classic", "textbook"] },
+        { w: "ubiquitous", r: ["everywhere", "widespread", "common"] },
+        { w: "pertinent", r: ["relevant", "related", "on point"] },
+        { w: "salient", r: ["main", "key", "striking"] },
+        { w: "albeit", r: ["though", "although", "even if"] },
+        { w: "whilst", r: ["while"] },
+        { w: "amongst", r: ["among"] },
+        { w: "amidst", r: ["amid", "in the middle of"] },
+        { w: "undoubtedly", r: ["no doubt", "clearly", "for sure"] },
+        { w: "undeniably", r: ["clearly", "without question"] },
+        { w: "inherently", r: ["by nature", "at heart", "built-in"] },
+        { w: "fundamentally", r: ["at its core", "basically", "deep down"] },
+        { w: "boasts", r: ["has", "offers", "comes with"], skip: /\b(he|she|they|who|you|i)\s+boasts?/i },
+        { w: "elucidate", r: ["explain", "clarify", "spell out"] },
+        { w: "ascertain", r: ["find out", "figure out", "confirm"] },
+        { w: "commence", r: ["start", "begin"] },
+        { w: "commenced", r: ["started", "began"] },
+        { w: "expedite", r: ["speed up", "hurry along"] },
+        { w: "mitigate", r: ["reduce", "ease", "soften"], skip: /mitigat\w*\s+(circumstance|risk|factor|damage)/i },
+        { w: "solidify", r: ["lock in", "firm up", "cement"] },
+        { w: "solidifies", r: ["cements", "firms up"] },
+        { w: "underpin", r: ["support", "hold up", "form the basis of"] },
+        { w: "underpins", r: ["supports", "holds up"] },
+        { w: "nestled", r: ["set", "tucked", "sitting"] },
+        { w: "picturesque", r: ["pretty", "scenic", "postcard-pretty"] },
+        { w: "breathtaking", r: ["stunning", "amazing", "jaw-dropping"] },
+        { w: "bustling", r: ["busy", "lively", "crowded"] },
+        { w: "indelible", r: ["lasting", "permanent", "unforgettable"] },
+        { w: "enduring", r: ["lasting", "long-lived", "durable"] },
+        { w: "curated", r: ["selected", "handpicked", "chosen"] },
+        { w: "crafting", r: ["writing", "creating", "putting together"], skip: /crafting\s+(table|bench|material|recipe|skill)/i },
+        { w: "noteworthy", r: ["worth mentioning", "interesting", "striking"] }
+      ];
+
+      /* PHRASES: matched case-insensitively, longest first. action:
+         delete = drop it (empty preferred); replace/rework = swap in a plain form. */
+      const PHRASES = [
+        { p: "in today's fast-paced world", a: "delete", r: ["", "these days", "today"] },
+        { p: "in today's digital age", a: "delete", r: ["", "now", "these days"] },
+        { p: "in today's world", a: "delete", r: ["", "today", "now"] },
+        { p: "in this day and age", a: "replace", r: ["today", "now"] },
+        { p: "in the modern era", a: "replace", r: ["today", "now"] },
+        { p: "it's important to note that", a: "delete", r: ["", "note that", "keep in mind that"] },
+        { p: "it is important to note that", a: "delete", r: ["", "note that"] },
+        { p: "it's worth noting that", a: "delete", r: ["", "note that"] },
+        { p: "it is worth noting that", a: "delete", r: ["", "note that"] },
+        { p: "it should be noted that", a: "delete", r: ["", "note that"] },
+        { p: "it is interesting to note that", a: "delete", r: ["", "curiously,"] },
+        { p: "it is essential to", a: "rework", r: ["you need to", "be sure to", "make sure you"] },
+        { p: "it is crucial to", a: "rework", r: ["you need to", "make sure you"] },
+        { p: "it is imperative to", a: "rework", r: ["you must", "it's critical to"] },
+        { p: "plays a crucial role in", a: "replace", r: ["is central to", "matters a lot in", "shapes"] },
+        { p: "plays a vital role in", a: "replace", r: ["is central to", "matters a lot in"] },
+        { p: "plays a key role in", a: "replace", r: ["is central to", "helps drive"] },
+        { p: "plays a significant role in", a: "replace", r: ["matters a lot in", "is a big part of"] },
+        { p: "plays a pivotal role in", a: "replace", r: ["is central to", "drives"] },
+        { p: "in the ever-evolving landscape of", a: "rework", r: ["in", "across"] },
+        { p: "in the ever-changing world of", a: "rework", r: ["in", "in today's"] },
+        { p: "in the world of", a: "replace", r: ["in"] },
+        { p: "in the realm of", a: "replace", r: ["in", "when it comes to"] },
+        { p: "serves as a testament to", a: "replace", r: ["shows", "proves", "is proof of"] },
+        { p: "is a testament to", a: "replace", r: ["shows", "proves", "is proof of"] },
+        { p: "stands as a testament to", a: "replace", r: ["shows", "proves"] },
+        { p: "at the end of the day", a: "replace", r: ["in the end", "when it comes down to it", ""] },
+        { p: "when it comes to", a: "replace", r: ["for", "with", "on"] },
+        { p: "a wide range of", a: "replace", r: ["many", "all kinds of", "various"] },
+        { p: "a wide array of", a: "replace", r: ["many", "all sorts of"] },
+        { p: "a vast array of", a: "replace", r: ["many", "a huge number of"] },
+        { p: "a diverse range of", a: "replace", r: ["many different", "all kinds of"] },
+        { p: "a plethora of", a: "replace", r: ["plenty of", "a lot of", "many"] },
+        { p: "a myriad of", a: "replace", r: ["many", "countless", "all sorts of"] },
+        { p: "a multitude of", a: "replace", r: ["many", "a lot of"] },
+        { p: "an abundance of", a: "replace", r: ["plenty of", "lots of"] },
+        { p: "a treasure trove of", a: "replace", r: ["a goldmine of", "packed with", "full of"] },
+        { p: "a rich tapestry of", a: "replace", r: ["a mix of", "a blend of"] },
+        { p: "in order to", a: "replace", r: ["to"] },
+        { p: "due to the fact that", a: "replace", r: ["because", "since"] },
+        { p: "despite the fact that", a: "replace", r: ["although", "even though"] },
+        { p: "in light of the fact that", a: "replace", r: ["because", "since"] },
+        { p: "for the purpose of", a: "replace", r: ["for", "to"] },
+        { p: "with the aim of", a: "replace", r: ["to", "aiming to"] },
+        { p: "in an effort to", a: "replace", r: ["to", "trying to"] },
+        { p: "has the ability to", a: "replace", r: ["can"] },
+        { p: "has the potential to", a: "replace", r: ["could", "might", "can"] },
+        { p: "is able to", a: "replace", r: ["can"] },
+        { p: "navigating the complexities of", a: "rework", r: ["dealing with", "working through"] },
+        { p: "navigate the complexities of", a: "rework", r: ["deal with", "work through"] },
+        { p: "unlock the full potential of", a: "rework", r: ["get the most out of", "make the most of"] },
+        { p: "unlock the potential of", a: "rework", r: ["get the most out of", "tap into"] },
+        { p: "unleash the power of", a: "rework", r: ["use", "get the most from"] },
+        { p: "harness the power of", a: "rework", r: ["use", "tap into"] },
+        { p: "leveraging the power of", a: "replace", r: ["using", "with"] },
+        { p: "by leveraging", a: "replace", r: ["by using", "with"] },
+        { p: "to the next level", a: "replace", r: ["further", "up a notch"] },
+        { p: "a game changer", a: "replace", r: ["a big deal", "a major shift", "a breakthrough"] },
+        { p: "delve into", a: "replace", r: ["dig into", "look at", "get into"] },
+        { p: "delves into", a: "replace", r: ["digs into", "looks at"] },
+        { p: "a deep dive into", a: "replace", r: ["a close look at", "a detailed look at"] },
+        { p: "let's dive in", a: "replace", r: ["let's get started", "here's how it works", ""] },
+        { p: "embark on a journey", a: "rework", r: ["get started", "begin", "set out"] },
+        { p: "it could be argued that", a: "delete", r: ["", "you could say", "some would say"] },
+        { p: "one could argue that", a: "delete", r: ["", "you could argue"] },
+        { p: "needless to say", a: "delete", r: ["", "of course"] },
+        { p: "it goes without saying that", a: "delete", r: ["", "obviously"] },
+        { p: "it's no secret that", a: "delete", r: ["", "clearly"] },
+        { p: "there's no denying that", a: "delete", r: ["", "clearly"] },
+        { p: "first and foremost", a: "replace", r: ["first", "above all"] },
+        { p: "last but not least", a: "replace", r: ["finally", "lastly"] },
+        { p: "in a nutshell", a: "replace", r: ["in short", "briefly"] },
+        { p: "in the grand scheme of things", a: "replace", r: ["overall", "all things considered"] },
+        { p: "each and every", a: "replace", r: ["every", "each"] },
+        { p: "on a daily basis", a: "replace", r: ["daily", "every day"] },
+        { p: "at this point in time", a: "replace", r: ["now", "right now"] },
+        { p: "in the near future", a: "replace", r: ["soon", "before long"] },
+        { p: "in the foreseeable future", a: "replace", r: ["soon", "for now"] },
+        { p: "shed light on", a: "replace", r: ["explain", "clarify", "reveal"] },
+        { p: "sheds light on", a: "replace", r: ["explains", "clarifies", "reveals"] },
+        { p: "paves the way for", a: "replace", r: ["opens the door to", "sets up", "makes room for"] },
+        { p: "pave the way for", a: "replace", r: ["open the door to", "set up"] },
+        { p: "a double-edged sword", a: "rework", r: ["a mixed blessing", "a trade-off"] },
+        { p: "a beacon of", a: "replace", r: ["a model of", "a standout example of"] },
+        { p: "a cornerstone of", a: "replace", r: ["a foundation of", "central to"] },
+        { p: "seamlessly integrates", a: "replace", r: ["works smoothly with", "fits right into"] },
+        { p: "as we navigate", a: "rework", r: ["as we deal with", "as we work through"] },
+        { p: "in a world where", a: "rework", r: ["now that", "since", "when"] },
+        { p: "gone are the days", a: "rework", r: ["no longer", "those days are over"] },
+        { p: "moving forward", a: "replace", r: ["from here", "from now on", "next"] },
+        { p: "at your fingertips", a: "replace", r: ["within reach", "easy to get to"] },
+        { p: "the digital landscape", a: "replace", r: ["the internet", "online", "the web"] },
+        { p: "elevate your", a: "replace", r: ["improve your", "boost your", "step up your"] },
+        { p: "hidden gem", a: "replace", r: ["overlooked spot", "underrated find"] },
+        { p: "nestled in the heart of", a: "replace", r: ["in the middle of", "right in", "in central"] },
+        { p: "boasts a", a: "replace", r: ["has a", "offers a", "comes with a"] },
+        { p: "fostering a culture of", a: "rework", r: ["building a culture of", "encouraging"] },
+        { p: "spearheaded by", a: "replace", r: ["led by", "headed by"] },
+        { p: "cannot be overstated", a: "rework", r: ["is huge", "really matters", "is hard to overstate"] },
+        { p: "as previously mentioned", a: "replace", r: ["as noted", "again"] },
+        { p: "as mentioned earlier", a: "replace", r: ["as noted", "again"] },
+        { p: "the key takeaway", a: "replace", r: ["the main point", "what matters here"] },
+        { p: "key takeaways", a: "replace", r: ["main points", "highlights"] },
+        { p: "actionable insights", a: "replace", r: ["useful ideas", "practical tips"] },
+        { p: "holistic approach", a: "replace", r: ["big-picture approach", "well-rounded approach"] },
+        { p: "comprehensive guide", a: "replace", r: ["complete guide", "full guide"] },
+        { p: "revolutionize the way", a: "replace", r: ["change how", "transform how"] },
+        { p: "transform the way", a: "replace", r: ["change how", "reshape how"] },
+        { p: "strives to", a: "replace", r: ["tries to", "works to", "aims to"] },
+        { p: "is designed to", a: "replace", r: ["is built to", "is meant to", "helps"] },
+        { p: "is poised to", a: "replace", r: ["is set to", "is about to", "looks ready to"] },
+        { p: "continues to evolve", a: "replace", r: ["keeps changing", "is still changing"] },
+        { p: "solidifies its position as", a: "replace", r: ["cements its place as", "confirms it as"] },
+        { p: "tailored to", a: "replace", r: ["made for", "built for", "suited to"] },
+        { p: "empowers you to", a: "replace", r: ["lets you", "helps you"] },
+        { p: "enables you to", a: "replace", r: ["lets you"] },
+        { p: "allows you to", a: "replace", r: ["lets you"] },
+        { p: "ensuring that", a: "replace", r: ["making sure", "so that"] },
+        { p: "meticulously crafted", a: "replace", r: ["carefully made", "carefully built"] },
+        { p: "carefully curated", a: "replace", r: ["handpicked", "hand-selected"] },
+        { p: "look no further than", a: "rework", r: ["try", "consider", "go with"] },
+        { p: "look no further", a: "delete", r: [""] },
+        { p: "with that being said", a: "replace", r: ["that said", "still", "even so"] },
+        { p: "having said that", a: "replace", r: ["that said", "still"] },
+        { p: "in terms of", a: "replace", r: ["for", "in", "regarding"] },
+        { p: "the fact that", a: "replace", r: ["that"] },
+        { p: "akin to", a: "replace", r: ["like", "similar to", "much like"] },
+        /* Stacked hedging (collapse to a single hedge). */
+        { p: "may potentially", a: "replace", r: ["may", "might"] },
+        { p: "might potentially", a: "replace", r: ["might", "may"] },
+        { p: "could potentially", a: "replace", r: ["could", "might"] },
+        { p: "seems to suggest", a: "replace", r: ["suggests"] }
+      ];
+
+      /* OPENERS: matched only at a sentence start (after ^, newline, or . ! ?).
+         The "" option removes the opener and re-capitalizes what follows. */
+      const OPENERS = [
+        { o: "Moreover", r: ["", "Also", "And", "On top of that"] },
+        { o: "Furthermore", r: ["", "Also", "Plus", "Beyond that"] },
+        { o: "Additionally", r: ["", "Also", "Plus"] },
+        { o: "In addition", r: ["", "Also", "On top of that"] },
+        { o: "In conclusion", r: ["", "So", "In the end", "All told"] },
+        { o: "To conclude", r: ["", "In the end"] },
+        { o: "In summary", r: ["", "In short", "So"] },
+        { o: "To summarize", r: ["", "In short"] },
+        { o: "Overall", r: ["", "On the whole", "All in all"] },
+        { o: "Ultimately", r: ["", "In the end", "Eventually"] },
+        { o: "In essence", r: ["", "Basically", "At heart"] },
+        { o: "Essentially", r: ["", "Basically"] },
+        { o: "That being said", r: ["That said", "Still", "Even so"] },
+        { o: "With that said", r: ["That said", "Still"] },
+        { o: "Nevertheless", r: ["Still", "Even so", "But"] },
+        { o: "Nonetheless", r: ["Still", "Even so"] },
+        { o: "However", r: ["But", "Still", "Then again"] },
+        { o: "Therefore", r: ["So", "That's why", "Which means"] },
+        { o: "Thus", r: ["So", "That means"] },
+        { o: "Consequently", r: ["So", "As a result", "Because of that"] },
+        { o: "Hence", r: ["So", "That's why"] },
+        { o: "Subsequently", r: ["Then", "After that", "Later"] },
+        { o: "As such", r: ["So", "Because of that", ""] },
+        { o: "Indeed", r: ["", "In fact", "Really"] },
+        { o: "Notably", r: ["", "In particular"] },
+        { o: "Importantly", r: ["", "The key part:", "What matters here:"] },
+        { o: "Crucially", r: ["", "Above all", "The key point:"] },
+        { o: "Interestingly", r: ["", "Curiously", "Oddly enough"] },
+        { o: "Firstly", r: ["First"] },
+        { o: "Secondly", r: ["Second"] },
+        { o: "Thirdly", r: ["Third"] },
+        { o: "Lastly", r: ["Finally", "Last"] },
+        { o: "Undoubtedly", r: ["", "No doubt", "Clearly"] },
+        { o: "Arguably", r: ["", "You could say", "Probably"] },
+        { o: "By doing so", r: ["That way", "This way"] },
+        { o: "In doing so", r: ["That way", "Along the way"] }
+      ];
+
+      /* Assistant / boilerplate leftovers — deleted outright (whole sentence for the AI-model line). */
+      const LEFTOVERS = [
+        /\bas an ai language model[^.!?]*[.!?]\s*/gi,
+        /\bas a language model[^.!?]*[.!?]\s*/gi,
+        /(^|[\n.!?]\s*)(certainly|sure|of course|great question|absolutely)[!,]\s*/gi,
+        /\bi hope this helps[!.]?\s*/gi,
+        /\bhappy to help[!.]?\s*/gi,
+        /\blet me know if you (have any|need)[^.!?]*[.!?]\s*/gi
+      ];
+
+      /* Contractions — Casual voice only. Ordered longest-first at build time. */
+      const CONTRACTIONS = [
+        { f: "it is important to", t: "it's important to" },
+        { f: "it has been", t: "it's been" },
+        { f: "i have been", t: "I've been" },
+        { f: "you have been", t: "you've been" },
+        { f: "we have been", t: "we've been" },
+        { f: "they have been", t: "they've been" },
+        { f: "should have", t: "should've", part: true },
+        { f: "would have", t: "would've", part: true },
+        { f: "could have", t: "could've", part: true },
+        { f: "might have", t: "might've", part: true },
+        { f: "must have", t: "must've", part: true },
+        { f: "there would", t: "there'd" },
+        { f: "there will", t: "there'll" },
+        { f: "there is", t: "there's", endGuard: true },
+        { f: "that would", t: "that'd" },
+        { f: "that will", t: "that'll" },
+        { f: "they would", t: "they'd" },
+        { f: "they have", t: "they've", part: true },
+        { f: "they will", t: "they'll" },
+        { f: "they are", t: "they're", endGuard: true },
+        { f: "should not", t: "shouldn't" },
+        { f: "would not", t: "wouldn't" },
+        { f: "could not", t: "couldn't" },
+        { f: "have not", t: "haven't" },
+        { f: "has not", t: "hasn't" },
+        { f: "had not", t: "hadn't" },
+        { f: "were not", t: "weren't" },
+        { f: "was not", t: "wasn't" },
+        { f: "are not", t: "aren't" },
+        { f: "is not", t: "isn't" },
+        { f: "does not", t: "doesn't" },
+        { f: "do not", t: "don't" },
+        { f: "did not", t: "didn't" },
+        { f: "will not", t: "won't" },
+        { f: "cannot", t: "can't" },
+        { f: "can not", t: "can't" },
+        { f: "it would", t: "it'd" },
+        { f: "it will", t: "it'll" },
+        { f: "it is", t: "it's", endGuard: true },
+        { f: "that is", t: "that's", endGuard: true },
+        { f: "here is", t: "here's", endGuard: true },
+        { f: "what is", t: "what's", endGuard: true },
+        { f: "who would", t: "who'd" },
+        { f: "who will", t: "who'll" },
+        { f: "who is", t: "who's", endGuard: true },
+        { f: "where is", t: "where's", endGuard: true },
+        { f: "how is", t: "how's", endGuard: true },
+        { f: "when is", t: "when's", endGuard: true },
+        { f: "i am", t: "I'm", endGuard: true },
+        { f: "i will", t: "I'll" },
+        { f: "i would", t: "I'd" },
+        { f: "you are", t: "you're", endGuard: true },
+        { f: "you will", t: "you'll" },
+        { f: "you would", t: "you'd" },
+        { f: "we are", t: "we're", endGuard: true },
+        { f: "we will", t: "we'll" },
+        { f: "we would", t: "we'd" },
+        { f: "he is", t: "he's", endGuard: true },
+        { f: "he will", t: "he'll" },
+        { f: "he would", t: "he'd" },
+        { f: "she is", t: "she's", endGuard: true },
+        { f: "she will", t: "she'll" },
+        { f: "she would", t: "she'd" }
+      ];
+
+      /* Past participles used to gate the "…'ve" contractions safely. */
+      const PARTICIPLES = new Set(
+        (
+          "been done gone seen known made taken given thought found come got gotten said left put kept " +
+          "meant told brought become begun broken chosen written driven eaten fallen felt held led lost " +
+          "met paid read run sent set shown spent stood understood won had heard held kept built bought " +
+          "caught taught sought fought worked played helped tried used liked loved wanted needed asked " +
+          "looked seemed turned started created changed offered decided included continued considered"
+        ).split(/\s+/)
+      );
+
+      const ABBREV = new Set(
+        "mr mrs ms dr prof st jr sr vs etc inc ltd co no fig al e.g i.e u.s u.k ph.d a.m p.m approx dept est".split(/\s+/)
+      );
+
+      /* ---- 2. Small utilities ------------------------------------------- */
+      function mulberry32(seed) {
+        let a = seed >>> 0;
+        return function () {
+          a |= 0;
+          a = (a + 0x6d2b79f5) | 0;
+          let t = Math.imul(a ^ (a >>> 15), 1 | a);
+          t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+      }
+      function esc(s) {
+        return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      }
+      function matchCase(sample, repl) {
+        if (!repl) return repl;
+        if (/^[A-Z]/.test(sample)) return repl.charAt(0).toUpperCase() + repl.slice(1);
+        return repl;
+      }
+      function pick(rng, arr) {
+        return arr[Math.floor(rng() * arr.length)];
+      }
+
+      /* Protect quotes, code, URLs and emails behind private-use placeholders so
+         no rule touches them; restore afterwards. */
+      const PH_OPEN = "";
+      const PH_CLOSE = "";
+      function protect(text, store) {
+        const patterns = [
+          /```[\s\S]*?```/g, // fenced code
+          /`[^`\n]+`/g, // inline code
+          /\bhttps?:\/\/[^\s)]+/gi, // urls
+          /\bwww\.[^\s)]+/gi,
+          /\b[\w.+-]+@[\w-]+\.[\w.-]+\b/g, // emails
+          /“[^”]*”/g, // curly double quotes “…”
+          /‘[^’]*’/g, // curly single quotes ‘…’
+          /"[^"\n]{0,600}"/g // straight double-quoted spans
+        ];
+        for (const re of patterns) {
+          text = text.replace(re, function (m) {
+            const id = store.length;
+            store.push(m);
+            return PH_OPEN + id + PH_CLOSE;
+          });
+        }
+        return text;
+      }
+      function restore(text, store) {
+        return text.replace(new RegExp(PH_OPEN + "(\\d+)" + PH_CLOSE, "g"), function (_, id) {
+          return store[+id];
+        });
+      }
+      const PH_ANY = new RegExp(PH_OPEN + "\\d+" + PH_CLOSE);
+
+      function normalizeUnicode(t) {
+        return t
+          .replace(/\r\n?/g, "\n")
+          .replace(/[‘’‛]/g, "'")
+          .replace(/[“”‟]/g, '"')
+          .replace(/…/g, "...")
+          .replace(/[   ]/g, " ")
+          .replace(/[​‌‍⁠﻿]/g, "")
+          .replace(/[‐‑]/g, "-")
+          .replace(/[‒–]/g, "-"); // figure/en dash → hyphen (em dash handled separately)
+      }
+
+      /* Sentence-start boundary, allowing a leading markdown marker (bullet,
+         heading, ordered-list, blockquote) at the document start or after a
+         newline, or a normal sentence ender. */
+      const MD_MARK = "(?:[-*+]\\s+|#{1,6}\\s+|\\d+[.)]\\s+|>\\s+)?";
+      const SENT_START = "(^\\s*" + MD_MARK + "|[\\n\\r]\\s*" + MD_MARK + "|[.!?][\"')\\]]?\\s+)";
+
+      /* ---- 3. The rules engine ------------------------------------------ */
+      function humanize(original, opts) {
+        const rng = mulberry32(opts.seed);
+        const casual = opts.register === "casual";
+        const strength = opts.strength; // light | standard | aggressive
+        const doWords = strength !== "light";
+        const doStructure = strength !== "light";
+        const aggressive = strength === "aggressive";
+        const wordProb = aggressive ? 0.97 : 0.82;
+        const openerDeleteBoost = aggressive ? 0.62 : 0.5;
+
+        const store = [];
+        let t = normalizeUnicode(original);
+        t = protect(t, store);
+
+        /* 3a. Assistant leftovers first. */
+        for (const re of LEFTOVERS) t = t.replace(re, "$1");
+
+        /* 3b. Phrases (longest first). */
+        for (const ph of PHRASES) {
+          const re = new RegExp("\\b" + esc(ph.p) + "\\b", "gi");
+          t = t.replace(re, function (m, offset, full) {
+            const before = full.slice(Math.max(0, offset - 2), offset);
+            const choices = ph.r.filter((x) => x.indexOf("...") === -1);
+            if (!choices.length) return m;
+            let repl = pick(rng, choices);
+            if (repl === "") {
+              // Deletion. tidy() re-capitalizes the following sentence start.
+              void before;
+              return "";
+            }
+            return matchCase(m, repl);
+          });
+        }
+
+        /* 3c. Openers at sentence starts. */
+        for (const op of OPENERS) {
+          const re = new RegExp(SENT_START + "(" + esc(op.o) + "),?\\s+", "g");
+          t = t.replace(re, function (whole, lead, word) {
+            const deleteOpt = op.r.indexOf("") !== -1 && rng() < openerDeleteBoost;
+            let repl = deleteOpt ? "" : pick(rng, op.r.filter((x) => x !== "" || op.r.length === 1));
+            if (repl === undefined) repl = "";
+            if (repl === "") return lead; // drop opener; lead keeps the sentence boundary for tidy()
+            return lead + matchCase(word, repl) + (repl.endsWith(":") ? " " : ", ");
+          });
+        }
+
+        /* 3d. Individual words (Standard+). */
+        if (doWords) {
+          for (const wd of WORDS) {
+            if (wd.casual && !casual) continue;
+            const flags = wd.lower ? "g" : "gi";
+            const re = new RegExp("\\b" + esc(wd.w) + "\\b", flags);
+            t = t.replace(re, function (m, offset, full) {
+              const win = full.slice(Math.max(0, offset - 14), offset + m.length + 16);
+              if (wd.skip && wd.skip.test(win)) return m;
+              // proper-noun guard: capitalized, not at sentence start, and not our own capital-start word
+              const prev = full.slice(Math.max(0, offset - 2), offset);
+              const midSentenceCap = /^[A-Z]/.test(m) && !/(^|[\n>.!?]\s?)$/.test(prev) && !wd.lower;
+              if (midSentenceCap) return m;
+              if (rng() > wordProb) return m;
+              return matchCase(m, pick(rng, wd.r));
+            });
+          }
+        }
+
+        /* 3e. Structural tells (Standard+). */
+        if (doStructure) {
+          // "not only X but also Y" → "X, and Y"
+          t = t.replace(/\bnot only\b\s+(.+?),?\s+but also\s+/gi, "$1, and ");
+          // present-participle tail clauses bolted on with a comma
+          t = t.replace(
+            /,\s+(highlighting|showcasing|demonstrating|underscoring|emphasizing|reflecting|solidifying|illustrating|reinforcing|signaling)\b[^.!?\n]*(?=[.!?\n]|$)/gi,
+            ""
+          );
+          // signposting roadmap sentences
+          t = t.replace(
+            new RegExp(SENT_START + "in this (?:article|post|guide|blog|section|piece|essay|paper),?\\s+we(?:'ll| will)?[^.!?\\n]*[.!?]\\s*", "gi"),
+            "$1"
+          );
+          // Em-dash budget: convert spaced em dashes to comma / period.
+          let emCount = 0;
+          t = t.replace(/\s*—\s*/g, function () {
+            emCount++;
+            if (emCount === 1 && !aggressive) return " — "; // allow one
+            return rng() < 0.5 ? ", " : ". "; // tidy() capitalizes after the new period
+          });
+          // Semicolons in prose → period + capital (skip protected spans).
+          t = t.replace(/([a-z0-9])\s*;\s+(?=[a-z])/g, function (mm, a) {
+            return a + ". "; // tidy() capitalizes after the new period
+          });
+        }
+
+        /* 3f. Contractions (Casual only). */
+        if (casual) {
+          for (const c of CONTRACTIONS) {
+            const re = new RegExp("\\b" + esc(c.f) + "\\b", "gi");
+            t = t.replace(re, function (m, offset, full) {
+              if (rng() > 0.8) return m; // leave ~20% uncontracted (uniformity is its own tell)
+              const after = full.slice(offset + m.length).replace(/^\s+/, "");
+              if (c.endGuard && /^[.,!?;:)]/.test(after)) return m; // clause-final "…, that is."
+              if (c.part) {
+                const nextWord = (after.match(/^[A-Za-z']+/) || [""])[0].toLowerCase();
+                if (!PARTICIPLES.has(nextWord)) return m; // "could have a point" must stay
+              }
+              return matchCase(m, c.t);
+            });
+          }
+        }
+
+        /* 3g. Restore protected spans, then tidy up. */
+        t = tidy(t);
+        t = restore(t, store);
+        return t;
+      }
+
+      /* Collapse whitespace and stray punctuation left by deletions, then
+         re-capitalize sentence starts. Order matters: orphan punctuation is
+         stripped BEFORE capitalization, so a comma left by a deleted opener
+         does not block the following word from being capitalized. */
+      function tidy(t) {
+        t = t
+          .replace(/[ \t]{2,}/g, " ")
+          .replace(/ +([,.;:!?])/g, "$1")
+          // Add a missing space after , ; : ! ? — but NOT after "." (would split
+          // e.g. / i.e. / U.S. / decimals). Sentence splits already add "." + space.
+          .replace(/([,;:!?])(?=[A-Za-z])/g, "$1 ")
+          .replace(/\(\s+/g, "(")
+          .replace(/\s+\)/g, ")")
+          .replace(/[ \t]+\n/g, "\n")
+          .replace(/\n{3,}/g, "\n\n");
+        // Remove an orphan comma/semicolon left at a sentence start by a deletion.
+        t = t
+          .replace(/(^|\n)[ \t]*[,;][ \t]*/g, "$1")
+          .replace(/([.!?]["')\]]?[ \t]+)[,;][ \t]*/g, "$1");
+        // Capitalize the first letter of the document and of each line, looking
+        // past any leading markdown marker (bullet / heading / quote).
+        const lineStart = new RegExp("(^|\\n)([ \\t]*" + MD_MARK + ")([a-z])", "g");
+        t = t.replace(lineStart, (m, lead, ws, c) => lead + ws + c.toUpperCase());
+        // Capitalize after sentence enders, skipping known abbreviations.
+        t = t.replace(/([.!?]["')\]]?\s+)([a-z])/g, function (m, sep, c, offset, full) {
+          // offset points at the sentence-ending punctuation, so `before` ends with
+          // the preceding token minus its final period — grab that trailing word to
+          // detect abbreviations (Dr, e.g, U.S) that should not start a new sentence.
+          const before = full.slice(0, offset);
+          const lastWord = (before.match(/([A-Za-z][A-Za-z.]*)$/) || [, ""])[1]
+            .toLowerCase()
+            .replace(/\.+$/, "");
+          if (ABBREV.has(lastWord)) return m;
+          return sep + c.toUpperCase();
+        });
+        return t.replace(/[ \t]+$/gm, "").trim();
+      }
+
+      /* ---- 4. Metrics ---------------------------------------------------- */
+      function splitSentences(t) {
+        return t
+          .replace(new RegExp(PH_ANY.source, "g"), " ")
+          .split(/(?<=[.!?])\s+(?=[A-Z0-9"'])/)
+          .map((s) => s.trim())
+          .filter(Boolean);
+      }
+      function countWords(t) {
+        const m = t.trim().match(/[A-Za-z0-9'’-]+/g);
+        return m ? m.length : 0;
+      }
+      function syllables(word) {
+        word = word.toLowerCase().replace(/[^a-z]/g, "");
+        if (word.length <= 3) return word.length ? 1 : 0;
+        word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, "").replace(/^y/, "");
+        const m = word.match(/[aeiouy]{1,2}/g);
+        return m ? m.length : 1;
+      }
+      function fleschEase(t) {
+        const sents = splitSentences(t);
+        const words = (t.match(/[A-Za-z'’]+/g) || []);
+        if (!sents.length || !words.length) return 0;
+        let syl = 0;
+        for (const w of words) syl += syllables(w);
+        const ease = 206.835 - 1.015 * (words.length / sents.length) - 84.6 * (syl / words.length);
+        return Math.max(0, Math.min(120, Math.round(ease)));
+      }
+      // AI-pattern score: 0 (very human) … 100 (very AI-like). Heuristic only.
+      function aiScore(t) {
+        const words = Math.max(1, countWords(t));
+        const per = (n, unit) => (n / words) * unit;
+        const sents = splitSentences(t);
+        const lens = sents.map(countWords).filter((n) => n > 0);
+        // cliché words / phrases
+        let cliche = 0;
+        for (const wd of WORDS) if (new RegExp("\\b" + esc(wd.w) + "\\b", "i").test(t)) cliche += (t.match(new RegExp("\\b" + esc(wd.w) + "\\b", "gi")) || []).length;
+        let phraseHits = 0;
+        for (const ph of PHRASES) phraseHits += (t.match(new RegExp("\\b" + esc(ph.p) + "\\b", "gi")) || []).length;
+        // sentence-initial connectives
+        let openerHits = 0;
+        for (const op of OPENERS) openerHits += (t.match(new RegExp(SENT_START + esc(op.o) + "\\b", "gi")) || []).length;
+        const connectiveRatio = sents.length ? openerHits / sents.length : 0;
+        // punctuation & structure
+        const emDash = (t.match(/—/g) || []).length;
+        const semis = (t.match(/;/g) || []).length;
+        const triads = (t.match(/\b\w+,\s+\w+,\s+and\s+\w+\b/gi) || []).length;
+        const tails = (t.match(/,\s+(highlighting|showcasing|demonstrating|underscoring|emphasizing|reflecting|solidifying|illustrating|reinforcing)\b/gi) || []).length;
+        // burstiness: low stddev of sentence length ⇒ more AI-like
+        let uniform = 0;
+        if (lens.length >= 4) {
+          const mean = lens.reduce((a, b) => a + b, 0) / lens.length;
+          const sd = Math.sqrt(lens.reduce((a, b) => a + (b - mean) * (b - mean), 0) / lens.length);
+          uniform = Math.max(0, 1 - sd / 8); // sd<8 words starts to look uniform
+        }
+        let score = 0;
+        score += Math.min(30, per(cliche, 1000) * 4.2); // vocabulary tells
+        score += Math.min(20, phraseHits * 6); // stock phrases
+        score += Math.min(18, connectiveRatio * 45); // transition addiction
+        score += Math.min(12, per(emDash, 1000) * 9); // em-dash rate
+        score += Math.min(6, per(semis, 1000) * 5); // semicolons
+        score += Math.min(6, triads * 3); // rule-of-three
+        score += Math.min(8, tails * 4); // participle tails
+        score += uniform * 14; // uniform rhythm
+        return Math.max(0, Math.min(100, Math.round(score)));
+      }
+
+      /* ---- 5. Word-level diff for highlighting --------------------------- */
+      function tokenize(t) {
+        return t.match(/\s+|[^\s]+/g) || [];
+      }
+      function htmlEscape(s) {
+        return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      }
+      function diffHtml(before, after) {
+        const A = tokenize(before);
+        const B = tokenize(after);
+        const n = A.length,
+          m = B.length;
+        // LCS table (guard against pathological sizes)
+        if (n * m > 4000000) return htmlEscape(after);
+        const dp = new Uint32Array((n + 1) * (m + 1));
+        const W = m + 1;
+        for (let i = n - 1; i >= 0; i--) {
+          for (let j = m - 1; j >= 0; j--) {
+            dp[i * W + j] =
+              A[i] === B[j] ? dp[(i + 1) * W + j + 1] + 1 : Math.max(dp[(i + 1) * W + j], dp[i * W + j + 1]);
+          }
+        }
+        let i = 0,
+          j = 0,
+          out = "",
+          changed = 0;
+        let buf = "";
+        const flush = () => {
+          if (buf) {
+            out += "<mark>" + htmlEscape(buf) + "</mark>";
+            buf = "";
+          }
+        };
+        while (j < m) {
+          if (i < n && A[i] === B[j]) {
+            flush();
+            out += htmlEscape(B[j]);
+            i++;
+            j++;
+          } else if (i < n && dp[(i + 1) * W + j] >= dp[i * W + j + 1]) {
+            i++; // token only in original (deletion) — skip
+          } else {
+            if (/\S/.test(B[j])) changed++;
+            buf += B[j];
+            j++;
+          }
+        }
+        flush();
+        return { html: out, changed };
+      }
+
+      /* ---- 6. UI wiring -------------------------------------------------- */
+      const $ = (id) => document.getElementById(id);
+      const input = $("input"),
+        output = $("output");
+      const state = { strength: "standard", register: "formal", seed: 12345, last: null };
+      const LS_TEXT = "symbio-humanizer-draft";
+
+      function toast(msg) {
+        const el = $("toast");
+        el.textContent = msg;
+        el.classList.add("show");
+        clearTimeout(el._t);
+        el._t = setTimeout(() => el.classList.remove("show"), 1800);
+      }
+
+      // Theme toggle (shares the site's storage key).
+      function currentTheme() {
+        const attr = document.documentElement.getAttribute("data-theme");
+        if (attr) return attr;
+        return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      }
+      function syncThemeIcon() {
+        $("themeIcon").textContent = currentTheme() === "dark" ? "☀" : "☾";
+      }
+      $("themeBtn").addEventListener("click", () => {
+        const next = currentTheme() === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", next);
+        try {
+          localStorage.setItem("symbio-theme", next);
+        } catch (e) {
+          /* ignore */
+        }
+        syncThemeIcon();
+      });
+      syncThemeIcon();
+
+      // Segmented controls.
+      function wireSeg(segId, key, after) {
+        const seg = $(segId);
+        seg.addEventListener("click", (e) => {
+          const b = e.target.closest("button");
+          if (!b) return;
+          [...seg.querySelectorAll("button")].forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+          state[key] = b.dataset.val;
+          if (after) after();
+        });
+      }
+      wireSeg("strengthSeg", "strength", () => {
+        if (state.last) run(false);
+      });
+      wireSeg("registerSeg", "register", () => {
+        if (state.last) run(false);
+      });
+
+      function updateInMeta() {
+        $("inMeta").textContent = countWords(input.value) + " words";
+      }
+      input.addEventListener("input", () => {
+        updateInMeta();
+        try {
+          localStorage.setItem(LS_TEXT, input.value);
+        } catch (e) {
+          /* ignore */
+        }
+      });
+
+      function run(newSeed) {
+        const src = input.value.trim();
+        if (!src) {
+          toast("Paste a draft first.");
+          input.focus();
+          return;
+        }
+        if (newSeed) state.seed = (state.seed * 1664525 + 1013904223) >>> 0;
+        const result = humanize(src, { seed: state.seed, strength: state.strength, register: state.register });
+        state.last = { src, result };
+        renderOutput(src, result);
+        const sb = aiScore(src),
+          sa = aiScore(result);
+        const rb = fleschEase(src),
+          ra = fleschEase(result);
+        $("scoreBefore").textContent = sb;
+        const saEl = $("scoreAfter");
+        saEl.textContent = sa;
+        saEl.className = sa <= sb ? "good" : "warn";
+        $("scoreBar").style.width = 100 - sa + "%";
+        $("readBefore").textContent = rb;
+        $("readAfter").textContent = ra;
+        $("lenAfter").textContent = countWords(result);
+        $("scores").hidden = false;
+        $("copyBtn").disabled = false;
+        $("dlBtn").disabled = false;
+        $("rerollBtn").disabled = false;
+      }
+
+      function renderOutput(src, result) {
+        const d = diffHtml(src, result);
+        output.innerHTML = typeof d === "string" ? d : d.html;
+        const changed = typeof d === "string" ? 0 : d.changed;
+        $("editCount").textContent = changed;
+        $("outMeta").textContent = countWords(result) + " words";
+      }
+
+      $("runBtn").addEventListener("click", () => run(false));
+      $("rerollBtn").addEventListener("click", () => run(true));
+      $("hlBtn").addEventListener("click", (e) => {
+        document.body.classList.toggle("no-highlight");
+        const on = !document.body.classList.contains("no-highlight");
+        e.currentTarget.setAttribute("aria-pressed", String(on));
+      });
+      $("clearBtn").addEventListener("click", () => {
+        input.value = "";
+        output.innerHTML = "";
+        state.last = null;
+        $("scores").hidden = true;
+        $("copyBtn").disabled = $("dlBtn").disabled = $("rerollBtn").disabled = true;
+        updateInMeta();
+        try {
+          localStorage.removeItem(LS_TEXT);
+        } catch (e) {
+          /* ignore */
+        }
+        input.focus();
+      });
+      $("pasteBtn").addEventListener("click", async () => {
+        try {
+          const txt = await navigator.clipboard.readText();
+          if (txt) {
+            input.value = txt;
+            updateInMeta();
+            input.dispatchEvent(new Event("input"));
+            toast("Pasted.");
+          }
+        } catch (e) {
+          toast("Press Ctrl/Cmd+V to paste.");
+          input.focus();
+        }
+      });
+      $("copyBtn").addEventListener("click", async () => {
+        if (!state.last) return;
+        try {
+          await navigator.clipboard.writeText(state.last.result);
+          toast("Copied clean text.");
+        } catch (e) {
+          const r = document.createRange();
+          r.selectNodeContents(output);
+          const sel = getSelection();
+          sel.removeAllRanges();
+          sel.addRange(r);
+          toast("Selected — press Ctrl/Cmd+C.");
+        }
+      });
+      $("dlBtn").addEventListener("click", () => {
+        if (!state.last) return;
+        const blob = new Blob([state.last.result], { type: "text/plain;charset=utf-8" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "humanized.txt";
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+      });
+
+      // Restore autosaved draft.
+      try {
+        const saved = localStorage.getItem(LS_TEXT);
+        if (saved) input.value = saved;
+      } catch (e) {
+        /* ignore */
+      }
+      updateInMeta();
+
+      /* ---- 7. Optional local-AI (Ollama) -------------------------------- */
+      const OLLAMA = "http://localhost:11434";
+      let aiController = null;
+
+      function setAiStatus(cls, text) {
+        const el = $("aiStatus");
+        el.className = "pill" + (cls ? " " + cls : "");
+        el.innerHTML = '<span class="dot"></span> ' + text;
+      }
+      function reachable(ms) {
+        // opaque probe: resolves if the server is up even when CORS would block a real read
+        return fetch(OLLAMA + "/", { mode: "no-cors", signal: AbortSignal.timeout(ms) })
+          .then(() => true)
+          .catch(() => false);
+      }
+      async function detectOllama() {
+        setAiStatus("", "Checking for a local model…");
+        $("aiHelp").innerHTML = "";
+        let up = false;
+        try {
+          const r = await fetch(OLLAMA + "/api/version", { signal: AbortSignal.timeout(1600) });
+          up = r.ok;
+        } catch (e) {
+          up = false;
+        }
+        if (!up) {
+          const there = await reachable(1600);
+          if (there) {
+            setAiStatus("is-warn", "Ollama is running but is blocking this page");
+            $("aiHelp").innerHTML =
+              '<p style="margin-top:8px">Open the &ldquo;How to install a local AI&rdquo; section below and follow the <strong>&ldquo;blocked by the browser&rdquo;</strong> fix (set <code>OLLAMA_ORIGINS</code> to <code>*</code> and restart Ollama), or open this page via <code>http://localhost:8080</code> instead of a file path.</p>';
+          } else {
+            setAiStatus("", "No local model detected (this is optional)");
+            $("aiHelp").innerHTML =
+              '<p style="margin-top:8px">The instant cleanup above already works with nothing installed. To add a deeper rewrite, install Ollama (see the section below) and click <strong>Re-check</strong>.</p>';
+          }
+          $("modelSel").disabled = true;
+          $("aiRunBtn").disabled = true;
+          return;
+        }
+        // list models
+        try {
+          const r = await fetch(OLLAMA + "/api/tags", { signal: AbortSignal.timeout(2500) });
+          const data = await r.json();
+          const models = (data.models || []).map((m) => m.name).filter(Boolean);
+          const sel = $("modelSel");
+          if (!models.length) {
+            setAiStatus("is-warn", "Ollama is running, but no models are installed");
+            $("aiHelp").innerHTML =
+              '<p style="margin-top:8px">Install one from a terminal: <code>ollama pull gemma3:4b</code> then click <strong>Re-check</strong>.</p>';
+            sel.disabled = true;
+            $("aiRunBtn").disabled = true;
+            return;
+          }
+          // rank by preference, then keep the rest
+          const order = ["gemma3:12b", "qwen3:8b", "gemma3:4b", "qwen3:4b-instruct-2507", "qwen2.5:7b", "mistral:7b", "llama3.2:3b"];
+          models.sort((a, b) => {
+            const ia = order.findIndex((o) => a.startsWith(o));
+            const ib = order.findIndex((o) => b.startsWith(o));
+            return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
+          });
+          sel.innerHTML = models.map((m) => '<option value="' + m + '">' + m + "</option>").join("");
+          sel.disabled = false;
+          $("aiRunBtn").disabled = false;
+          setAiStatus("is-ok", "Ready — " + models.length + " local model" + (models.length > 1 ? "s" : ""));
+        } catch (e) {
+          setAiStatus("is-warn", "Could not read the model list");
+          $("aiRunBtn").disabled = true;
+        }
+      }
+
+      $("creativity").addEventListener("input", (e) => {
+        const v = +e.target.value;
+        $("creaVal").textContent = v < 33 ? "low" : v < 66 ? "medium" : "high";
+      });
+      $("aiRecheckBtn").addEventListener("click", detectOllama);
+
+      function splitParagraphs(t) {
+        return t.split(/\n{2,}/);
+      }
+      const AI_SYSTEM =
+        "You are an expert copy editor. Rewrite the user's text so it reads as natural, fluent human writing.\n" +
+        "Rules:\n" +
+        "- Preserve the exact meaning, facts, names, and numbers. Add nothing, omit nothing.\n" +
+        "- Keep roughly the same length and the same paragraph breaks.\n" +
+        "- Keep the original language and point of view.\n" +
+        "- Vary sentence rhythm and word choice; avoid stock AI phrasing (delve, moreover, in conclusion, it's important to note, tapestry, testament).\n" +
+        "- Do not use em dashes.\n" +
+        "- Output ONLY the rewritten text. No preamble, no quotes, no markdown fences, no notes.";
+
+      async function ollamaChat(model, text, temperature, signal) {
+        const res = await fetch(OLLAMA + "/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          signal,
+          body: JSON.stringify({
+            model,
+            messages: [
+              { role: "system", content: AI_SYSTEM },
+              { role: "user", content: "Rewrite this text:\n\n<<<TEXT\n" + text + "\nTEXT>>>" }
+            ],
+            stream: true,
+            think: false,
+            options: { temperature, top_p: 0.95, num_ctx: 8192 },
+            keep_alive: "30m"
+          })
+        });
+        if (!res.ok) {
+          let msg = "Ollama error " + res.status;
+          try {
+            const j = await res.json();
+            if (j.error) msg += ": " + j.error;
+          } catch (e) {
+            /* ignore */
+          }
+          throw new Error(msg);
+        }
+        const reader = res.body.getReader();
+        const dec = new TextDecoder();
+        let buf = "",
+          full = "";
+        for (;;) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buf += dec.decode(value, { stream: true });
+          const lines = buf.split("\n");
+          buf = lines.pop();
+          for (const line of lines) {
+            if (!line.trim()) continue;
+            let obj;
+            try {
+              obj = JSON.parse(line);
+            } catch (e) {
+              continue;
+            }
+            full += (obj.message && obj.message.content) || "";
+          }
+        }
+        return full;
+      }
+      function cleanModelOutput(s) {
+        return s
+          .replace(/^\s*(here('| i)s|sure|certainly)[^\n:]*:\s*/i, "")
+          .replace(/^```[a-z]*\n?|\n?```$/g, "")
+          .replace(/<think>[\s\S]*?<\/think>/gi, "")
+          .trim();
+      }
+
+      $("aiRunBtn").addEventListener("click", async () => {
+        const src = input.value.trim();
+        if (!src) {
+          toast("Paste a draft first.");
+          return;
+        }
+        const model = $("modelSel").value;
+        const temp = 0.4 + (+$("creativity").value / 100) * 0.6; // 0.4 … 1.0
+        aiController = new AbortController();
+        $("aiRunBtn").disabled = true;
+        $("aiStopBtn").hidden = false;
+        const paras = splitParagraphs(src);
+        const runBtnLabel = setAiStatus.bind(null, "", "");
+        try {
+          const outParas = [];
+          for (let k = 0; k < paras.length; k++) {
+            if (!paras[k].trim()) {
+              outParas.push(paras[k]);
+              continue;
+            }
+            setAiStatus("", "Rewriting" + (paras.length > 1 ? " part " + (k + 1) + " of " + paras.length : "") + "…");
+            let rw = await ollamaChat(model, paras[k], temp, aiController.signal);
+            rw = cleanModelOutput(rw);
+            // safety: if the model returned almost nothing, keep the original paragraph
+            if (countWords(rw) < Math.max(3, countWords(paras[k]) * 0.4)) rw = paras[k];
+            outParas.push(rw);
+            output.innerHTML = htmlEscape(outParas.join("\n\n")) + '<span style="opacity:.5">▍</span>';
+          }
+          // Follow the model with a light rules pass to catch residual clichés, then score + diff.
+          let combined = outParas.join("\n\n");
+          combined = humanize(combined, { seed: state.seed, strength: "light", register: state.register });
+          state.last = { src, result: combined };
+          renderOutput(src, combined);
+          const sb = aiScore(src),
+            sa = aiScore(combined);
+          $("scoreBefore").textContent = sb;
+          const saEl = $("scoreAfter");
+          saEl.textContent = sa;
+          saEl.className = sa <= sb ? "good" : "warn";
+          $("scoreBar").style.width = 100 - sa + "%";
+          $("readBefore").textContent = fleschEase(src);
+          $("readAfter").textContent = fleschEase(combined);
+          $("lenAfter").textContent = countWords(combined);
+          $("scores").hidden = false;
+          $("copyBtn").disabled = $("dlBtn").disabled = false;
+          const drift = countWords(combined) / Math.max(1, countWords(src));
+          setAiStatus("is-ok", "Done." + (drift < 0.6 || drift > 1.6 ? " ⚠ Length changed a lot — check the meaning." : " Check the highlighted changes."));
+        } catch (e) {
+          if (e.name === "AbortError") {
+            setAiStatus("is-warn", "Stopped.");
+          } else {
+            setAiStatus("is-warn", String(e.message || e));
+          }
+        } finally {
+          $("aiRunBtn").disabled = false;
+          $("aiStopBtn").hidden = true;
+          aiController = null;
+        }
+      });
+      $("aiStopBtn").addEventListener("click", () => {
+        if (aiController) aiController.abort();
+      });
+
+      // Kick off a detection when the panel is first opened.
+      $("aiCard").addEventListener(
+        "toggle",
+        function () {
+          if (this.open && !this._checked) {
+            this._checked = true;
+            detectOllama();
+          }
+        },
+        false
+      );
+    </script>
+  </body>
+</html>

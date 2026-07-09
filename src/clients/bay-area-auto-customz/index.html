@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark" />
     <meta name="theme-color" content="#070707" />
+    <!-- CSP backstop: the live feed/reviews sections render third-party JSON, so
+         lock scripts to this origin. style 'unsafe-inline' covers the inline
+         style="" positioning attrs; img/connect allow any https for feed media. -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; media-src 'self'; connect-src 'self' https:; base-uri 'self'"
+    />
 
     <title>Bay Area Auto Customz | Starlight Headliners &amp; Custom Auto Lighting</title>
     <meta
@@ -17,7 +24,7 @@
     <!-- Absolute URLs use the current live GitHub Pages address; update this base
          if the site moves to a custom domain (e.g. https://bayareaautocustomz.com/). -->
     <link rel="canonical" href="https://ravikus1457.github.io/Symbio-AI/clients/bay-area-auto-customz/" />
-    <link rel="apple-touch-icon" href="images/logo-badge-gold.jpg" />
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png" />
 
     <meta property="og:type" content="business.business" />
     <meta property="og:site_name" content="Bay Area Auto Customz" />
@@ -33,12 +40,13 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Load fonts without blocking first paint; swap to all media once ready. -->
+    <!-- Load fonts without blocking first paint; app.js flips media to "all"
+         (an inline onload handler would violate the CSP above). -->
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Space+Grotesk:wght@600;700&display=swap"
       media="print"
-      onload="this.media='all'"
+      data-font-link
     />
     <noscript>
       <link
@@ -51,12 +59,13 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "AutoBodyShop",
+        "@type": "AutomotiveBusiness",
         "name": "Bay Area Auto Customz",
         "description": "Starlight headliners, interior and exterior lighting, custom headliners, and butterfly doors.",
         "telephone": "+1-925-536-5086",
         "areaServed": "San Francisco Bay Area, CA",
         "url": "https://ravikus1457.github.io/Symbio-AI/clients/bay-area-auto-customz/",
+        "image": "https://ravikus1457.github.io/Symbio-AI/clients/bay-area-auto-customz/images/starlight-mercedes-wide.jpg",
         "priceRange": "$$",
         "address": { "@type": "PostalAddress", "addressRegion": "CA", "addressLocality": "Walnut Creek", "addressCountry": "US" },
         "sameAs": [
@@ -78,10 +87,10 @@
         <a class="brand" href="#top" aria-label="Bay Area Auto Customz home">
           <img
             class="brand__logo"
-            src="images/logo-badge-gold.webp"
+            src="images/logo-badge-sm.jpg"
             alt="Bay Area Auto Customz logo"
-            width="720"
-            height="576"
+            width="206"
+            height="165"
           />
           <span class="brand__text">
             <strong>Bay Area Auto Customz</strong>
@@ -165,14 +174,15 @@
         </section>
 
         <!-- ===================== STARLIGHT STUDIO ===================== -->
-        <section class="section" id="studio">
+        <section class="section" id="studio" tabindex="-1">
           <div class="section__intro">
             <span class="eyebrow">Interactive starlight designer</span>
             <h2>See your headliner before we build it.</h2>
             <p>
               Start with a blank headliner shaped like the real thing. Tap a kit size to see exactly
               how a 300, 750, or 2,000-star install looks — or switch to design mode and plot stars
-              one by one to map your own constellation. Save the preview, then send it with your quote.
+              one by one to map your own constellation. Save the preview PNG, then attach it when you
+              text or DM us your quote request.
             </p>
           </div>
 
@@ -194,13 +204,14 @@
                   id="headliner"
                   width="1200"
                   height="740"
-                  aria-label="Starlight headliner preview. Use the kit-size buttons to preview star density."
+                  tabindex="0"
+                  aria-label="Starlight headliner preview. Use the kit-size buttons to preview star density. In design mode, use the arrow keys to move the cursor and Enter to place or erase a star."
                 ></canvas>
-                <p class="canvas-hint" data-hint>Pick a kit size on the right to preview the density.</p>
+                <p class="canvas-hint" data-hint>Pick a kit size to preview the density.</p>
               </div>
 
               <div class="studio__foot">
-                <span data-kit-readout>Choose a kit size to begin.</span>
+                <span data-kit-readout role="status">Choose a kit size to begin.</span>
                 <div class="studio__foot-actions">
                   <button class="text-btn" type="button" data-save>Save preview PNG</button>
                   <button class="text-btn" type="button" data-clear>Clear</button>
@@ -571,6 +582,8 @@
                 <img
                   class="tile__media"
                   src="images/starlight-roof-purple.jpg"
+                  srcset="images/starlight-roof-purple-800.jpg 800w, images/starlight-roof-purple.jpg 1400w"
+                  sizes="(max-width: 680px) 92vw, (max-width: 1040px) 46vw, 350px"
                   alt="Purple starlight headliner glowing above the front seats of a Mercedes C-Class"
                   loading="lazy"
                   width="1400"
@@ -589,6 +602,8 @@
                 <img
                   class="tile__media"
                   src="images/starlight-white-ice.jpg"
+                  srcset="images/starlight-white-ice-800.jpg 800w, images/starlight-white-ice.jpg 1400w"
+                  sizes="(max-width: 680px) 92vw, (max-width: 1040px) 46vw, 350px"
                   alt="Ice-white starlight headliner over black leather seats in a Mercedes"
                   loading="lazy"
                   width="1400"
@@ -607,6 +622,8 @@
                 <img
                   class="tile__media"
                   src="images/ambient-door-speaker.jpg"
+                  srcset="images/ambient-door-speaker-800.jpg 800w, images/ambient-door-speaker.jpg 1400w"
+                  sizes="(max-width: 680px) 92vw, (max-width: 1040px) 46vw, 350px"
                   alt="Blue ambient lighting tracing the door panel and glowing speaker grille in a Corvette"
                   loading="lazy"
                   width="1400"
@@ -625,6 +642,8 @@
                 <img
                   class="tile__media"
                   src="images/starlight-mercedes-wide.jpg"
+                  srcset="images/starlight-mercedes-wide-800.jpg 800w, images/starlight-mercedes-wide.jpg 1600w"
+                  sizes="(max-width: 680px) 92vw, (max-width: 1040px) 46vw, 350px"
                   alt="White Mercedes with doors open, starlight headliner lit and logo puddle lights on the shop floor"
                   loading="lazy"
                   width="1600"
@@ -645,6 +664,8 @@
               <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
                 <img
                   src="images/starlight-mercedes-cabin.jpg"
+                  srcset="images/starlight-mercedes-cabin-800.jpg 800w, images/starlight-mercedes-cabin.jpg 1400w"
+                  sizes="(max-width: 680px) 92vw, (max-width: 1040px) 46vw, 350px"
                   alt="Starlight roof over the rear cabin of a Mercedes C-Class"
                   loading="lazy"
                   width="1400"
@@ -657,6 +678,8 @@
               <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
                 <img
                   src="images/starlight-console-white.jpg"
+                  srcset="images/starlight-console-white-800.jpg 800w, images/starlight-console-white.jpg 1400w"
+                  sizes="(max-width: 680px) 92vw, (max-width: 1040px) 46vw, 350px"
                   alt="Lit center console trim with a starlight headliner above in a Mercedes"
                   loading="lazy"
                   width="1400"
@@ -669,6 +692,8 @@
               <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
                 <img
                   src="images/starlight-roof-console.jpg"
+                  srcset="images/starlight-roof-console-800.jpg 800w, images/starlight-roof-console.jpg 1400w"
+                  sizes="(max-width: 680px) 92vw, (max-width: 1040px) 46vw, 350px"
                   alt="Starlight headliner and illuminated dash trim seen from the open driver door"
                   loading="lazy"
                   width="1400"
@@ -681,6 +706,8 @@
               <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
                 <img
                   src="images/starlight-roof-doors.jpg"
+                  srcset="images/starlight-roof-doors-800.jpg 800w, images/starlight-roof-doors.jpg 1400w"
+                  sizes="(max-width: 680px) 92vw, (max-width: 1040px) 46vw, 350px"
                   alt="Star fibers wrapping the roof and pillars of a Mercedes cabin"
                   loading="lazy"
                   width="1400"
@@ -693,6 +720,8 @@
               <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
                 <img
                   src="images/starlight-camaro-blue.jpg"
+                  srcset="images/starlight-camaro-blue-800.jpg 800w, images/starlight-camaro-blue.jpg 1400w"
+                  sizes="(max-width: 680px) 92vw, (max-width: 1040px) 46vw, 350px"
                   alt="Ice-blue starlight headliner over blue leather seats in a Camaro"
                   loading="lazy"
                   width="1400"
@@ -793,15 +822,18 @@
             <h2>Lighting and custom work, done right.</h2>
           </div>
           <div class="services">
-            <article class="service service--feature" data-service="starlight" tabindex="0" role="button" aria-label="Starlight headliners — open the designer">
+            <!-- The two designer-linked cards use a real <button> in the heading so
+                 screen readers keep the h3 + card text (role="button" on the article
+                 would flatten it all into one label). Card clicks bubble from anywhere. -->
+            <article class="service service--feature service--link" data-service="starlight">
               <span class="service__no">01</span>
-              <h3>Starlight headliners</h3>
+              <h3><button class="service__btn" type="button">Starlight headliners</button></h3>
               <p>Individual fiber-optic stars with custom density, color, and patterns. Tap to design yours.</p>
               <strong>Custom quote</strong>
             </article>
-            <article class="service" data-service="shooting" tabindex="0" role="button" aria-label="Shooting stars — open the designer">
+            <article class="service service--link" data-service="shooting">
               <span class="service__no">02</span>
-              <h3>Shooting stars</h3>
+              <h3><button class="service__btn" type="button">Shooting stars</button></h3>
               <p>Animated meteor streaks across the headliner for that high-end effect.</p>
               <strong>Add-on</strong>
             </article>
@@ -924,6 +956,8 @@
                 <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
                   <img
                     src="images/ambient-bmw-green.jpg"
+                  srcset="images/ambient-bmw-green-800.jpg 800w, images/ambient-bmw-green.jpg 1600w"
+                  sizes="(max-width: 680px) 92vw, (max-width: 1040px) 46vw, 350px"
                     alt="Green ambient light lines tracing the dash, doors, and steering wheel of a BMW with a blue footwell glow"
                     loading="lazy"
                     width="1600"
@@ -936,6 +970,8 @@
                 <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
                   <img
                     src="images/ambient-bmw-red.jpg"
+                  srcset="images/ambient-bmw-red-800.jpg 800w, images/ambient-bmw-red.jpg 1400w"
+                  sizes="(max-width: 680px) 92vw, (max-width: 1040px) 46vw, 350px"
                     alt="Rainbow gradient ambient light strip across the dash of a BMW with red leather interior"
                     loading="lazy"
                     width="1400"
@@ -948,6 +984,8 @@
                 <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
                   <img
                     src="images/ambient-bmw-door.jpg"
+                  srcset="images/ambient-bmw-door-800.jpg 800w, images/ambient-bmw-door.jpg 1600w"
+                  sizes="(max-width: 680px) 92vw, (max-width: 1040px) 46vw, 350px"
                     alt="Teal and green ambient lighting along the doors and dash of a white BMW with the door open"
                     loading="lazy"
                     width="1600"
@@ -1043,17 +1081,17 @@
             <article class="review">
               <span class="review__stars" aria-hidden="true">★★★★★</span>
               <p>Great service with Bay Area Auto Customz! Make sure you guys come check them out and get your car done. I came all the way from Oakland.</p>
-              <small>— Corey Dlt · 5 months ago · Google</small>
+              <small>— Corey Dlt · Google review</small>
             </article>
             <article class="review">
               <span class="review__stars" aria-hidden="true">★★★★★</span>
               <p>Overall very clean job — I love how the ambient lighting looks on my Lexus. Professional service and great results!</p>
-              <small>— Nikki Asemi · 1 month ago · Google</small>
+              <small>— Nikki Asemi · Google review</small>
             </article>
             <article class="review">
               <span class="review__stars" aria-hidden="true">★★★★★</span>
               <p>Did an amazing job. Brought in my second car for the stars.</p>
-              <small>— Omar · 7 months ago · Google</small>
+              <small>— Omar · Google review</small>
             </article>
           </div>
           <p class="reviews__source" data-reviews-source hidden></p>
@@ -1113,7 +1151,7 @@
                 <textarea name="details" rows="3" placeholder="Roof color, star density, shooting stars, timing..."></textarea>
               </label>
               <button class="btn btn--gold btn--block" type="submit">Send my quote request</button>
-              <div class="booking__out" data-booking-out role="status" aria-live="polite" hidden></div>
+              <div class="booking__out" data-booking-out role="status" aria-live="polite"></div>
               <p class="booking__fine">No spam. Your details are only used to prepare your quote.</p>
             </form>
           </div>
@@ -1125,10 +1163,11 @@
         <div class="footer__brand">
           <img
             class="brand__logo"
-            src="images/logo-badge-gold.webp"
+            src="images/logo-badge-sm.jpg"
             alt="Bay Area Auto Customz logo"
-            width="720"
-            height="576"
+            width="206"
+            height="165"
+            loading="lazy"
           />
           <div>
             <strong>Bay Area Auto Customz</strong>

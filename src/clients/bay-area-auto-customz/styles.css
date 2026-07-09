@@ -32,8 +32,10 @@
 
 html {
   scroll-behavior: smooth;
-  /* Offset anchor jumps so the sticky header doesn't cover section headings. */
-  scroll-padding-top: 5rem;
+  /* Offset anchor jumps so the sticky header doesn't cover section headings.
+     The wrapped header is up to ~140px tall at laptop widths; app.js refines
+     this to the exact measured height once it loads. */
+  scroll-padding-top: 9.5rem;
 }
 
 body {
@@ -129,6 +131,12 @@ h3 {
   left: 0;
 }
 
+/* Skip-link target: focusable via tabindex="-1" (Safari otherwise drops focus
+   back to the top), but a section doesn't need its own visible ring. */
+#studio:focus {
+  outline: none;
+}
+
 /* ---------------------------------------------------------------- buttons */
 .btn {
   display: inline-flex;
@@ -204,6 +212,9 @@ h3 {
   top: 0;
   z-index: 30;
   display: flex;
+  /* wrap at every width — without this, 681-749px viewports clip the Call
+     button off-screen (the wrap rule used to start only below 680px) */
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
@@ -248,6 +259,7 @@ h3 {
 }
 
 .nav a {
+  white-space: nowrap;
   transition: color 150ms ease;
 }
 
@@ -1026,7 +1038,11 @@ img.tile__media {
 .feed__card:focus-visible {
   transform: translateY(-2px);
   border-color: rgba(255, 221, 138, 0.5);
-  outline: none;
+}
+
+.feed__card:focus-visible {
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 3px;
 }
 
 .feed__media {
@@ -1167,22 +1183,29 @@ img.tile__media {
   transition: transform 160ms ease, border-color 160ms ease;
 }
 
-.service[role="button"] {
+.service--link {
   cursor: pointer;
 }
 
 /* Only the interactive service cards (01/02 open the designer) get the lift,
-   so the static cards don't falsely signal they're clickable. */
-.service[role="button"]:hover {
+   so the static cards don't falsely signal they're clickable. The focus ring
+   lives on the card via :focus-within — the inner heading button is unstyled. */
+.service--link:hover,
+.service--link:focus-within {
   transform: translateY(-3px);
   border-color: rgba(255, 221, 138, 0.4);
 }
 
-.service[role="button"]:focus-visible {
-  transform: translateY(-3px);
-  border-color: rgba(255, 221, 138, 0.4);
+.service--link:focus-within {
   outline: 2px solid var(--gold-bright);
   outline-offset: 2px;
+}
+
+.service__btn {
+  all: unset;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
 }
 
 .service::after {
@@ -1737,8 +1760,15 @@ img.tile__media {
   border: 1px solid var(--line);
   border-radius: 0.8rem;
   background: rgba(255, 255, 255, 0.05);
+  /* 16px minimum — anything smaller makes iOS Safari zoom in on focus and
+     stay zoomed, which wrecks the quote flow for the phone-first audience */
+  font-size: 1rem;
   outline: none;
   transition: border-color 150ms ease;
+}
+
+.booking__form [aria-invalid="true"] {
+  border-color: rgba(255, 111, 72, 0.65);
 }
 
 .booking__form input:focus,
@@ -1757,6 +1787,12 @@ img.tile__media {
   border-radius: 0.8rem;
   background: rgba(63, 208, 137, 0.08);
   font-size: 0.9rem;
+}
+
+/* The live region stays in the DOM (so its first message announces) but
+   collapses visually until it has content. */
+.booking__out:empty {
+  display: none;
 }
 
 .booking__out a {
@@ -2273,9 +2309,10 @@ img.tile__media {
     gap: 0.6rem;
   }
 
-  /* Taller wrapped header on phones needs a bigger anchor offset. */
+  /* The 3-row wrapped phone header is ~190-215px tall (no-JS fallback;
+     app.js measures and sets the exact value). */
   html {
-    scroll-padding-top: 7rem;
+    scroll-padding-top: 13.5rem;
   }
 
   /* Bigger tap targets for the scrollable nav strip. */

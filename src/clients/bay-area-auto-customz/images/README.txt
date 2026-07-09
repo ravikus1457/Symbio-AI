@@ -11,7 +11,9 @@ BRAND SIGNS & LOGOS (from Sergio's real RGB signage)
                          sign is a tap link to Instagram, so the link always works)
   logo-badge-rgb.webp    RGB neon car badge — emblem in the #ambient panel
   logo-badge-gold.webp   gold car badge — the site logo (header + footer)
-  logo-badge-gold.jpg    same badge as JPEG — og:image / link-preview
+  logo-badge-gold.jpg    same badge as JPEG (og:image is now the doors-open reveal
+                         shot starlight-mercedes-wide.jpg); apple-touch-icon.png +
+                         logo-badge-sm.jpg are derived from this badge
 
 INSTAGRAM QR (regenerated — the stylized QR baked into the sign scans poorly)
   qr-instagram-card.png  branded "Scan to follow" card, gold frame + IG glyph —
@@ -79,7 +81,7 @@ ADDING MORE
 LIVE GOOGLE REVIEWS (#reviews — real reviews, auto-updating)
   Google blocks scraping (and their ToS forbids it), so real reviews load from
   a reviews feed. Until one is connected, three representative cards show and
-  the 4.9/66 aggregate is displayed. To pull REAL Google reviews (one-time):
+  the 4.9/69 aggregate is displayed. To pull REAL Google reviews (one-time):
     1. Go to https://featurable.com, create a free Google-reviews widget, and
        connect the Bay Area Auto Customz Google Business Profile.
     2. Copy the widget's JSON feed URL.
@@ -89,8 +91,14 @@ LIVE GOOGLE REVIEWS (#reviews — real reviews, auto-updating)
   (new or legacy) or any JSON array with author / rating / text per review, so
   the Places API works too if a key is preferred.
 
+RESPONSIVE VARIANTS
+  Every gallery/ambient photo has an ~800px "-800.jpg" sibling used via srcset,
+  so phones don't download the full 1400-1600px originals. When adding a photo,
+  also export an 800px copy (ffmpeg -i x.jpg -vf scale=800:-2 -q:v 5 x-800.jpg)
+  and mirror the srcset/sizes attributes from an existing <img>.
+
 NOTES
-  The Google rating (4.9 / 66 reviews) is Sergio's stated number; connect the
-  reviews feed above to show the live figure. The review *quotes* are
-  representative until the feed is connected (or swap in real approved
-  snippets). DIY-kit prices read "Ask for pricing" until Sergio confirms them.
+  The Google rating (4.9 / 69 reviews) matches the live Google listing; the
+  three review quotes are real Google reviews (Corey, Nikki, Omar), shown
+  undated so they can't drift stale — the live feed adds fresh dates when
+  connected. DIY-kit prices read "Ask for pricing" until Sergio confirms them.

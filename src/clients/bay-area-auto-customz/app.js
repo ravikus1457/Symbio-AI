@@ -39,6 +39,26 @@
   const yearEl = $("[data-year]");
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
+  /* ------------------------------------------------------------ web fonts */
+  // The font stylesheet ships with media="print" so it never blocks first
+  // paint; flip it to "all" here (an inline onload= would violate the CSP).
+  $$("link[data-font-link]").forEach((l) => {
+    l.media = "all";
+  });
+
+  /* ------------------------------------------------- sticky-header offset */
+  // The sticky header wraps to 1-3 rows depending on width, so anchor jumps
+  // need a matching scroll offset. CSS carries a generous fallback; this pins
+  // it to the exact measured height.
+  const headerEl = $("[data-header]");
+  function syncScrollPadding() {
+    if (!headerEl) return;
+    const h = Math.ceil(headerEl.getBoundingClientRect().height);
+    if (h > 0) document.documentElement.style.scrollPaddingTop = `${h + 12}px`;
+  }
+  syncScrollPadding();
+  window.addEventListener("resize", syncScrollPadding);
+
   /* ============================ STARLIGHT STUDIO ======================== */
   const canvas = $("#headliner");
   if (canvas) initStudio(canvas);
@@ -142,6 +162,7 @@
       sizeScale: 1, // shrinks stars as density rises so they read as pinpoints
       alphaScale: 1, // eases brightness at high density so it doesn't blow out
       sunroof: els.sunroof ? els.sunroof.checked : true, // toggle the sunroof cut-out
+      kbCursor: null, // keyboard-placement cursor (design mode)
       painting: false,
       lastPoint: null,
       lastPaintAt: 0,
@@ -212,7 +233,17 @@
         state.lines.push({ x1: state.lastPoint.x, y1: state.lastPoint.y, x2: star.x, y2: star.y, color: star.color });
       }
       state.lastPoint = { x: star.x, y: star.y };
-      fieldDirty = true;
+      // When the big-kit cache is active and clean, paint just the new star into
+      // it instead of flagging a full rebake — dragging Paint over a 4,000-star
+      // field would otherwise redraw every star per placed star.
+      if (state.stars.length > CACHE_ABOVE && !fieldDirty) {
+        fctx.globalCompositeOperation = "lighter";
+        drawStar(fctx, star, (0.4 + star.baseA * 0.55) * state.alphaScale);
+        fctx.globalCompositeOperation = "source-over";
+        fctx.globalAlpha = 1;
+      } else {
+        fieldDirty = true;
+      }
       return true;
     }
 
@@ -293,6 +324,9 @@
       state.trails = [];
       state.lastPoint = null;
       fieldDirty = true;
+      // A real Clear also forgets the last kit, so a view-only toggle (like the
+      // sunroof checkbox) can never resurrect a canvas the user just emptied.
+      if (!keepLabel) state.lastKitCount = 0;
       if (!keepLabel && els.pkg) els.pkg.textContent = "Custom starlight layout";
       update();
     }
@@ -451,7 +485,7 @@
       fieldDirty = false;
     }
 
-    function render(time) {
+    function render(time, staticTrails) {
       if (!baseReady) bakeBase();
       ctx.clearRect(0, 0, W, H);
       ctx.drawImage(base, 0, 0);
@@ -478,11 +512,13 @@
 
       // shooting-star trails — a bright head + fading tail that travels along
       // its path and repeats, so they actually streak instead of sitting still.
+      // staticTrails forces the mid-path pose (used by the PNG snapshot so the
+      // meteors the customer added can never be caught mid-gap and missing).
       for (const tr of state.trails) {
         let head, alpha;
-        if (reduceMotion) {
+        if (reduceMotion || staticTrails) {
           head = 0.6;
-          alpha = 0.9; // static streak when motion is reduced
+          alpha = 0.9; // fixed streak pose
         } else {
           const ph = ((time + tr.offset) % tr.cycle) / tr.cycle;
           const active = 0.5; // half the cycle is the streak, half is the gap
@@ -502,15 +538,18 @@
         grad.addColorStop(0.7, tr.color);
         grad.addColorStop(1, "#ffffff");
         ctx.save();
-        ctx.globalAlpha = clamp(alpha, 0, 1);
+        // two-pass stroke instead of shadowBlur — the same glow for a fraction
+        // of the per-frame cost on mid-range phones
         ctx.strokeStyle = grad;
-        ctx.lineWidth = 2.4;
         ctx.lineCap = "round";
-        ctx.shadowColor = tr.color;
-        ctx.shadowBlur = 16;
         ctx.beginPath();
         ctx.moveTo(tx, ty);
         ctx.lineTo(hx, hy);
+        ctx.globalAlpha = clamp(alpha, 0, 1) * 0.35;
+        ctx.lineWidth = 8;
+        ctx.stroke();
+        ctx.globalAlpha = clamp(alpha, 0, 1);
+        ctx.lineWidth = 2.4;
         ctx.stroke();
         ctx.fillStyle = "#ffffff"; // bright head
         ctx.beginPath();
@@ -548,14 +587,38 @@
 
       drawHeadlinerRim();
 
-      // front / rear orientation labels + watermark
-      ctx.fillStyle = "rgba(245, 241, 232, 0.34)";
-      ctx.font = "700 13px Inter, sans-serif";
+      // keyboard cursor (design mode, canvas focused): gold ring + crosshair
+      if (state.mode === "design" && state.kbCursor && document.activeElement === canvas) {
+        const k = state.kbCursor;
+        ctx.save();
+        ctx.strokeStyle = "rgba(255, 221, 138, 0.9)";
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.arc(k.x, k.y, 11, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(k.x - 17, k.y);
+        ctx.lineTo(k.x - 6, k.y);
+        ctx.moveTo(k.x + 6, k.y);
+        ctx.lineTo(k.x + 17, k.y);
+        ctx.moveTo(k.x, k.y - 17);
+        ctx.lineTo(k.x, k.y - 6);
+        ctx.moveTo(k.x, k.y + 6);
+        ctx.lineTo(k.x, k.y + 17);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // front / rear orientation labels + watermark — scaled up when the canvas
+      // is displayed small (phones), otherwise 13px shrinks to ~3px on screen
+      const wmScale = clamp(labelScale, 1, 1.6);
+      ctx.fillStyle = "rgba(245, 241, 232, 0.7)";
+      ctx.font = `700 ${Math.round(13 * labelScale)}px Inter, sans-serif`;
       ctx.textAlign = "center";
-      ctx.fillText("FRONT", PANEL.cx, PANEL.y - 9);
-      ctx.fillText("REAR", PANEL.cx, PANEL.y + PANEL.h + 20);
+      ctx.fillText("FRONT", PANEL.cx, PANEL.y - 7 * labelScale);
+      ctx.fillText("REAR", PANEL.cx, PANEL.y + PANEL.h + 16 * labelScale);
       ctx.fillStyle = "rgba(255, 221, 138, 0.5)";
-      ctx.font = "700 18px Inter, sans-serif";
+      ctx.font = `700 ${Math.round(18 * wmScale)}px Inter, sans-serif`;
       ctx.fillText("BAY AREA AUTO CUSTOMZ · STARLIGHT PREVIEW", W * 0.5, H * 0.965);
       ctx.textAlign = "left";
     }
@@ -563,11 +626,29 @@
     let rafId = 0;
     let needsRender = true;
     let onScreen = true;
+
+    // Canvas CSS size → backing-store scale, cached so render() never reads
+    // layout per frame. Drives the FRONT/REAR label sizing on small screens.
+    let labelScale = 1;
+    function syncLabelScale() {
+      const r = canvas.getBoundingClientRect();
+      if (r.width > 0) labelScale = clamp(W / r.width, 1, 3.2);
+      requestRender();
+    }
+    syncLabelScale();
+    window.addEventListener("resize", syncLabelScale);
+
     function requestRender() {
       needsRender = true;
     }
     function loop(t) {
-      render(t);
+      // Skip the full redraw when nothing on screen animates — a static scene
+      // (no trails, twinkle at 0 or empty roof) costs one no-op check per frame.
+      const animating = state.trails.length > 0 || (state.twinkle > 0 && state.stars.length > 0);
+      if (needsRender || animating) {
+        render(t);
+        needsRender = false;
+      }
       rafId = requestAnimationFrame(loop);
     }
     function startLoop() {
@@ -638,6 +719,37 @@
     window.addEventListener("pointerup", stop);
     canvas.addEventListener("pointercancel", stop);
 
+    // Keyboard star placement (design mode): arrows move a visible cursor,
+    // Enter/Space places (or erases, with the Erase tool). Keeps the designer
+    // usable without a pointer — the canvas is tabbable via tabindex in HTML.
+    const KB_MOVES = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+    canvas.addEventListener("keydown", (ev) => {
+      if (state.mode !== "design") return;
+      if (KB_MOVES[ev.key]) {
+        ev.preventDefault();
+        const step = ev.shiftKey ? 56 : 14;
+        const c = state.kbCursor || { x: PANEL.cx, y: PANEL.y + PANEL.h * 0.75 };
+        c.x = clamp(c.x + KB_MOVES[ev.key][0] * step, PANEL.x, PANEL.x + PANEL.w);
+        c.y = clamp(c.y + KB_MOVES[ev.key][1] * step, PANEL.y, PANEL.y + PANEL.h);
+        state.kbCursor = c;
+        requestRender();
+      } else if (ev.key === "Enter" || ev.key === " ") {
+        ev.preventDefault();
+        if (!state.kbCursor) state.kbCursor = { x: PANEL.cx, y: PANEL.y + PANEL.h * 0.75 };
+        state.lastPoint = null; // keyboard placement never draws paint lines
+        if (state.tool === "erase") {
+          eraseAt(state.kbCursor);
+          update();
+        } else if (addStar(state.kbCursor, { skipLine: true })) {
+          update();
+        }
+      }
+    });
+    canvas.addEventListener("blur", () => {
+      state.kbCursor = null;
+      requestRender();
+    });
+
     /* ----------------------------------------------------- control wiring */
     $$("[data-kit-count]").forEach((btn) => {
       btn.addEventListener("click", () => {
@@ -666,6 +778,7 @@
         if (state.lastKitCount && state.stars.length) {
           fillKit(state.lastKitCount);
           if (els.shooting && els.shooting.checked) addShootingStars();
+          update(); // refresh the "+ shooting stars" note after the re-lay
         }
       });
     });
@@ -675,9 +788,12 @@
         $$("[data-color]").forEach((b) => b.classList.remove("is-active"));
         btn.classList.add("is-active");
         state.color = btn.dataset.color;
-        // recolor existing stars to match the new selection
+        // recolor existing stars — and shooting-star trails — to match
         state.stars.forEach((s) => {
           s.color = resolveColor();
+        });
+        state.trails.forEach((tr) => {
+          tr.color = state.color === "rgb" ? "#f6fbff" : resolveColor();
         });
         fieldDirty = true;
         requestRender();
@@ -686,7 +802,18 @@
 
     if (els.size) {
       els.size.addEventListener("input", () => {
+        // Re-scale the stars already on the canvas too — otherwise the slider
+        // looks dead in the normal kit flow (it only affected future stars).
+        const prev = state.sizeStep;
         state.sizeStep = Number(els.size.value);
+        const delta = state.sizeStep - prev;
+        if (delta && state.stars.length) {
+          state.stars.forEach((s) => {
+            s.r = Math.max(0.6, s.r + delta);
+          });
+          fieldDirty = true;
+          requestRender();
+        }
       });
     }
     if (els.twinkle) {
@@ -706,11 +833,16 @@
       els.sunroof.addEventListener("change", () => {
         state.sunroof = els.sunroof.checked;
         baseReady = false; // re-bake the panel with / without the sunroof
-        // drop any stars now under the sunroof, then even out kit layouts
+        // drop any stars — and their constellation lines — now under the sunroof
         state.stars = state.stars.filter((s) => insidePanel(s));
-        if (state.mode === "kit" && state.lastKitCount) {
+        state.lines = state.lines.filter((l) => insidePanel({ x: l.x1, y: l.y1 }) && insidePanel({ x: l.x2, y: l.y2 }));
+        // Only re-lay a kit that's actually on the canvas (same guard as the
+        // pattern buttons) — otherwise toggling the sunroof would resurrect a
+        // cleared kit or wipe hand-placed additions.
+        if (state.mode === "kit" && state.lastKitCount && state.stars.length) {
           fillKit(state.lastKitCount);
           if (els.shooting && els.shooting.checked) addShootingStars();
+          update(); // refresh the "+ shooting stars" note after the re-lay
         } else {
           fieldDirty = true;
           update();
@@ -730,10 +862,12 @@
           state.tool = "star";
           $$("[data-tool]").forEach((b) => b.classList.toggle("is-active", b.dataset.tool === "star"));
         }
-        if (els.hint && state.stars.length === 0) {
+        // Always keep the hint copy in sync with the mode — update() handles
+        // visibility, so a later Clear can't reveal the wrong mode's text.
+        if (els.hint) {
           els.hint.textContent = design
             ? "Click to place stars · drag with Paint to draw a trail · Erase to remove."
-            : "Pick a kit size on the right to preview the density.";
+            : "Pick a kit size to preview the density.";
         }
       });
     });
@@ -742,11 +876,14 @@
     const saveBtn = $("[data-save]");
     if (saveBtn) {
       saveBtn.addEventListener("click", () => {
-        render(performance.now());
+        // staticTrails: snapshot with every shooting star posed mid-streak, so
+        // the PNG can't catch them mid-gap and invisible
+        render(performance.now(), true);
         const link = document.createElement("a");
         link.download = "bay-area-auto-customz-starlight.png";
         link.href = canvas.toDataURL("image/png");
         link.click();
+        requestRender(); // next frame returns to live animation
       });
     }
     const clearBtn = $("[data-clear]");
@@ -919,26 +1056,33 @@
   }
 
   // Tolerate the common feed shapes (Behold, EmbedSocial, raw arrays, etc.).
+  // Feed URLs come from third-party JSON — only ever link to real web pages.
+  function safeHttpUrl(u) {
+    return typeof u === "string" && /^https?:\/\//i.test(u.trim()) ? u.trim() : null;
+  }
+
   function normalizePosts(data) {
     const raw = Array.isArray(data)
       ? data
       : (data && (data.posts || data.data || data.media || data.items)) || [];
     return raw
+      .filter((p) => p && typeof p === "object")
       .map((p) => {
-        const permalink = p.permalink || p.link || p.url || p.postUrl;
+        const permalink = safeHttpUrl(p.permalink || p.link || p.url || p.postUrl);
         const type = String(p.mediaType || p.media_type || p.type || "").toUpperCase();
         const isVideo = type.includes("VIDEO") || type.includes("REEL");
         const sizes = p.sizes || {};
-        const thumb =
+        const thumb = safeHttpUrl(
           p.thumbnailUrl ||
-          p.thumbnail_url ||
-          p.thumbnail ||
-          (sizes.small && sizes.small.mediaUrl) ||
-          (sizes.medium && sizes.medium.mediaUrl) ||
-          p.mediaUrl ||
-          p.media_url ||
-          p.displayUrl ||
-          p.image;
+            p.thumbnail_url ||
+            p.thumbnail ||
+            (sizes.small && sizes.small.mediaUrl) ||
+            (sizes.medium && sizes.medium.mediaUrl) ||
+            p.mediaUrl ||
+            p.media_url ||
+            p.displayUrl ||
+            p.image
+        );
         const caption = (p.caption || p.title || "").toString();
         const source = /tiktok/i.test(permalink || "") ? "TikTok" : "Instagram";
         return permalink && thumb ? { permalink, thumb, isVideo, caption, source } : null;
@@ -984,7 +1128,7 @@
   // Google blocks scraping, so real reviews load from a reviews feed instead.
   // Point [data-reviews-url] at a free Featurable Google-reviews JSON feed (or
   // a Google Places API response, or any JSON with author/rating/text) and the
-  // real reviews + live 4.9/66 render and stay current. No URL → fallback cards.
+  // real reviews + live 4.9/69 render and stay current. No URL → fallback cards.
   const reviewsRoot = $("[data-reviews-feed]");
   if (reviewsRoot) initReviews(reviewsRoot);
 
@@ -1028,10 +1172,14 @@
       : root.reviews || (root.result && root.result.reviews) || root.data || [];
     const words = { ONE: 1, TWO: 2, THREE: 3, FOUR: 4, FIVE: 5 };
     const reviews = (Array.isArray(arr) ? arr : [])
+      .filter((r) => r && typeof r === "object")
       .map((r) => {
         let rating = r.rating != null ? r.rating : r.starRating != null ? r.starRating : r.stars;
         if (typeof rating === "string") rating = words[rating.toUpperCase()] || Number(rating) || 5;
-        const text = (r.text && (r.text.text || r.text)) || r.comment || r.reviewText || r.review || "";
+        // r.text is a string in legacy Places / a {text} object in the new API —
+        // never let a bare object fall through and render "[object Object]"
+        const rawText = r.text && typeof r.text === "object" ? r.text.text : r.text;
+        const text = (typeof rawText === "string" && rawText) || r.comment || r.reviewText || r.review || "";
         const author =
           r.author_name ||
           (r.reviewer && r.reviewer.displayName) ||
@@ -1077,19 +1225,15 @@
   }
 
   /* ============================ SERVICES ↔ STUDIO ======================= */
-  $$('.service[role="button"]').forEach((card) => {
-    const go = () => {
+  // The clickable cards carry .service--link with a real <button> in the h3;
+  // clicks anywhere on the card (and native Enter/Space on the button) bubble
+  // to this one handler.
+  $$(".service--link").forEach((card) => {
+    card.addEventListener("click", () => {
       const kind = card.dataset.service;
       if (window.__bacStudio) window.__bacStudio.preset(kind);
       const studio = $("#studio");
-      if (studio) studio.scrollIntoView({ behavior: "smooth", block: "start" });
-    };
-    card.addEventListener("click", go);
-    card.addEventListener("keydown", (ev) => {
-      if (ev.key === "Enter" || ev.key === " ") {
-        ev.preventDefault();
-        go();
-      }
+      if (studio) studio.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
     });
   });
 
@@ -1114,7 +1258,7 @@
     }
     if (scroll) {
       const book = $("#book");
-      if (book) book.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (book) book.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
     }
     if (focus && bookingForm) {
       const nameField = bookingForm.querySelector('[name="name"]');
@@ -1132,8 +1276,19 @@
       const service = (data.get("service") || "").toString();
       const details = (data.get("details") || "").toString().trim();
 
+      // Flag the exact missing fields for assistive tech (and clear old flags).
+      bookingForm.querySelectorAll("[aria-invalid]").forEach((el) => el.removeAttribute("aria-invalid"));
       if (!name || !contact || !vehicle) {
-        bookingOut.hidden = false;
+        [
+          ["name", name],
+          ["contact", contact],
+          ["vehicle", vehicle],
+        ].forEach(([field, val]) => {
+          if (!val) {
+            const el = bookingForm.querySelector(`[name="${field}"]`);
+            if (el) el.setAttribute("aria-invalid", "true");
+          }
+        });
         bookingOut.style.borderColor = "rgba(255,111,72,0.5)";
         bookingOut.style.background = "rgba(255,111,72,0.08)";
         bookingOut.textContent = "Please add your name, a phone or email, and your vehicle so we can send a quote.";
@@ -1152,7 +1307,6 @@
       const enc = encodeURIComponent(message);
       const smsHref = `sms:${BUSINESS.tel}?&body=${enc}`;
 
-      bookingOut.hidden = false;
       bookingOut.style.borderColor = "rgba(63,208,137,0.4)";
       bookingOut.style.background = "rgba(63,208,137,0.08)";
       bookingOut.innerHTML =
@@ -1161,7 +1315,23 @@
         `<a class="btn btn--gold btn--sm" href="${smsHref}">Send as text</a>` +
         `<a class="btn btn--ghost btn--sm" href="tel:${BUSINESS.tel}">Call now</a>` +
         `<a class="btn btn--ghost btn--sm" href="${BUSINESS.instagram}" target="_blank" rel="noopener">DM Instagram</a>` +
+        `<button class="btn btn--ghost btn--sm" type="button" data-copy-msg>Copy message</button>` +
         `</span>`;
+      // sms:/tel: links go nowhere on most desktops — give those visitors a
+      // clipboard fallback so the quote text is never trapped in the form.
+      const copyBtn = bookingOut.querySelector("[data-copy-msg]");
+      if (copyBtn) {
+        copyBtn.addEventListener("click", () => {
+          const done = () => {
+            copyBtn.textContent = "Copied — paste it in a text or DM";
+          };
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(message).then(done, done);
+          } else {
+            done();
+          }
+        });
+      }
     });
   }
 
@@ -1337,10 +1507,16 @@
       "We're in the Bay Area — Walnut Creek and the greater East Bay. Reach out and we'll sort out scheduling.",
     hours:
       `We open at 9:30 AM. The fastest way to reach us is call or text ${BUSINESS.phone}, or DM @bayareaautocustomz.`,
-    reviews:
-      "We're rated 4.9 stars on Google across 66 reviews — see the Reviews section, and there's a link to read them all on Google.",
+    // Read the rating + count from the page at answer time so the assistant can
+    // never contradict the site (initReviews updates those spans when the live
+    // Google-reviews feed is connected).
+    get reviews() {
+      const score = ($("[data-review-score]") || {}).textContent || "4.9";
+      const count = ($("[data-review-count]") || {}).textContent || "69";
+      return `We're rated ${score.trim()} stars on Google across ${count.trim()} reviews — see the Reviews section, and there's a link to read them all on Google.`;
+    },
     visualizer:
-      "Scroll up to the designer: pick a kit size (300–4,000 stars) to preview the density on a real headliner shape, switch to \"Design your own\" to place stars one by one, pick a color, add shooting stars, then save the preview or send it with your quote.",
+      "Scroll up to the designer: pick a kit size (300–4,000 stars) to preview the density on a real headliner shape, switch to \"Design your own\" to place stars one by one, pick a color, add shooting stars, then save the preview PNG and attach it when you text or DM us.",
     default:
       `Happy to help. For the most accurate answer, tell me your vehicle and the look you want, or call/text ${BUSINESS.phone}. You can also try the starlight designer above to preview your headliner.`,
   };
@@ -1547,7 +1723,8 @@
       const colorLabel = s.color === "rgb" ? "RGB mix" : s.color;
       const det =
         `My starlight design: ${fmt(s.stars)} stars (~${fmt(s.kit)}-star kit), ${colorLabel} color` +
-        (s.shooting ? ", with shooting stars." : ".");
+        (s.shooting ? ", with shooting stars." : ".") +
+        " I can text or DM the saved preview PNG.";
       prefillBooking({
         service: s.shooting ? "Starlight + shooting stars" : "Starlight headliner",
         details: det,

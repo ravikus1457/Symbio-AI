@@ -1,0 +1,688 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>*,*::before,*::after{box-sizing:border-box}body,h1,h2,h3,p,figure,blockquote{margin:0}img{max-width:100%}</style></head><body><title>Simon Deo Photography — Site Mockup</title>
+
+<style>
+  /* ---------- Tokens ---------- */
+  :root{
+    --bg:#F6F0E4;
+    --panel:#EFE6D2;
+    --head:#2A2318;
+    --body:#4C4334;
+    --muted:#8B7F67;
+    --accent:#A9843E;
+    --accent-soft:#C2A878;
+    --rule:rgba(58,48,32,.20);
+    --hero-bg:#1D1710;
+    --hero-ink:#F2E9D8;
+    --hero-muted:#B7A98D;
+    --display:"Didot","Bodoni MT","Playfair Display","Cormorant Garamond",Georgia,serif;
+    --serif:Georgia,"Iowan Old Style","Palatino Linotype","Book Antiqua",serif;
+    --utility:"Avenir Next",Avenir,"Century Gothic","Gill Sans","Helvetica Neue",Arial,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#17120D;
+      --panel:#201A12;
+      --head:#EDE3CF;
+      --body:#C9BEA9;
+      --muted:#93876F;
+      --accent:#C9A96A;
+      --accent-soft:#A98E5B;
+      --rule:rgba(237,227,207,.16);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#17120D;
+    --panel:#201A12;
+    --head:#EDE3CF;
+    --body:#C9BEA9;
+    --muted:#93876F;
+    --accent:#C9A96A;
+    --accent-soft:#A98E5B;
+    --rule:rgba(237,227,207,.16);
+  }
+  :root[data-theme="light"]{
+    --bg:#F6F0E4;
+    --panel:#EFE6D2;
+    --head:#2A2318;
+    --body:#4C4334;
+    --muted:#8B7F67;
+    --accent:#A9843E;
+    --accent-soft:#C2A878;
+    --rule:rgba(58,48,32,.20);
+  }
+
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+
+  body{
+    background:var(--bg);
+    color:var(--body);
+    font-family:var(--serif);
+    font-size:17px;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  a{color:var(--accent); text-decoration:none}
+  a:hover{text-decoration:underline; text-underline-offset:3px}
+  a:focus-visible, button:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:2px}
+
+  /* ---------- Shared layout ---------- */
+  .wrap{max-width:1080px; margin:0 auto; padding:0 clamp(20px,4vw,48px)}
+  section{padding:clamp(64px,9vw,110px) 0}
+
+  .eyebrow{
+    font-family:var(--utility);
+    font-size:11px;
+    letter-spacing:.32em;
+    text-transform:uppercase;
+    color:var(--accent);
+    display:block;
+  }
+  h2{
+    font-family:var(--display);
+    font-weight:400;
+    font-size:clamp(30px,4.4vw,44px);
+    line-height:1.12;
+    color:var(--head);
+    letter-spacing:.01em;
+    text-wrap:balance;
+    margin-top:14px;
+  }
+  .lede{max-width:58ch; color:var(--body)}
+
+  /* The thin rule + square motif from Simon's quote card */
+  .motif{display:flex; align-items:center; gap:14px; margin:26px 0 0; max-width:220px}
+  .motif::before, .motif::after{content:""; height:1px; flex:1; background:var(--accent-soft)}
+  .motif i{width:5px; height:5px; background:var(--accent); transform:rotate(45deg); flex:none}
+
+  .section-head{display:flex; flex-direction:column; align-items:flex-start; gap:0; margin-bottom:clamp(36px,5vw,56px)}
+  .section-head.center{align-items:center; text-align:center}
+  .section-head p{margin-top:18px}
+
+  /* ---------- Reveal (only hides content when JS is running) ---------- */
+  :root.js .reveal{opacity:0; transform:translateY(16px); transition:opacity .7s ease, transform .7s ease}
+  :root.js .reveal.in{opacity:1; transform:none}
+  @media (prefers-reduced-motion: reduce){
+    :root.js .reveal{opacity:1; transform:none; transition:none}
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position:relative;
+    background:var(--hero-bg);
+    color:var(--hero-ink);
+    min-height:92vh;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+  .hero canvas{position:absolute; inset:0; width:100%; height:100%; display:block}
+  .hero > *{position:relative}
+
+  .nav{
+    display:flex; align-items:center; justify-content:space-between; gap:20px;
+    padding:26px clamp(20px,4vw,48px);
+  }
+  .monogram{
+    font-family:var(--display);
+    font-size:20px; letter-spacing:.14em;
+    color:var(--hero-ink);
+    border:1px solid rgba(242,233,216,.4);
+    padding:8px 12px 6px;
+    line-height:1;
+  }
+  .monogram:hover{text-decoration:none; border-color:var(--accent-soft)}
+  .nav-links{display:flex; gap:clamp(16px,3vw,34px); flex-wrap:wrap}
+  .nav-links a{
+    font-family:var(--utility); font-size:11px; letter-spacing:.24em; text-transform:uppercase;
+    color:var(--hero-muted);
+  }
+  .nav-links a:hover{color:var(--hero-ink); text-decoration:none}
+
+  .hero-center{
+    flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:40px clamp(20px,4vw,48px) 90px;
+  }
+  .hero-center .eyebrow{color:var(--accent-soft)}
+  .hero h1{
+    font-family:var(--display);
+    font-weight:400;
+    font-size:clamp(52px,10vw,108px);
+    line-height:1.02;
+    letter-spacing:.015em;
+    color:var(--hero-ink);
+    margin-top:22px;
+    text-wrap:balance;
+  }
+  .hero .sub-word{
+    font-family:var(--utility);
+    font-size:clamp(12px,1.6vw,15px);
+    letter-spacing:.58em;
+    text-transform:uppercase;
+    color:var(--accent-soft);
+    margin-top:18px;
+    padding-left:.58em; /* optically recenter tracked caps */
+  }
+  .hero .motif{margin:30px auto 0}
+  .hero-tag{
+    font-family:var(--serif); font-style:italic;
+    font-size:clamp(17px,2.2vw,21px);
+    color:var(--hero-muted);
+    max-width:44ch; margin-top:26px;
+    text-wrap:balance;
+  }
+  .hero-cta{display:flex; gap:16px; margin-top:40px; flex-wrap:wrap; justify-content:center}
+
+  .btn{
+    display:inline-block;
+    font-family:var(--utility); font-size:12px; letter-spacing:.22em; text-transform:uppercase;
+    padding:15px 30px 13px;
+    border:1px solid var(--accent-soft);
+    color:var(--hero-bg);
+    background:var(--accent-soft);
+    transition:background .25s ease, color .25s ease;
+  }
+  .btn:hover{background:transparent; color:var(--accent-soft); text-decoration:none}
+  .btn.ghost{background:transparent; color:var(--hero-ink); border-color:rgba(242,233,216,.45)}
+  .btn.ghost:hover{border-color:var(--accent-soft); color:var(--accent-soft)}
+
+  .scroll-cue{
+    position:absolute; left:50%; bottom:26px; transform:translateX(-50%);
+    width:1px; height:44px; background:linear-gradient(to bottom, transparent, var(--accent-soft));
+  }
+
+  /* ---------- Plates (placeholder photographs) ---------- */
+  figure{margin:0}
+  .plate{position:relative; display:flex; flex-direction:column}
+  .plate .frame{
+    position:relative;
+    aspect-ratio:var(--ar, 4/5);
+    overflow:hidden;
+    border-radius:3px;
+    background:var(--panel);
+  }
+  .plate canvas{position:absolute; inset:0; width:100%; height:100%; display:block}
+  .plate .tag{
+    position:absolute; top:10px; left:10px;
+    font-family:var(--utility); font-size:9px; letter-spacing:.22em; text-transform:uppercase;
+    color:rgba(246,240,228,.85);
+    background:rgba(29,23,16,.42);
+    padding:5px 8px 4px;
+    border-radius:2px;
+    backdrop-filter:blur(2px);
+  }
+  .plate figcaption{
+    display:flex; justify-content:space-between; align-items:baseline; gap:12px;
+    padding-top:12px;
+  }
+  .cap-title{font-family:var(--display); font-size:19px; color:var(--head); letter-spacing:.02em}
+  .cap-sub{font-family:var(--utility); font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); text-align:right}
+
+  .gallery{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:clamp(18px,3vw,32px) clamp(14px,2.4vw,26px);
+  }
+  .span2{grid-column:span 2}
+  .span3{grid-column:span 3}
+  .span6{grid-column:span 6}
+  @media (max-width:760px){
+    .span2,.span3{grid-column:span 6}
+  }
+
+  /* ---------- About ---------- */
+  .about-grid{
+    display:grid; grid-template-columns:minmax(0,5fr) minmax(0,7fr);
+    gap:clamp(32px,6vw,72px); align-items:center;
+  }
+  @media (max-width:760px){ .about-grid{grid-template-columns:1fr} }
+  .about-copy .eyebrow{margin-bottom:0}
+  .about-copy h2{margin-bottom:8px}
+  .about-copy p{margin-top:18px; max-width:58ch}
+  .pull{
+    font-family:var(--display); font-size:clamp(20px,2.6vw,25px); line-height:1.4;
+    color:var(--head);
+    border-left:1px solid var(--accent-soft);
+    padding-left:22px;
+    margin-top:30px;
+  }
+
+  /* ---------- Coverage ---------- */
+  .coverage{background:var(--panel)}
+  .days{
+    display:grid; grid-template-columns:repeat(3,1fr);
+    border-top:1px solid var(--rule);
+    border-bottom:1px solid var(--rule);
+  }
+  @media (max-width:760px){ .days{grid-template-columns:1fr} }
+  .day{
+    padding:clamp(28px,4vw,44px) clamp(20px,3vw,36px);
+    border-left:1px solid var(--rule);
+  }
+  .day:first-child{border-left:none}
+  @media (max-width:760px){
+    .day{border-left:none; border-top:1px solid var(--rule)}
+    .day:first-child{border-top:none}
+  }
+  .day .eyebrow{color:var(--muted)}
+  .day h3{
+    font-family:var(--display); font-weight:400; font-size:24px; color:var(--head);
+    margin-top:12px; letter-spacing:.01em;
+  }
+  .day p{margin-top:12px; font-size:16px}
+
+  .includes{
+    display:grid; grid-template-columns:1fr 1fr;
+    gap:10px clamp(24px,4vw,56px);
+    margin-top:26px;
+    padding:0; list-style:none;
+    max-width:760px;
+  }
+  @media (max-width:600px){ .includes{grid-template-columns:1fr} }
+  .includes li{
+    padding-left:22px; position:relative; font-size:16px;
+  }
+  .includes li::before{
+    content:""; position:absolute; left:0; top:.62em;
+    width:10px; height:1px; background:var(--accent);
+  }
+  .extras{
+    margin-top:44px; border-top:1px solid var(--rule);
+  }
+  .extra{
+    display:flex; justify-content:space-between; align-items:baseline; gap:24px;
+    padding:16px 0; border-bottom:1px solid var(--rule);
+  }
+  .extra b{font-family:var(--display); font-weight:400; font-size:19px; color:var(--head); flex:none}
+  .extra span{font-size:15px; color:var(--muted); text-align:right}
+  .coverage-note{
+    margin-top:30px; font-style:italic; color:var(--muted); font-size:16px; max-width:60ch;
+  }
+
+  /* ---------- Kind words ---------- */
+  .quote-block{text-align:center; max-width:760px; margin:0 auto; position:relative}
+  .quote-block .tag-inline{
+    font-family:var(--utility); font-size:9px; letter-spacing:.22em; text-transform:uppercase;
+    color:var(--muted); border:1px solid var(--rule); padding:5px 10px 4px; border-radius:2px;
+    display:inline-block; margin-bottom:26px;
+  }
+  blockquote{
+    margin:0;
+    font-family:var(--display); font-weight:400;
+    font-size:clamp(22px,3.4vw,32px); line-height:1.42;
+    color:var(--head); text-wrap:balance;
+  }
+  .attrib{
+    display:block; margin-top:22px;
+    font-family:var(--utility); font-size:11px; letter-spacing:.26em; text-transform:uppercase;
+    color:var(--muted);
+  }
+
+  /* ---------- Contact ---------- */
+  .contact{background:var(--hero-bg); color:var(--hero-muted); text-align:center}
+  .contact .eyebrow{color:var(--accent-soft)}
+  .contact h2{color:var(--hero-ink)}
+  .contact .motif{margin:26px auto 0}
+  .contact p{max-width:52ch; margin:22px auto 0}
+  .contact-cta{display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-top:36px}
+  .contact small{
+    display:block; margin-top:30px;
+    font-family:var(--utility); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+    color:rgba(183,169,141,.7);
+  }
+
+  /* ---------- Footer ---------- */
+  footer{padding:36px 0 46px; border-top:1px solid var(--rule)}
+  .foot{
+    display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; align-items:baseline;
+  }
+  .foot p{font-family:var(--utility); font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--muted)}
+  .mockup-note{
+    margin-top:18px; font-style:italic; font-size:15px; color:var(--muted); max-width:72ch;
+  }
+</style>
+
+<!-- ============ HERO ============ -->
+<header class="hero" id="top">
+  <canvas id="heroCanvas" aria-hidden="true"></canvas>
+  <nav class="nav" aria-label="Site">
+    <a class="monogram" href="#top" aria-label="Simon Deo Photography — home">S·D</a>
+    <div class="nav-links">
+      <a href="#portfolio">Portfolio</a>
+      <a href="#about">About</a>
+      <a href="#coverage">Coverage</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </nav>
+  <div class="hero-center">
+    <span class="eyebrow">Sacramento, California</span>
+    <h1>Simon Deo</h1>
+    <div class="sub-word">Photography</div>
+    <div class="motif" aria-hidden="true"><i></i></div>
+    <p class="hero-tag">Weddings photographed the way they felt — from the Bhatwaan at home to the last dance of the reception.</p>
+    <div class="hero-cta">
+      <a class="btn" href="#portfolio">View the work</a>
+      <a class="btn ghost" href="#contact">Check your date</a>
+    </div>
+  </div>
+  <div class="scroll-cue" aria-hidden="true"></div>
+</header>
+
+<main>
+
+  <!-- ============ PORTFOLIO ============ -->
+  <section id="portfolio">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Portfolio</span>
+        <h2>Three days of celebration, one story</h2>
+        <p class="lede">Multi-day weddings deserve more than one day of pictures. From home ceremonies to the grand entrance, the story is told in order — and in full.</p>
+      </div>
+
+      <div class="gallery">
+        <figure class="plate span2 reveal" style="--ar:4/5">
+          <div class="frame">
+            <canvas data-seed="11" data-palette="marigold"></canvas>
+            <span class="tag">Placeholder</span>
+          </div>
+          <figcaption><span class="cap-title">The Bhatwaan</span><span class="cap-sub">At home</span></figcaption>
+        </figure>
+
+        <figure class="plate span2 reveal" style="--ar:4/5">
+          <div class="frame">
+            <canvas data-seed="23" data-palette="dusk"></canvas>
+            <span class="tag">Placeholder</span>
+          </div>
+          <figcaption><span class="cap-title">The Baraat</span><span class="cap-sub">The arrival</span></figcaption>
+        </figure>
+
+        <figure class="plate span2 reveal" style="--ar:4/5">
+          <div class="frame">
+            <canvas data-seed="37" data-palette="garden"></canvas>
+            <span class="tag">Placeholder</span>
+          </div>
+          <figcaption><span class="cap-title">The Ceremony</span><span class="cap-sub">Vows &amp; rites</span></figcaption>
+        </figure>
+
+        <figure class="plate span3 reveal" style="--ar:3/2">
+          <div class="frame">
+            <canvas data-seed="41" data-palette="ivory"></canvas>
+            <span class="tag">Placeholder</span>
+          </div>
+          <figcaption><span class="cap-title">The Couple</span><span class="cap-sub">Portraits</span></figcaption>
+        </figure>
+
+        <figure class="plate span3 reveal" style="--ar:3/2">
+          <div class="frame">
+            <canvas data-seed="53" data-palette="dusk"></canvas>
+            <span class="tag">Placeholder</span>
+          </div>
+          <figcaption><span class="cap-title">Golden Hour</span><span class="cap-sub">Natural light</span></figcaption>
+        </figure>
+
+        <figure class="plate span6 reveal" style="--ar:21/9">
+          <div class="frame">
+            <canvas data-seed="67" data-palette="night"></canvas>
+            <span class="tag">Placeholder</span>
+          </div>
+          <figcaption><span class="cap-title">The Reception</span><span class="cap-sub">First dance to last</span></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ABOUT ============ -->
+  <section id="about">
+    <div class="wrap">
+      <div class="about-grid">
+        <figure class="plate reveal" style="--ar:4/5">
+          <div class="frame">
+            <canvas data-seed="79" data-palette="ivory"></canvas>
+            <span class="tag">Portrait placeholder</span>
+          </div>
+          <figcaption><span class="cap-title">Simon</span><span class="cap-sub">Behind the camera</span></figcaption>
+        </figure>
+        <div class="about-copy reveal">
+          <span class="eyebrow">About</span>
+          <h2>It started with a yearbook and a Canon 7D</h2>
+          <p>Simon picked up his first DSLR in his senior-year yearbook class and never put a camera down again. What began as photographs of family and friends grew into a profession built on the same idea: the best pictures happen between people who trust each other.</p>
+          <p>Based in Sacramento, Simon photographs weddings and celebrations across Northern California and beyond — with a love for natural light, natural backgrounds, and the in-between moments that families talk about for years.</p>
+          <p class="pull">“Clients become friends. That’s when the real photographs happen.”</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COVERAGE ============ -->
+  <section id="coverage" class="coverage">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Coverage</span>
+        <h2>Built around your celebration</h2>
+        <p class="lede">Every wedding is different — one day or three, one venue or four. Coverage is shaped around your events, not squeezed into a preset.</p>
+      </div>
+
+      <div class="days reveal">
+        <div class="day">
+          <span class="eyebrow">Before</span>
+          <h3>Pre-wedding ceremonies</h3>
+          <p>Bhatwaan, mehndi, haldi and the days at home — the rituals, the hands, the laughter in the kitchen. Two to four hours of quiet, close coverage.</p>
+        </div>
+        <div class="day">
+          <span class="eyebrow">The Day</span>
+          <h3>The wedding</h3>
+          <p>Six to ten hours with two photographers, so nothing is missed — one with the couple, one with everyone who loves them.</p>
+        </div>
+        <div class="day">
+          <span class="eyebrow">After</span>
+          <h3>The reception</h3>
+          <p>Entrances, speeches, the first dance and the wildest ones. Four to five hours, edited fast enough to relive it while it’s still fresh.</p>
+        </div>
+      </div>
+
+      <div class="reveal">
+        <h3 style="font-family:var(--display); font-weight:400; font-size:24px; color:var(--head); margin-top:56px">Every collection includes</h3>
+        <ul class="includes">
+          <li>A next-day edit of highlight photographs</li>
+          <li>A sneak-peek gallery within 1–2 weeks</li>
+          <li>Every photograph professionally edited — not just a selection</li>
+          <li>A printed photobook of your wedding</li>
+          <li>A pre-wedding photoshoot at any Sacramento location</li>
+          <li>Two photographers on the wedding day</li>
+        </ul>
+
+        <div class="extras">
+          <div class="extra"><b>Premium photobook</b><span>An upgraded, larger-format album</span></div>
+          <div class="extra"><b>YouTube live stream</b><span>For family who can’t be there in person</span></div>
+          <div class="extra"><b>Out-of-town coverage</b><span>Travel beyond Sacramento, billed by the mile</span></div>
+        </div>
+
+        <p class="coverage-note">Coverage is quoted per celebration — share your dates and events for a tailored package.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ KIND WORDS ============ -->
+  <section id="kind-words">
+    <div class="wrap">
+      <div class="quote-block reveal">
+        <span class="tag-inline">Placeholder — swap in a real review</span>
+        <blockquote>“Pull a favorite line from a past couple here — one or two sentences, in their own words, about what it felt like to be photographed by Simon.”</blockquote>
+        <span class="attrib">— A 2026 couple · Sacramento</span>
+        <div class="motif" style="margin:34px auto 0" aria-hidden="true"><i></i></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTACT ============ -->
+  <section id="contact" class="contact">
+    <div class="wrap reveal">
+      <span class="eyebrow">Booking 2026 · 2027</span>
+      <h2>Check your date</h2>
+      <div class="motif" aria-hidden="true"><i></i></div>
+      <p>Tell Simon about your celebration — the dates, the events, the places — and he’ll put together a package built around it.</p>
+      <div class="contact-cta">
+        <a class="btn" href="mailto:hello@simondeo.com">hello@simondeo.com</a>
+        <a class="btn ghost" href="https://www.instagram.com/simondeo_photography/" rel="noopener">@simondeo_photography</a>
+      </div>
+      <small>Replace the email above with your booking address</small>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <p>© 2026 Simon Deo Photography</p>
+      <p>Sacramento, California</p>
+    </div>
+    <p class="mockup-note">A note on this mockup: every image on this page is a generated placeholder plate. Swap in real photographs — same crops, same captions — and the layout is ready to publish. Sections, copy and colors are all easy to adjust.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  document.documentElement.classList.add("js");
+
+  /* Deterministic PRNG so plates render identically on every visit */
+  function mulberry32(a){
+    return function(){
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      var t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
+  var PALETTES = {
+    marigold: { base:["#5C3418","#8F5A24"], glow:["#D9A85C","#E8C077","#B4712E","#F0D9A6"] },
+    dusk:     { base:["#33261B","#5C4630"], glow:["#C9A96A","#8A6D45","#E3C388","#6E5133"] },
+    garden:   { base:["#3C3D28","#5E6242"], glow:["#B9BC85","#8A8F5C","#DCD3A0","#6E7348"] },
+    ivory:    { base:["#A69171","#CBB795"], glow:["#EFE3CC","#DCC9A4","#B49D77","#F6EEDB"] },
+    night:    { base:["#171210","#33261A"], glow:["#8A6D45","#C9A96A","#5C4630","#E3C388"] }
+  };
+
+  /* Shared film-grain tile */
+  var grainTile = null;
+  function grain(){
+    if (grainTile) return grainTile;
+    var g = document.createElement("canvas");
+    g.width = g.height = 140;
+    var gx = g.getContext("2d");
+    var id = gx.createImageData(140, 140);
+    var rnd = mulberry32(99);
+    for (var i = 0; i < id.data.length; i += 4){
+      var v = Math.floor(rnd() * 255);
+      id.data[i] = v; id.data[i+1] = v; id.data[i+2] = v;
+      id.data[i+3] = 13;
+    }
+    gx.putImageData(id, 0, 0);
+    grainTile = g;
+    return g;
+  }
+
+  function paint(canvas, opts){
+    var host = canvas.parentElement;
+    var rect = host.getBoundingClientRect();
+    if (rect.width < 2 || rect.height < 2) return;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = Math.round(rect.width * dpr);
+    var h = Math.round(rect.height * dpr);
+    canvas.width = w; canvas.height = h;
+
+    var ctx = canvas.getContext("2d");
+    var seed = parseInt(canvas.dataset.seed || "1", 10);
+    var rnd = mulberry32(seed);
+    var pal = PALETTES[canvas.dataset.palette] || PALETTES.dusk;
+    opts = opts || {};
+
+    /* Base wash */
+    var g = ctx.createLinearGradient(0, 0, w * 0.35, h);
+    g.addColorStop(0, pal.base[0]);
+    g.addColorStop(1, pal.base[1]);
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, w, h);
+
+    /* Soft out-of-focus glow field */
+    ctx.globalCompositeOperation = "lighter";
+    var blobs = opts.blobs || (16 + Math.floor(rnd() * 10));
+    var i, x, y, r, rg, col;
+    for (i = 0; i < blobs; i++){
+      x = rnd() * w;
+      y = opts.sink ? h * (0.35 + rnd() * 0.75) : rnd() * h;
+      r = (0.07 + rnd() * 0.20) * Math.max(w, h);
+      col = pal.glow[Math.floor(rnd() * pal.glow.length)];
+      rg = ctx.createRadialGradient(x, y, 0, x, y, r);
+      rg.addColorStop(0, col);
+      rg.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.globalAlpha = 0.10 + rnd() * 0.16;
+      ctx.fillStyle = rg;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    /* A few crisp bokeh discs */
+    var discs = opts.discs || (6 + Math.floor(rnd() * 6));
+    for (i = 0; i < discs; i++){
+      x = rnd() * w;
+      y = opts.sink ? h * (0.3 + rnd() * 0.8) : rnd() * h;
+      r = (0.006 + rnd() * 0.02) * Math.max(w, h);
+      col = pal.glow[Math.floor(rnd() * pal.glow.length)];
+      ctx.globalAlpha = 0.18 + rnd() * 0.3;
+      ctx.fillStyle = col;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = "source-over";
+
+    /* Vignette */
+    var v = ctx.createRadialGradient(w/2, h/2, Math.min(w,h)*0.35, w/2, h/2, Math.max(w,h)*0.75);
+    v.addColorStop(0, "rgba(0,0,0,0)");
+    v.addColorStop(1, "rgba(12,8,4,0.34)");
+    ctx.fillStyle = v;
+    ctx.fillRect(0, 0, w, h);
+
+    /* Grain */
+    ctx.fillStyle = ctx.createPattern(grain(), "repeat");
+    ctx.fillRect(0, 0, w, h);
+  }
+
+  function paintAll(){
+    document.querySelectorAll(".plate canvas").forEach(function(c){ paint(c); });
+    var hero = document.getElementById("heroCanvas");
+    if (hero){
+      hero.dataset.seed = hero.dataset.seed || "5";
+      hero.dataset.palette = hero.dataset.palette || "night";
+      paint(hero, { blobs: 34, discs: 18, sink: true });
+    }
+  }
+
+  var resizeTimer = null;
+  window.addEventListener("resize", function(){
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(paintAll, 180);
+  });
+
+  /* Scroll reveal */
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var reveals = document.querySelectorAll(".reveal");
+  if (reduced || !("IntersectionObserver" in window)){
+    reveals.forEach(function(el){ el.classList.add("in"); });
+  } else {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -6% 0px" });
+    reveals.forEach(function(el){ io.observe(el); });
+  }
+
+  paintAll();
+})();
+</script>
+</body></html>

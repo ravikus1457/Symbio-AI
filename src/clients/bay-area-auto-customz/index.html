@@ -1120,23 +1120,23 @@
               </ol>
             </div>
 
-            <!-- Netlify Forms: once deployed on Netlify, each submission is
-                 captured and emailed to Sergio automatically (Forms → add a
-                 notification: his email, or his carrier email-to-SMS address for
-                 a text — see images/README.txt). Works alongside the instant
-                 text/call/DM buttons the visitor also gets. -->
+            <!-- Formspree (host-agnostic: Vercel, GitHub Pages, Netlify…): each
+                 submission is emailed to Sergio automatically. Create a free form
+                 at formspree.io and paste its endpoint into action="" below
+                 (replace YOUR_FORM_ID); set the notify email to his address or a
+                 carrier email-to-SMS address for a text — see images/README.txt.
+                 Works alongside the instant text/call/DM buttons too. -->
             <form
               class="booking__form"
               data-booking
               name="quote"
               method="POST"
-              data-netlify="true"
-              netlify-honeypot="bot-field"
+              action="https://formspree.io/f/YOUR_FORM_ID"
               novalidate
             >
-              <input type="hidden" name="form-name" value="quote" />
+              <input type="hidden" name="_subject" value="New quote request - Bay Area Auto Customz" />
               <p class="booking__hp" hidden aria-hidden="true">
-                <label>Don&rsquo;t fill this out: <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
+                <label>Don&rsquo;t fill this out: <input name="_gotcha" tabindex="-1" autocomplete="off" /></label>
               </p>
               <label>
                 Name

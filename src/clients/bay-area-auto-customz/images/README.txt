@@ -100,19 +100,23 @@ LIVE GOOGLE REVIEWS (#reviews — real reviews, auto-updating)
   the Places API works too if a key is preferred.
 
 BOOKING ALERTS (quote form → Sergio gets a text/email on every submission)
-  The form is wired for Netlify Forms. Once the site is deployed on Netlify,
-  each quote request is captured automatically and can notify Sergio — even if
-  the visitor never taps a send button. To turn it on (one-time, in Netlify):
-    Netlify dashboard → your site → Forms → the "quote" form → Add notification.
-    - For EMAIL: enter Sergio's email address.
-    - For a TEXT: enter his carrier's email-to-SMS address as the notification
-      email — e.g. 9255365086@vtext.com (Verizon), @txt.att.net (AT&T),
-      @tmomail.net (T-Mobile). The email arrives on his phone as a text. Free.
-    - For real SMS: pipe Netlify's outgoing form webhook to Zapier/Make → Twilio
-      (more reliable than carrier gateways; small per-text cost).
-  The instant "Send as text / Call / DM / Copy" buttons the visitor sees still
-  work everywhere, independent of this. (On non-Netlify hosts the auto-alert
-  POST just fails silently.)
+  The form posts to Formspree, which works on ANY static host (Vercel, GitHub
+  Pages, Netlify — anywhere). Each quote request is emailed to Sergio
+  automatically, even if the visitor never taps a send button. Turn it on once
+  (~3 min):
+    1. Go to https://formspree.io, sign up (free tier: 50 submissions/month),
+       create a form, and set its notification email to Sergio's address — or
+       his carrier email-to-SMS address for a TEXT: e.g. 9255365086@vtext.com
+       (Verizon), @txt.att.net (AT&T), @tmomail.net (T-Mobile). Free; it lands
+       on his phone as a text.
+    2. Copy the form's endpoint (looks like https://formspree.io/f/abcdwxyz).
+    3. Paste it into action="" on <form class="booking__form"> in index.html,
+       replacing YOUR_FORM_ID. Done — no other changes needed.
+  The instant "Send as text / Call / DM / Copy" buttons the visitor sees work
+  everywhere regardless. Until the endpoint is set, the auto-alert is simply
+  skipped (the form detects the YOUR_FORM_ID placeholder) and only those
+  instant buttons are used. For real carrier-grade SMS, point Formspree's
+  webhook/Zapier at Twilio (small per-text cost).
 
 RESPONSIVE VARIANTS
   Every gallery/ambient photo has an ~800px "-800.jpg" sibling used via srcset,

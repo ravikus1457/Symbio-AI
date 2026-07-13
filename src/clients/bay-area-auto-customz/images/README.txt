@@ -38,7 +38,12 @@ AMBIENT INSTALLS (#ambient "Ambient installs" grid)
   ambient-bmw-door.jpg      teal door-to-dash lines, white BMW
   ambient-door-speaker.jpg  Corvette door + speaker glow (featured in #work)
 
-SHOP VIDEO REELS (#motion "See it in motion" — H.264 MP4, muted, ~1-3MB each)
+SHOP VIDEO REELS (#motion "See it in motion" — H.264 MP4, ~1-3MB each)
+  Each reel has its OWN original trap/hip-hop music bed (AAC), one distinct
+  song per clip — different key + tempo + melody. The tracks are 100%
+  synthesized from scratch (no third-party samples), so they're fully clear
+  to use on the commercial site. Reels are muted posters until tapped; on tap
+  they play full screen with sound.
   reel-headliner-white.mp4 / -poster.jpg  white starlight headliner, red seats
   reel-shooting-star.mp4 / -poster.jpg    shooting star across the roof
   reel-red-stars.mp4 / -poster.jpg        dense red star field
@@ -52,9 +57,12 @@ SHOP VIDEO REELS (#motion "See it in motion" — H.264 MP4, muted, ~1-3MB each)
   reel-purple-build.mp4 / -poster.jpg     purple & white build walkaround
   The six -headliner/-shooting/-red-stars/-rgb-dash/-ambient-night/-purple-build
   clips came from Sergio's phone (portrait iPhone .mov, rotation baked in).
-  To add a reel: transcode to H.264 MP4 (720px wide, yuv420p, faststart,
-  no audio), export a poster JPEG, then copy a <figure class="reel"> block
-  in index.html. Reels wrap into rows automatically, so add as many as you like.
+  To add a reel: transcode to H.264 MP4 (720px wide, yuv420p, faststart),
+  export a poster JPEG, then copy a <figure class="reel"> block in index.html.
+  To give it a music bed, mux in an audio track without re-encoding the video:
+    ffmpeg -i clip.mp4 -stream_loop -1 -i track.wav -map 0:v:0 -map 1:a:0 \
+      -c:v copy -c:a aac -b:a 128k -shortest -movflags +faststart out.mp4
+  Reels wrap into rows automatically, so add as many as you like.
 
 LIVE SOCIAL FEED (#feed "Straight from the feed" — auto-updates on new posts)
   The feed grid shows curated fallback cards until a live feed is connected.

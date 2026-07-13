@@ -313,7 +313,7 @@
             <h2>Photos don&rsquo;t do it justice.</h2>
             <p>
               Real clips straight from the shop — color cycles, starlight twinkle, and ambient
-              lines wrapping the cabin. Tap a clip to play it.
+              lines wrapping the cabin. Tap a clip to watch it full screen with sound.
             </p>
           </div>
 
@@ -1120,7 +1120,24 @@
               </ol>
             </div>
 
-            <form class="booking__form" data-booking novalidate>
+            <!-- Netlify Forms: once deployed on Netlify, each submission is
+                 captured and emailed to Sergio automatically (Forms → add a
+                 notification: his email, or his carrier email-to-SMS address for
+                 a text — see images/README.txt). Works alongside the instant
+                 text/call/DM buttons the visitor also gets. -->
+            <form
+              class="booking__form"
+              data-booking
+              name="quote"
+              method="POST"
+              data-netlify="true"
+              netlify-honeypot="bot-field"
+              novalidate
+            >
+              <input type="hidden" name="form-name" value="quote" />
+              <p class="booking__hp" hidden aria-hidden="true">
+                <label>Don&rsquo;t fill this out: <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
+              </p>
               <label>
                 Name
                 <input name="name" type="text" placeholder="Your name" autocomplete="name" required />

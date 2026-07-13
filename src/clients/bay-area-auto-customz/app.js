@@ -74,27 +74,30 @@
     PANEL.r = Math.min(PANEL.w, PANEL.h) * 0.3;
     PANEL.cx = PANEL.x + PANEL.w / 2;
     PANEL.cy = PANEL.y + PANEL.h / 2;
-    // Sunroof glass panel toward the front — no stars land here.
-    const SUNROOF = { w: PANEL.w * 0.29, h: PANEL.h * 0.34 };
-    SUNROOF.x = PANEL.cx - SUNROOF.w / 2;
-    SUNROOF.y = PANEL.y + PANEL.h * 0.2;
+    // Orientation: the car runs left-to-right — REAR on the left, FRONT on the
+    // right (matching Sergio's diagram). So the windshield hardware lives on the
+    // right edge and the grab handles sit on the top/bottom (the door sides).
+    // Sunroof glass panel toward the front (right) — no stars land here.
+    const SUNROOF = { w: PANEL.w * 0.26, h: PANEL.h * 0.5 };
+    SUNROOF.x = PANEL.x + PANEL.w * 0.48;
+    SUNROOF.y = PANEL.cy - SUNROOF.h / 2;
     SUNROOF.r = Math.min(SUNROOF.w, SUNROOF.h) * 0.16;
 
-    // The rest of a real headliner's hardware — sun visors + overhead map-light
-    // console up front, grab handles on the sides. Stars avoid all of these,
-    // exactly like a real fiber-optic install goes around them.
+    // The rest of a real headliner's hardware — two sun visors + the overhead
+    // map-light console at the front (right edge), grab handles on the door
+    // sides (top & bottom). Stars avoid all of these, like a real install.
     const featRect = (fx, fy, fw, fh, rr) => {
       const R = { x: PANEL.x + PANEL.w * fx, y: PANEL.y + PANEL.h * fy, w: PANEL.w * fw, h: PANEL.h * fh };
       R.r = Math.min(R.w, R.h) * (rr == null ? 0.32 : rr);
       return R;
     };
-    const VISOR_L = featRect(0.06, 0.035, 0.25, 0.085, 0.26);
-    const VISOR_R = featRect(0.69, 0.035, 0.25, 0.085, 0.26);
-    const CONSOLE = featRect(0.435, 0.03, 0.13, 0.075, 0.4); // overhead map lights
-    const HANDLE_L = featRect(0.02, 0.55, 0.095, 0.05, 0.5);
-    const HANDLE_R = featRect(0.885, 0.55, 0.095, 0.05, 0.5);
+    const VISOR_TR = featRect(0.9, 0.06, 0.082, 0.3, 0.26); // front driver/passenger visors
+    const VISOR_BR = featRect(0.9, 0.64, 0.082, 0.3, 0.26);
+    const CONSOLE = featRect(0.905, 0.43, 0.07, 0.14, 0.4); // overhead map lights (front-center)
+    const HANDLE_TOP = featRect(0.34, 0.02, 0.1, 0.05, 0.5); // grab handles above the doors
+    const HANDLE_BOT = featRect(0.34, 0.93, 0.1, 0.05, 0.5);
     // Always-present hardware (the sunroof is optional — see state.sunroof).
-    const HARDWARE = [VISOR_L, VISOR_R, CONSOLE, HANDLE_L, HANDLE_R];
+    const HARDWARE = [VISOR_TR, VISOR_BR, CONSOLE, HANDLE_TOP, HANDLE_BOT];
 
     // Draw hundreds–thousands of stars smoothly by baking the static field to
     // an offscreen canvas and only animating a small twinkle subset on top.
@@ -301,13 +304,13 @@
     function addShootingStars(count = 3) {
       state.trails = [];
       for (let i = 0; i < count; i += 1) {
-        // each meteor starts low-left and streaks up-right, then repeats after
-        // a gap; store its path + timing so render() can animate it from `time`.
-        const angle = random(-0.5, -0.24);
-        const travel = random(PANEL.w * 0.45, PANEL.w * 0.68);
+        // meteors streak toward the front (left→right, slight tilt) and repeat
+        // after a gap; store the path + timing so render() animates it from `time`.
+        const angle = random(-0.16, 0.12);
+        const travel = random(PANEL.w * 0.42, PANEL.w * 0.6);
         state.trails.push({
-          x0: random(PANEL.x + PANEL.w * 0.06, PANEL.cx - PANEL.w * 0.05),
-          y0: random(PANEL.cy + PANEL.h * 0.05, PANEL.y + PANEL.h * 0.82),
+          x0: random(PANEL.x + PANEL.w * 0.04, PANEL.x + PANEL.w * 0.28),
+          y0: random(PANEL.y + PANEL.h * 0.12, PANEL.y + PANEL.h * 0.88),
           dx: Math.cos(angle) * travel,
           dy: Math.sin(angle) * travel,
           tail: random(95, 155),
@@ -418,17 +421,17 @@
         c.stroke();
       }
       // visors + overhead console (raised suede panels) and grab handles (slots)
-      drawMolding(c, VISOR_L, "raised");
-      drawMolding(c, VISOR_R, "raised");
+      drawMolding(c, VISOR_TR, "raised");
+      drawMolding(c, VISOR_BR, "raised");
       drawMolding(c, CONSOLE, "raised");
-      c.fillStyle = "rgba(255, 222, 150, 0.5)"; // map-light lenses
-      for (const fx of [0.34, 0.66]) {
+      c.fillStyle = "rgba(255, 222, 150, 0.5)"; // map-light lenses (stacked in the tall console)
+      for (const fy of [0.34, 0.66]) {
         c.beginPath();
-        c.arc(CONSOLE.x + CONSOLE.w * fx, CONSOLE.y + CONSOLE.h * 0.5, Math.min(CONSOLE.w, CONSOLE.h) * 0.12, 0, Math.PI * 2);
+        c.arc(CONSOLE.x + CONSOLE.w * 0.5, CONSOLE.y + CONSOLE.h * fy, Math.min(CONSOLE.w, CONSOLE.h) * 0.28, 0, Math.PI * 2);
         c.fill();
       }
-      drawMolding(c, HANDLE_L, "slot");
-      drawMolding(c, HANDLE_R, "slot");
+      drawMolding(c, HANDLE_TOP, "slot");
+      drawMolding(c, HANDLE_BOT, "slot");
       c.restore();
     }
 
@@ -609,14 +612,16 @@
         ctx.restore();
       }
 
-      // front / rear orientation labels + watermark — scaled up when the canvas
-      // is displayed small (phones), otherwise 13px shrinks to ~3px on screen
+      // rear / front orientation labels (car runs left→right) + watermark —
+      // scaled up when the canvas is displayed small (phones)
       const wmScale = clamp(labelScale, 1, 1.6);
       ctx.fillStyle = "rgba(245, 241, 232, 0.7)";
       ctx.font = `700 ${Math.round(13 * labelScale)}px Inter, sans-serif`;
       ctx.textAlign = "center";
-      ctx.fillText("FRONT", PANEL.cx, PANEL.y - 7 * labelScale);
-      ctx.fillText("REAR", PANEL.cx, PANEL.y + PANEL.h + 16 * labelScale);
+      ctx.textBaseline = "middle";
+      ctx.fillText("REAR", PANEL.x - 22 * labelScale, PANEL.cy);
+      ctx.fillText("FRONT", PANEL.x + PANEL.w + 26 * labelScale, PANEL.cy);
+      ctx.textBaseline = "alphabetic";
       ctx.fillStyle = "rgba(255, 221, 138, 0.5)";
       ctx.font = `700 ${Math.round(18 * wmScale)}px Inter, sans-serif`;
       ctx.fillText("BAY AREA AUTO CUSTOMZ · STARLIGHT PREVIEW", W * 0.5, H * 0.965);
@@ -996,16 +1001,55 @@
       toggle.setAttribute("aria-pressed", "false");
     });
 
-    toggle.addEventListener("click", () => {
-      if (video.paused) {
-        video.muted = true;
-        const p = video.play();
-        if (p && p.catch) p.catch(() => {});
-      } else {
+    // Clicking a reel opens it full screen and plays it with sound (Sergio's
+    // request). Falls back to in-place muted play if fullscreen is unavailable.
+    toggle.addEventListener("click", () => openVideoFullscreen(video));
+
+    // When the viewer leaves fullscreen, stop the clip and re-mute so the
+    // in-place poster/loop behaviour is clean again.
+    const onFsExit = () => {
+      const fsEl = document.fullscreenElement || document.webkitFullscreenElement;
+      if (!fsEl) {
         video.pause();
+        video.controls = false;
+        video.muted = true;
+        video.currentTime = 0;
       }
-    });
+    };
+    document.addEventListener("fullscreenchange", onFsExit);
+    document.addEventListener("webkitfullscreenchange", onFsExit);
+    video.addEventListener("webkitendfullscreen", onFsExit); // iOS
   });
+
+  function openVideoFullscreen(video) {
+    video.muted = false;
+    video.controls = true;
+    video.loop = false;
+    const play = () => {
+      const pr = video.play();
+      if (pr && pr.catch) {
+        pr.catch(() => {
+          video.muted = true; // autoplay-with-sound blocked → play muted
+          video.play().catch(() => {});
+        });
+      }
+    };
+    const req =
+      video.requestFullscreen ||
+      video.webkitRequestFullscreen ||
+      video.webkitEnterFullscreen; // iOS Safari (on the <video> itself)
+    if (req) {
+      try {
+        const r = req.call(video);
+        if (r && r.then) r.then(play, play);
+        else play();
+      } catch (_) {
+        play();
+      }
+    } else {
+      play(); // no fullscreen support — at least play it
+    }
+  }
 
   /* ===================== LIVE SOCIAL FEED (IG / TikTok) ================= */
   // Auto-updating feed. When [data-feed-url] points at a JSON feed (e.g. a free
@@ -1306,6 +1350,19 @@
       const message = lines.join("\n");
       const enc = encodeURIComponent(message);
       const smsHref = `sms:${BUSINESS.tel}?&body=${enc}`;
+
+      // Alert Sergio automatically: POST to Netlify Forms so he gets an email /
+      // text on every submission, even if the visitor never taps a send button.
+      // Best-effort — off Netlify (e.g. a preview host) this fails silently and
+      // the instant text/call/DM options below still work.
+      try {
+        const body = new URLSearchParams();
+        body.set("form-name", bookingForm.getAttribute("name") || "quote");
+        new FormData(bookingForm).forEach((v, k) => body.set(k, v));
+        fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: body.toString() }).catch(() => {});
+      } catch (_) {
+        /* no-op */
+      }
 
       bookingOut.style.borderColor = "rgba(63,208,137,0.4)";
       bookingOut.style.background = "rgba(63,208,137,0.08)";

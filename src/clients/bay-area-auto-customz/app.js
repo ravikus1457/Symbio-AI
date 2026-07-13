@@ -1356,17 +1356,23 @@
       const enc = encodeURIComponent(message);
       const smsHref = `sms:${BUSINESS.tel}?&body=${enc}`;
 
-      // Alert Sergio automatically: POST to Netlify Forms so he gets an email /
-      // text on every submission, even if the visitor never taps a send button.
-      // Best-effort — off Netlify (e.g. a preview host) this fails silently and
-      // the instant text/call/DM options below still work.
-      try {
-        const body = new URLSearchParams();
-        body.set("form-name", bookingForm.getAttribute("name") || "quote");
-        new FormData(bookingForm).forEach((v, k) => body.set(k, v));
-        fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: body.toString() }).catch(() => {});
-      } catch (_) {
-        /* no-op */
+      // Alert Sergio automatically: POST to the form's endpoint (Formspree) so
+      // he gets an email/text on every submission, even if the visitor never
+      // taps a send button. Host-agnostic (works on Vercel, GitHub Pages, etc.).
+      // Best-effort — until the real endpoint is pasted into the form's action
+      // (replacing YOUR_FORM_ID), this is skipped and the instant text/call/DM
+      // options below still work; any network error also fails silently.
+      const endpoint = bookingForm.getAttribute("action") || "";
+      if (/^https?:\/\//i.test(endpoint) && !endpoint.includes("YOUR_FORM_ID")) {
+        try {
+          fetch(endpoint, {
+            method: "POST",
+            headers: { Accept: "application/json" },
+            body: new FormData(bookingForm),
+          }).catch(() => {});
+        } catch (_) {
+          /* no-op */
+        }
       }
 
       bookingOut.style.borderColor = "rgba(63,208,137,0.4)";

@@ -70,18 +70,18 @@
 
     // Headliner silhouette (placement + clip region) — a rounded roof panel
     // with a sunroof cut-out, shaped like the real thing instead of an oval.
-    const PANEL = { x: W * 0.12, y: H * 0.135, w: W * 0.76, h: H * 0.6 };
-    PANEL.r = Math.min(PANEL.w, PANEL.h) * 0.3;
+    const PANEL = { x: W * 0.12, y: H * 0.115, w: W * 0.76, h: H * 0.64 };
+    PANEL.r = Math.min(Math.min(PANEL.w, PANEL.h) * 0.07, 48);
     PANEL.cx = PANEL.x + PANEL.w / 2;
     PANEL.cy = PANEL.y + PANEL.h / 2;
     // Orientation: the car runs left-to-right — REAR on the left, FRONT on the
     // right (matching Sergio's diagram). So the windshield hardware lives on the
     // right edge and the grab handles sit on the top/bottom (the door sides).
     // Sunroof glass panel toward the front (right) — no stars land here.
-    const SUNROOF = { w: PANEL.w * 0.26, h: PANEL.h * 0.5 };
-    SUNROOF.x = PANEL.x + PANEL.w * 0.48;
+    const SUNROOF = { w: PANEL.w * 0.24, h: PANEL.h * 0.46 };
+    SUNROOF.x = PANEL.x + PANEL.w * 0.38;
     SUNROOF.y = PANEL.cy - SUNROOF.h / 2;
-    SUNROOF.r = Math.min(SUNROOF.w, SUNROOF.h) * 0.16;
+    SUNROOF.r = Math.min(SUNROOF.w, SUNROOF.h) * 0.12;
 
     // The rest of a real headliner's hardware — two sun visors + the overhead
     // map-light console at the front (right edge), grab handles on the door
@@ -91,11 +91,11 @@
       R.r = Math.min(R.w, R.h) * (rr == null ? 0.32 : rr);
       return R;
     };
-    const VISOR_TR = featRect(0.9, 0.06, 0.082, 0.3, 0.26); // front driver/passenger visors
-    const VISOR_BR = featRect(0.9, 0.64, 0.082, 0.3, 0.26);
-    const CONSOLE = featRect(0.905, 0.43, 0.07, 0.14, 0.4); // overhead map lights (front-center)
-    const HANDLE_TOP = featRect(0.34, 0.02, 0.1, 0.05, 0.5); // grab handles above the doors
-    const HANDLE_BOT = featRect(0.34, 0.93, 0.1, 0.05, 0.5);
+    const VISOR_TR = featRect(0.885, 0.1, 0.065, 0.24, 0.26); // front driver/passenger visors
+    const VISOR_BR = featRect(0.885, 0.66, 0.065, 0.24, 0.26);
+    const CONSOLE = featRect(0.885, 0.455, 0.055, 0.09, 0.3); // overhead map light (front-center)
+    const HANDLE_TOP = featRect(0.27, 0.02, 0.085, 0.03, 0.5); // grab handles above the doors
+    const HANDLE_BOT = featRect(0.27, 0.93, 0.085, 0.03, 0.5);
     // Always-present hardware (the sunroof is optional — see state.sunroof).
     const HARDWARE = [VISOR_TR, VISOR_BR, CONSOLE, HANDLE_TOP, HANDLE_BOT];
 
@@ -388,10 +388,10 @@
       c.fillStyle = roof;
       c.fillRect(0, 0, W, H);
       // faint suede perforation lines
-      c.globalAlpha = 0.1;
+      c.globalAlpha = 0.045;
       c.strokeStyle = "#d7a84f";
-      c.lineWidth = 1;
-      for (let x = -H; x < W; x += 44) {
+      c.lineWidth = 0.75;
+      for (let x = -H; x < W; x += 66) {
         c.beginPath();
         c.moveTo(x, 0);
         c.lineTo(x + H * 0.5, H);
@@ -405,7 +405,8 @@
         PANEL.cx, PANEL.cy, Math.max(PANEL.w, PANEL.h) * 0.62
       );
       depth.addColorStop(0, "rgba(0, 0, 0, 0)");
-      depth.addColorStop(1, "rgba(0, 0, 0, 0.5)");
+      depth.addColorStop(0.62, "rgba(0, 0, 0, 0)");
+      depth.addColorStop(1, "rgba(0, 0, 0, 0.32)");
       c.fillStyle = depth;
       c.fillRect(0, 0, W, H);
       // sunroof glass panel (optional; kept star-free, like a real headliner)
@@ -424,12 +425,14 @@
       drawMolding(c, VISOR_TR, "raised");
       drawMolding(c, VISOR_BR, "raised");
       drawMolding(c, CONSOLE, "raised");
-      c.fillStyle = "rgba(255, 222, 150, 0.5)"; // map-light lenses (stacked in the tall console)
-      for (const fy of [0.34, 0.66]) {
-        c.beginPath();
-        c.arc(CONSOLE.x + CONSOLE.w * 0.5, CONSOLE.y + CONSOLE.h * fy, Math.min(CONSOLE.w, CONSOLE.h) * 0.28, 0, Math.PI * 2);
-        c.fill();
-      }
+      // a single recessed overhead map-light lens (one calm dot, not two "eyes")
+      c.beginPath();
+      c.arc(CONSOLE.x + CONSOLE.w * 0.5, CONSOLE.y + CONSOLE.h * 0.5, Math.min(CONSOLE.w, CONSOLE.h) * 0.2, 0, Math.PI * 2);
+      c.fillStyle = "rgba(255, 222, 150, 0.5)";
+      c.fill();
+      c.lineWidth = 1;
+      c.strokeStyle = "rgba(255, 222, 150, 0.25)";
+      c.stroke();
       drawMolding(c, HANDLE_TOP, "slot");
       drawMolding(c, HANDLE_BOT, "slot");
       c.restore();
@@ -441,11 +444,11 @@
       roundRectPath(c, R);
       if (kind === "raised") {
         const g = c.createLinearGradient(0, R.y, 0, R.y + R.h);
-        g.addColorStop(0, "rgba(58, 48, 32, 0.6)");
-        g.addColorStop(1, "rgba(16, 13, 8, 0.6)");
+        g.addColorStop(0, "rgba(58, 48, 32, 0.5)");
+        g.addColorStop(1, "rgba(16, 13, 8, 0.5)");
         c.fillStyle = g;
       } else {
-        c.fillStyle = "rgba(0, 0, 0, 0.45)"; // recessed slot (grab handle)
+        c.fillStyle = "rgba(0, 0, 0, 0.4)"; // recessed slot (grab handle)
       }
       c.fill();
       c.lineWidth = 1.4;
@@ -461,10 +464,10 @@
 
     function drawHeadlinerRim() {
       roundRectPath(ctx, PANEL);
-      ctx.strokeStyle = "rgba(255, 221, 138, 0.3)";
-      ctx.lineWidth = 3;
+      ctx.strokeStyle = "rgba(255, 221, 138, 0.22)";
+      ctx.lineWidth = 2;
       ctx.stroke();
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.05)";
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
       ctx.lineWidth = 1;
       ctx.stroke();
     }
@@ -617,11 +620,13 @@
       const wmScale = clamp(labelScale, 1, 1.6);
       ctx.fillStyle = "rgba(245, 241, 232, 0.7)";
       ctx.font = `700 ${Math.round(13 * labelScale)}px Inter, sans-serif`;
-      ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText("REAR", PANEL.x - 22 * labelScale, PANEL.cy);
-      ctx.fillText("FRONT", PANEL.x + PANEL.w + 26 * labelScale, PANEL.cy);
+      ctx.textAlign = "right";
+      ctx.fillText("REAR", PANEL.x - 0.018 * W, PANEL.cy);
+      ctx.textAlign = "left";
+      ctx.fillText("FRONT", PANEL.x + PANEL.w + 0.018 * W, PANEL.cy);
       ctx.textBaseline = "alphabetic";
+      ctx.textAlign = "center";
       ctx.fillStyle = "rgba(255, 221, 138, 0.5)";
       ctx.font = `700 ${Math.round(18 * wmScale)}px Inter, sans-serif`;
       ctx.fillText("BAY AREA AUTO CUSTOMZ · STARLIGHT PREVIEW", W * 0.5, H * 0.965);
@@ -1025,15 +1030,18 @@
     video.muted = false;
     video.controls = true;
     video.loop = false;
-    const play = () => {
-      const pr = video.play();
-      if (pr && pr.catch) {
-        pr.catch(() => {
-          video.muted = true; // autoplay-with-sound blocked → play muted
-          video.play().catch(() => {});
-        });
-      }
-    };
+    // Start playback FIRST, synchronously in the click handler, so the tap's
+    // user-activation is spent on play() — not on a fullscreen request that an
+    // embedded/iframed page (or a locked-down in-app browser) may block. If we
+    // requested fullscreen first and it was denied, the activation would be
+    // gone and the clip would never play. Fullscreen is a best-effort bonus.
+    const pr = video.play();
+    if (pr && pr.catch) {
+      pr.catch(() => {
+        video.muted = true; // unmuted play blocked → at least play it muted
+        video.play().catch(() => {});
+      });
+    }
     const req =
       video.requestFullscreen ||
       video.webkitRequestFullscreen ||
@@ -1041,13 +1049,10 @@
     if (req) {
       try {
         const r = req.call(video);
-        if (r && r.then) r.then(play, play);
-        else play();
+        if (r && r.catch) r.catch(() => {}); // denied → keep playing inline
       } catch (_) {
-        play();
+        /* no fullscreen here — the clip is already playing inline */
       }
-    } else {
-      play(); // no fullscreen support — at least play it
     }
   }
 

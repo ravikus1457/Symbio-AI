@@ -1,8 +1,8 @@
 /* =========================================================================
    Bay Area Auto Customz — interactive site logic
-   - Starlight designer: preview kit sizes (200–800 fibers) in three layout
-     patterns AND plot your own stars, in purple / white / blue / RGB,
-     with shooting stars.
+   - Starlight designer: preview kit sizes (300–4,000 fibers) on a real
+     headliner shape in three layout patterns AND plot your own stars, in
+     purple / white / blue / RGB, with shooting stars.
    - Shop-video reel switcher, gallery lightbox, booking (no backend — opens
      text/email prefilled), DIY-kit + service shortcuts, and an assistant
      that remembers your vehicle and can prefill the quote form.
@@ -24,7 +24,9 @@
     tiktok: "https://www.tiktok.com/@bayareaautocustomz",
   };
 
-  const KIT_SIZES = [200, 300, 400, 500, 600, 800];
+  // Sergio's real kit sizes — 300-star minimum, up to 4,000.
+  const KIT_SIZES = [300, 400, 500, 650, 750, 860, 1100, 1500, 2000, 2500, 3000, 3500, 4000];
+  const fmt = (n) => n.toLocaleString("en-US");
   const COLORS = {
     purple: "#c08bff",
     white: "#f6fbff",
@@ -37,6 +39,26 @@
   const yearEl = $("[data-year]");
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
+  /* ------------------------------------------------------------ web fonts */
+  // The font stylesheet ships with media="print" so it never blocks first
+  // paint; flip it to "all" here (an inline onload= would violate the CSP).
+  $$("link[data-font-link]").forEach((l) => {
+    l.media = "all";
+  });
+
+  /* ------------------------------------------------- sticky-header offset */
+  // The sticky header wraps to 1-3 rows depending on width, so anchor jumps
+  // need a matching scroll offset. CSS carries a generous fallback; this pins
+  // it to the exact measured height.
+  const headerEl = $("[data-header]");
+  function syncScrollPadding() {
+    if (!headerEl) return;
+    const h = Math.ceil(headerEl.getBoundingClientRect().height);
+    if (h > 0) document.documentElement.style.scrollPaddingTop = `${h + 12}px`;
+  }
+  syncScrollPadding();
+  window.addEventListener("resize", syncScrollPadding);
+
   /* ============================ STARLIGHT STUDIO ======================== */
   const canvas = $("#headliner");
   if (canvas) initStudio(canvas);
@@ -46,8 +68,73 @@
     const W = canvas.width;
     const H = canvas.height;
 
-    // Headliner ellipse (placement + clip region).
-    const ROOF = { cx: W * 0.5, cy: H * 0.46, rx: W * 0.43, ry: H * 0.32 };
+    // Headliner silhouette (placement + clip region) — a rounded roof panel
+    // with a sunroof cut-out, shaped like the real thing instead of an oval.
+    const PANEL = { x: W * 0.12, y: H * 0.115, w: W * 0.76, h: H * 0.64 };
+    PANEL.r = Math.min(Math.min(PANEL.w, PANEL.h) * 0.07, 48);
+    PANEL.cx = PANEL.x + PANEL.w / 2;
+    PANEL.cy = PANEL.y + PANEL.h / 2;
+    // Orientation: the car runs left-to-right — REAR on the left, FRONT on the
+    // right (matching Sergio's diagram). So the windshield hardware lives on the
+    // right edge and the grab handles sit on the top/bottom (the door sides).
+    // Sunroof glass panel toward the front (right) — no stars land here.
+    const SUNROOF = { w: PANEL.w * 0.24, h: PANEL.h * 0.46 };
+    SUNROOF.x = PANEL.x + PANEL.w * 0.38;
+    SUNROOF.y = PANEL.cy - SUNROOF.h / 2;
+    SUNROOF.r = Math.min(SUNROOF.w, SUNROOF.h) * 0.12;
+
+    // The rest of a real headliner's hardware — two sun visors + the overhead
+    // map-light console at the front (right edge), grab handles on the door
+    // sides (top & bottom). Stars avoid all of these, like a real install.
+    const featRect = (fx, fy, fw, fh, rr) => {
+      const R = { x: PANEL.x + PANEL.w * fx, y: PANEL.y + PANEL.h * fy, w: PANEL.w * fw, h: PANEL.h * fh };
+      R.r = Math.min(R.w, R.h) * (rr == null ? 0.32 : rr);
+      return R;
+    };
+    const VISOR_TR = featRect(0.885, 0.1, 0.065, 0.24, 0.26); // front driver/passenger visors
+    const VISOR_BR = featRect(0.885, 0.66, 0.065, 0.24, 0.26);
+    const CONSOLE = featRect(0.885, 0.455, 0.055, 0.09, 0.3); // overhead map light (front-center)
+    const HANDLE_TOP = featRect(0.27, 0.02, 0.085, 0.03, 0.5); // grab handles above the doors
+    const HANDLE_BOT = featRect(0.27, 0.93, 0.085, 0.03, 0.5);
+    // Always-present hardware (the sunroof is optional — see state.sunroof).
+    const HARDWARE = [VISOR_TR, VISOR_BR, CONSOLE, HANDLE_TOP, HANDLE_BOT];
+
+    // Draw hundreds–thousands of stars smoothly by baking the static field to
+    // an offscreen canvas and only animating a small twinkle subset on top.
+    const CACHE_ABOVE = 700;
+    const field = document.createElement("canvas");
+    field.width = W;
+    field.height = H;
+    const fctx = field.getContext("2d");
+    let fieldDirty = true;
+
+    // The background + headliner panel never change, so bake them once instead
+    // of rebuilding two gradients and 44 perforation strokes every frame.
+    const base = document.createElement("canvas");
+    base.width = W;
+    base.height = H;
+    const bctx = base.getContext("2d");
+    let baseReady = false;
+
+    function roundRectPath(c, R) {
+      const rr = Math.min(R.r, R.w / 2, R.h / 2);
+      c.beginPath();
+      c.moveTo(R.x + rr, R.y);
+      c.arcTo(R.x + R.w, R.y, R.x + R.w, R.y + R.h, rr);
+      c.arcTo(R.x + R.w, R.y + R.h, R.x, R.y + R.h, rr);
+      c.arcTo(R.x, R.y + R.h, R.x, R.y, rr);
+      c.arcTo(R.x, R.y, R.x + R.w, R.y, rr);
+      c.closePath();
+    }
+
+    function inRoundRect(p, R) {
+      const rr = Math.min(R.r, R.w / 2, R.h / 2);
+      if (p.x < R.x || p.x > R.x + R.w || p.y < R.y || p.y > R.y + R.h) return false;
+      const dx = Math.min(p.x - R.x, R.x + R.w - p.x);
+      const dy = Math.min(p.y - R.y, R.y + R.h - p.y);
+      if (dx >= rr || dy >= rr) return true; // outside the rounded corners
+      return (rr - dx) ** 2 + (rr - dy) ** 2 <= rr * rr;
+    }
 
     const els = {
       count: $("[data-count]"),
@@ -59,11 +146,13 @@
       size: $("[data-size]"),
       twinkle: $("[data-twinkle]"),
       shooting: $("[data-shooting]"),
+      sunroof: $("[data-sunroof]"),
       designTools: $("[data-design-tools]"),
     };
 
     const state = {
       stars: [],
+      twinkleStars: [],
       lines: [],
       trails: [],
       mode: "kit", // "kit" | "design"
@@ -73,6 +162,10 @@
       color: "purple",
       sizeStep: Number(els.size ? els.size.value : 2),
       twinkle: Number(els.twinkle ? els.twinkle.value : 55),
+      sizeScale: 1, // shrinks stars as density rises so they read as pinpoints
+      alphaScale: 1, // eases brightness at high density so it doesn't blow out
+      sunroof: els.sunroof ? els.sunroof.checked : true, // toggle the sunroof cut-out
+      kbCursor: null, // keyboard-placement cursor (design mode)
       painting: false,
       lastPoint: null,
       lastPaintAt: 0,
@@ -85,10 +178,13 @@
       const s = document.createElement("canvas");
       s.width = s.height = 64;
       const g = s.getContext("2d");
+      // Tight bright core + quick falloff reads like a real fiber point,
+      // not a soft cloud (so dense kits stay crisp instead of washing out).
       const grad = g.createRadialGradient(32, 32, 0, 32, 32, 32);
       grad.addColorStop(0, "#ffffff");
-      grad.addColorStop(0.28, hex);
-      grad.addColorStop(0.6, hex + "55");
+      grad.addColorStop(0.16, hex);
+      grad.addColorStop(0.42, hex + "4d");
+      grad.addColorStop(0.72, hex + "12");
       grad.addColorStop(1, "rgba(0,0,0,0)");
       g.fillStyle = grad;
       g.beginPath();
@@ -112,9 +208,11 @@
       };
     }
 
-    function insideRoof(p) {
-      const n = ((p.x - ROOF.cx) ** 2) / ROOF.rx ** 2 + ((p.y - ROOF.cy) ** 2) / ROOF.ry ** 2;
-      return n <= 1;
+    function insidePanel(p) {
+      if (!inRoundRect(p, PANEL)) return false;
+      if (state.sunroof && inRoundRect(p, SUNROOF)) return false;
+      for (const R of HARDWARE) if (inRoundRect(p, R)) return false;
+      return true;
     }
 
     function makeStar(p, opts = {}) {
@@ -126,17 +224,29 @@
         color: opts.color || resolveColor(),
         phase: random(0, Math.PI * 2),
         pulse: random(0.3, 0.95),
+        baseA: random(0.62, 1),
       };
     }
 
     function addStar(p, opts = {}) {
-      if (!insideRoof(p)) return false;
+      if (!insidePanel(p)) return false;
       const star = makeStar(p, opts);
       state.stars.push(star);
       if (state.tool === "paint" && state.lastPoint && !opts.skipLine) {
         state.lines.push({ x1: state.lastPoint.x, y1: state.lastPoint.y, x2: star.x, y2: star.y, color: star.color });
       }
       state.lastPoint = { x: star.x, y: star.y };
+      // When the big-kit cache is active and clean, paint just the new star into
+      // it instead of flagging a full rebake — dragging Paint over a 4,000-star
+      // field would otherwise redraw every star per placed star.
+      if (state.stars.length > CACHE_ABOVE && !fieldDirty) {
+        fctx.globalCompositeOperation = "lighter";
+        drawStar(fctx, star, (0.4 + star.baseA * 0.55) * state.alphaScale);
+        fctx.globalCompositeOperation = "source-over";
+        fctx.globalAlpha = 1;
+      } else {
+        fieldDirty = true;
+      }
       return true;
     }
 
@@ -145,36 +255,48 @@
       state.lines = state.lines.filter(
         (l) => Math.hypot(l.x1 - p.x, l.y1 - p.y) > 42 && Math.hypot(l.x2 - p.x, l.y2 - p.y) > 42
       );
+      fieldDirty = true;
     }
 
-    function randomRoofPoint(pattern, i, n) {
-      if (pattern === "galaxy") {
-        const t = i / n;
-        const ang = t * Math.PI * 6 + random(-0.3, 0.3);
-        const rad = t;
-        return {
-          x: ROOF.cx + Math.cos(ang) * ROOF.rx * rad * random(0.85, 1.05),
-          y: ROOF.cy + Math.sin(ang) * ROOF.ry * rad * random(0.85, 1.05),
-        };
+    // Pick a star position inside the headliner (never on the sunroof) for the
+    // chosen pattern, using rejection sampling so the shape is respected.
+    function randomPanelPoint(pattern, i, n) {
+      const hw = PANEL.w / 2;
+      const hh = PANEL.h / 2;
+      for (let tries = 0; tries < 48; tries += 1) {
+        let p;
+        if (pattern === "galaxy") {
+          // start the spiral outside the sunroof so inner stars don't all reject
+          const t = 0.14 + 0.86 * ((i + 1) / n);
+          const ang = t * Math.PI * 6 + random(-0.3, 0.3);
+          p = {
+            x: PANEL.cx + Math.cos(ang) * hw * t * random(0.82, 1.02),
+            y: PANEL.cy + Math.sin(ang) * hh * t * random(0.82, 1.02),
+          };
+        } else if (pattern === "edge") {
+          const ang = random(0, Math.PI * 2);
+          const rad = Math.sqrt(random(0.42, 1));
+          p = { x: PANEL.cx + Math.cos(ang) * hw * rad * 1.02, y: PANEL.cy + Math.sin(ang) * hh * rad * 1.02 };
+        } else {
+          p = { x: random(PANEL.x, PANEL.x + PANEL.w), y: random(PANEL.y, PANEL.y + PANEL.h) };
+        }
+        if (insidePanel(p)) return p;
       }
-      if (pattern === "edge") {
-        const ang = random(0, Math.PI * 2);
-        const rad = Math.sqrt(random(0.35, 1));
-        return { x: ROOF.cx + Math.cos(ang) * ROOF.rx * rad, y: ROOF.cy + Math.sin(ang) * ROOF.ry * rad };
+      // Scatter fallback — never stack rejected stars on one pixel over the sunroof.
+      for (let s = 0; s < 48; s += 1) {
+        const p = { x: random(PANEL.x, PANEL.x + PANEL.w), y: random(PANEL.y, PANEL.y + PANEL.h) };
+        if (insidePanel(p)) return p;
       }
-      // uniform scatter (area-correct)
-      const ang = random(0, Math.PI * 2);
-      const rad = Math.sqrt(random(0, 1));
-      return { x: ROOF.cx + Math.cos(ang) * ROOF.rx * rad, y: ROOF.cy + Math.sin(ang) * ROOF.ry * rad };
+      return { x: PANEL.x + PANEL.w * 0.12, y: PANEL.cy };
     }
 
     function fillKit(n, pattern = state.pattern) {
       clearStars(true);
       state.lastKitCount = n;
       for (let i = 0; i < n; i += 1) {
-        addStar(randomRoofPoint(pattern, i, n), { skipLine: true });
+        addStar(randomPanelPoint(pattern, i, n), { skipLine: true });
       }
-      const label = `${n}-fiber starlight`;
+      const label = `${fmt(n)}-star starlight`;
       if (els.pkg) els.pkg.textContent = label;
       update();
     }
@@ -182,13 +304,19 @@
     function addShootingStars(count = 3) {
       state.trails = [];
       for (let i = 0; i < count; i += 1) {
+        // meteors streak toward the front (left→right, slight tilt) and repeat
+        // after a gap; store the path + timing so render() animates it from `time`.
+        const angle = random(-0.16, 0.12);
+        const travel = random(PANEL.w * 0.42, PANEL.w * 0.6);
         state.trails.push({
-          x: random(ROOF.cx - ROOF.rx * 0.4, ROOF.cx + ROOF.rx * 0.5),
-          y: random(ROOF.cy - ROOF.ry * 0.5, ROOF.cy + ROOF.ry * 0.2),
-          angle: random(-0.55, -0.18),
-          length: random(110, 200),
+          x0: random(PANEL.x + PANEL.w * 0.04, PANEL.x + PANEL.w * 0.28),
+          y0: random(PANEL.y + PANEL.h * 0.12, PANEL.y + PANEL.h * 0.88),
+          dx: Math.cos(angle) * travel,
+          dy: Math.sin(angle) * travel,
+          tail: random(95, 155),
+          cycle: random(2600, 4600), // ms for one streak + gap
+          offset: random(0, 4600), // stagger so they don't fire in unison
           color: state.color === "rgb" ? "#f6fbff" : resolveColor(),
-          phase: random(0, Math.PI * 2),
         });
       }
     }
@@ -198,6 +326,10 @@
       state.lines = [];
       state.trails = [];
       state.lastPoint = null;
+      fieldDirty = true;
+      // A real Clear also forgets the last kit, so a view-only toggle (like the
+      // sunroof checkbox) can never resurrect a canvas the user just emptied.
+      if (!keepLabel) state.lastKitCount = 0;
       if (!keepLabel && els.pkg) els.pkg.textContent = "Custom starlight layout";
       update();
     }
@@ -208,8 +340,11 @@
 
     function update() {
       const n = state.stars.length;
-      if (els.count) els.count.textContent = n === 0 ? "Blank headliner · 0 stars" : `${n} star${n === 1 ? "" : "s"} placed`;
-      if (els.summaryCount) els.summaryCount.textContent = `${n} star${n === 1 ? "" : "s"}`;
+      // Denser kits = smaller, slightly dimmer points, like real fiber stars.
+      state.sizeScale = clamp(1.05 - (n / 4000) * 0.55, 0.5, 1.05);
+      state.alphaScale = clamp(1.02 - (n / 4000) * 0.32, 0.64, 1);
+      if (els.count) els.count.textContent = n === 0 ? "Blank headliner · 0 stars" : `${fmt(n)} star${n === 1 ? "" : "s"} placed`;
+      if (els.summaryCount) els.summaryCount.textContent = `${fmt(n)} star${n === 1 ? "" : "s"}`;
 
       if (els.summaryNote) {
         if (n === 0) {
@@ -217,70 +352,152 @@
         } else {
           const ck = closestKit(n);
           const extra = state.trails.length ? " + shooting stars" : "";
-          els.summaryNote.textContent = `Closest kit: ${ck}-fiber${extra}. Final quote depends on vehicle & roof.`;
+          els.summaryNote.textContent = `Closest kit: ${fmt(ck)} stars${extra}. Final quote depends on vehicle & roof.`;
         }
       }
       if (els.kitReadout) {
         els.kitReadout.textContent = n === 0
           ? "Choose a kit size to begin."
-          : `Previewing ${n} fibers — about a ${closestKit(n)}-fiber install.`;
+          : `Previewing ${fmt(n)} stars — about a ${fmt(closestKit(n))}-star install.`;
       }
       if (els.hint) els.hint.hidden = n > 0;
       requestRender();
     }
 
     /* ----------------------------------------------------------- drawing */
-    function drawBackground() {
-      ctx.clearRect(0, 0, W, H);
+    function drawBackground(c) {
+      c.clearRect(0, 0, W, H);
       // base + faint warm center
-      const bg = ctx.createRadialGradient(W * 0.5, H * 0.05, 30, W * 0.5, H * 0.5, W * 0.62);
+      const bg = c.createRadialGradient(W * 0.5, H * 0.05, 30, W * 0.5, H * 0.5, W * 0.62);
       bg.addColorStop(0, "rgba(60, 48, 26, 0.45)");
       bg.addColorStop(0.45, "rgba(10, 9, 7, 0.98)");
       bg.addColorStop(1, "#030303");
-      ctx.fillStyle = bg;
-      ctx.fillRect(0, 0, W, H);
+      c.fillStyle = bg;
+      c.fillRect(0, 0, W, H);
     }
 
-    function drawRoofPanel() {
-      ctx.save();
-      ctx.beginPath();
-      ctx.ellipse(ROOF.cx, ROOF.cy, ROOF.rx, ROOF.ry, 0, 0, Math.PI * 2);
-      ctx.clip();
-      const roof = ctx.createLinearGradient(0, 0, 0, H);
-      roof.addColorStop(0, "#16110a");
-      roof.addColorStop(0.6, "#070707");
-      roof.addColorStop(1, "#020202");
-      ctx.fillStyle = roof;
-      ctx.fillRect(0, 0, W, H);
+    function drawHeadlinerPanel(c) {
+      c.save();
+      roundRectPath(c, PANEL);
+      c.clip();
+      // suede base
+      const roof = c.createLinearGradient(0, PANEL.y, 0, PANEL.y + PANEL.h);
+      roof.addColorStop(0, "#18120a");
+      roof.addColorStop(0.55, "#0b0a08");
+      roof.addColorStop(1, "#040404");
+      c.fillStyle = roof;
+      c.fillRect(0, 0, W, H);
       // faint suede perforation lines
-      ctx.globalAlpha = 0.12;
-      ctx.strokeStyle = "#d7a84f";
-      ctx.lineWidth = 1;
-      for (let x = -H; x < W; x += 46) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x + H * 0.5, H);
-        ctx.stroke();
+      c.globalAlpha = 0.045;
+      c.strokeStyle = "#d7a84f";
+      c.lineWidth = 0.75;
+      for (let x = -H; x < W; x += 66) {
+        c.beginPath();
+        c.moveTo(x, 0);
+        c.lineTo(x + H * 0.5, H);
+        c.stroke();
       }
-      ctx.globalAlpha = 1;
-      ctx.restore();
+      c.globalAlpha = 1;
+      // soft depth — the fabric darkens toward the edges so it reads as a
+      // gently curved roof panel rather than a flat rectangle
+      const depth = c.createRadialGradient(
+        PANEL.cx, PANEL.cy, Math.min(PANEL.w, PANEL.h) * 0.12,
+        PANEL.cx, PANEL.cy, Math.max(PANEL.w, PANEL.h) * 0.62
+      );
+      depth.addColorStop(0, "rgba(0, 0, 0, 0)");
+      depth.addColorStop(0.62, "rgba(0, 0, 0, 0)");
+      depth.addColorStop(1, "rgba(0, 0, 0, 0.32)");
+      c.fillStyle = depth;
+      c.fillRect(0, 0, W, H);
+      // sunroof glass panel (optional; kept star-free, like a real headliner)
+      if (state.sunroof) {
+        roundRectPath(c, SUNROOF);
+        const glass = c.createLinearGradient(SUNROOF.x, SUNROOF.y, SUNROOF.x, SUNROOF.y + SUNROOF.h);
+        glass.addColorStop(0, "#080b12");
+        glass.addColorStop(1, "#03040a");
+        c.fillStyle = glass;
+        c.fill();
+        c.lineWidth = 2;
+        c.strokeStyle = "rgba(150, 180, 220, 0.16)";
+        c.stroke();
+      }
+      // visors + overhead console (raised suede panels) and grab handles (slots)
+      drawMolding(c, VISOR_TR, "raised");
+      drawMolding(c, VISOR_BR, "raised");
+      drawMolding(c, CONSOLE, "raised");
+      // a single recessed overhead map-light lens (one calm dot, not two "eyes")
+      c.beginPath();
+      c.arc(CONSOLE.x + CONSOLE.w * 0.5, CONSOLE.y + CONSOLE.h * 0.5, Math.min(CONSOLE.w, CONSOLE.h) * 0.2, 0, Math.PI * 2);
+      c.fillStyle = "rgba(255, 222, 150, 0.5)";
+      c.fill();
+      c.lineWidth = 1;
+      c.strokeStyle = "rgba(255, 222, 150, 0.25)";
+      c.stroke();
+      drawMolding(c, HANDLE_TOP, "slot");
+      drawMolding(c, HANDLE_BOT, "slot");
+      c.restore();
     }
 
-    function drawRoofRim() {
-      ctx.strokeStyle = "rgba(255, 221, 138, 0.32)";
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.ellipse(ROOF.cx, ROOF.cy, ROOF.rx, ROOF.ry, 0, 0, Math.PI * 2);
+    // Recessed / raised headliner hardware: a soft molded fill + a faint gold
+    // seam, plus a top highlight on raised panels so they catch light.
+    function drawMolding(c, R, kind) {
+      roundRectPath(c, R);
+      if (kind === "raised") {
+        const g = c.createLinearGradient(0, R.y, 0, R.y + R.h);
+        g.addColorStop(0, "rgba(58, 48, 32, 0.5)");
+        g.addColorStop(1, "rgba(16, 13, 8, 0.5)");
+        c.fillStyle = g;
+      } else {
+        c.fillStyle = "rgba(0, 0, 0, 0.4)"; // recessed slot (grab handle)
+      }
+      c.fill();
+      c.lineWidth = 1.4;
+      c.strokeStyle = "rgba(255, 221, 138, 0.16)";
+      c.stroke();
+    }
+
+    function bakeBase() {
+      drawBackground(bctx);
+      drawHeadlinerPanel(bctx);
+      baseReady = true;
+    }
+
+    function drawHeadlinerRim() {
+      roundRectPath(ctx, PANEL);
+      ctx.strokeStyle = "rgba(255, 221, 138, 0.22)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
+      ctx.lineWidth = 1;
       ctx.stroke();
     }
 
-    function render(time) {
-      drawBackground();
-      drawRoofPanel();
+    function drawStar(c, st, alpha) {
+      const draw = (3 + st.r * 2.6) * state.sizeScale;
+      c.globalAlpha = alpha;
+      c.drawImage(sprite(st.color), st.x - draw, st.y - draw, draw * 2, draw * 2);
+    }
+
+    // Bake the whole static star field once; refresh only when stars change.
+    function renderField() {
+      fctx.clearRect(0, 0, W, H);
+      fctx.globalCompositeOperation = "lighter";
+      for (const st of state.stars) drawStar(fctx, st, (0.4 + st.baseA * 0.55) * state.alphaScale);
+      fctx.globalCompositeOperation = "source-over";
+      fctx.globalAlpha = 1;
+      const cap = 160;
+      const step = Math.max(1, Math.floor(state.stars.length / cap));
+      state.twinkleStars = state.stars.filter((_, idx) => idx % step === 0).slice(0, cap);
+      fieldDirty = false;
+    }
+
+    function render(time, staticTrails) {
+      if (!baseReady) bakeBase();
+      ctx.clearRect(0, 0, W, H);
+      ctx.drawImage(base, 0, 0);
 
       ctx.save();
-      ctx.beginPath();
-      ctx.ellipse(ROOF.cx, ROOF.cy, ROOF.rx, ROOF.ry, 0, 0, Math.PI * 2);
+      roundRectPath(ctx, PANEL);
       ctx.clip();
 
       // constellation lines
@@ -299,61 +516,159 @@
         ctx.restore();
       }
 
-      // shooting-star trails
+      // shooting-star trails — a bright head + fading tail that travels along
+      // its path and repeats, so they actually streak instead of sitting still.
+      // staticTrails forces the mid-path pose (used by the PNG snapshot so the
+      // meteors the customer added can never be caught mid-gap and missing).
       for (const tr of state.trails) {
-        const pulse = reduceMotion ? 0.8 : 0.55 + Math.sin(time * 0.002 + tr.phase) * 0.35;
-        ctx.save();
-        ctx.translate(tr.x, tr.y);
-        ctx.rotate(tr.angle);
-        const grad = ctx.createLinearGradient(-tr.length, 0, tr.length * 0.2, 0);
+        let head, alpha;
+        if (reduceMotion || staticTrails) {
+          head = 0.6;
+          alpha = 0.9; // fixed streak pose
+        } else {
+          const ph = ((time + tr.offset) % tr.cycle) / tr.cycle;
+          const active = 0.5; // half the cycle is the streak, half is the gap
+          if (ph > active) continue; // in the gap — nothing on screen
+          head = ph / active; // 0..1 progress along the path
+          alpha = Math.min(1, head / 0.12, (1 - head) / 0.18); // fade in/out
+        }
+        const len = Math.hypot(tr.dx, tr.dy) || 1;
+        const ux = tr.dx / len;
+        const uy = tr.dy / len;
+        const hx = tr.x0 + tr.dx * head;
+        const hy = tr.y0 + tr.dy * head;
+        const tx = hx - ux * tr.tail;
+        const ty = hy - uy * tr.tail;
+        const grad = ctx.createLinearGradient(tx, ty, hx, hy);
         grad.addColorStop(0, "rgba(0,0,0,0)");
-        grad.addColorStop(0.6, tr.color);
+        grad.addColorStop(0.7, tr.color);
         grad.addColorStop(1, "#ffffff");
+        ctx.save();
+        // two-pass stroke instead of shadowBlur — the same glow for a fraction
+        // of the per-frame cost on mid-range phones
         ctx.strokeStyle = grad;
-        ctx.lineWidth = 2 + pulse * 2;
-        ctx.shadowColor = tr.color;
-        ctx.shadowBlur = 18;
+        ctx.lineCap = "round";
         ctx.beginPath();
-        ctx.moveTo(-tr.length, 0);
-        ctx.lineTo(tr.length * 0.22, 0);
+        ctx.moveTo(tx, ty);
+        ctx.lineTo(hx, hy);
+        ctx.globalAlpha = clamp(alpha, 0, 1) * 0.35;
+        ctx.lineWidth = 8;
         ctx.stroke();
+        ctx.globalAlpha = clamp(alpha, 0, 1);
+        ctx.lineWidth = 2.4;
+        ctx.stroke();
+        ctx.fillStyle = "#ffffff"; // bright head
+        ctx.beginPath();
+        ctx.arc(hx, hy, 1.9, 0, Math.PI * 2);
+        ctx.fill();
         ctx.restore();
       }
 
-      // stars (sprite-based)
+      // stars — cached field + animated twinkle subset for big kits, or fully
+      // animated for small/hand-placed layouts.
       const speed = 0.0004 + state.twinkle / 60000;
       ctx.globalCompositeOperation = "lighter";
-      for (const st of state.stars) {
-        let a = 0.92;
-        if (!reduceMotion && state.twinkle > 0) {
-          a = clamp(0.55 + Math.sin(time * speed + st.phase) * st.pulse, 0.18, 1);
+      if (state.stars.length > CACHE_ABOVE) {
+        if (fieldDirty) renderField();
+        ctx.globalAlpha = 1;
+        ctx.drawImage(field, 0, 0);
+        if (!reduceMotion && state.twinkle > 0 && state.twinkleStars) {
+          for (const st of state.twinkleStars) {
+            const a = clamp(0.12 + Math.sin(time * speed + st.phase) * 0.5, 0, 0.8);
+            drawStar(ctx, st, a);
+          }
         }
-        const draw = 3 + st.r * 2.6;
-        ctx.globalAlpha = a;
-        ctx.drawImage(sprite(st.color), st.x - draw, st.y - draw, draw * 2, draw * 2);
+      } else {
+        for (const st of state.stars) {
+          let a = 0.92;
+          if (!reduceMotion && state.twinkle > 0) {
+            a = clamp(0.55 + Math.sin(time * speed + st.phase) * st.pulse, 0.18, 1);
+          }
+          drawStar(ctx, st, a);
+        }
       }
       ctx.globalCompositeOperation = "source-over";
       ctx.globalAlpha = 1;
       ctx.restore();
 
-      drawRoofRim();
+      drawHeadlinerRim();
 
-      // watermark label
-      ctx.fillStyle = "rgba(255, 221, 138, 0.5)";
-      ctx.font = "700 18px Inter, sans-serif";
+      // keyboard cursor (design mode, canvas focused): gold ring + crosshair
+      if (state.mode === "design" && state.kbCursor && document.activeElement === canvas) {
+        const k = state.kbCursor;
+        ctx.save();
+        ctx.strokeStyle = "rgba(255, 221, 138, 0.9)";
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.arc(k.x, k.y, 11, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(k.x - 17, k.y);
+        ctx.lineTo(k.x - 6, k.y);
+        ctx.moveTo(k.x + 6, k.y);
+        ctx.lineTo(k.x + 17, k.y);
+        ctx.moveTo(k.x, k.y - 17);
+        ctx.lineTo(k.x, k.y - 6);
+        ctx.moveTo(k.x, k.y + 6);
+        ctx.lineTo(k.x, k.y + 17);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // rear / front orientation labels (car runs left→right) + watermark —
+      // scaled up when the canvas is displayed small (phones)
+      const wmScale = clamp(labelScale, 1, 1.6);
+      ctx.fillStyle = "rgba(245, 241, 232, 0.7)";
+      ctx.font = `700 ${Math.round(13 * labelScale)}px Inter, sans-serif`;
+      ctx.textBaseline = "middle";
+      ctx.textAlign = "right";
+      ctx.fillText("REAR", PANEL.x - 0.018 * W, PANEL.cy);
+      ctx.textAlign = "left";
+      ctx.fillText("FRONT", PANEL.x + PANEL.w + 0.018 * W, PANEL.cy);
+      ctx.textBaseline = "alphabetic";
       ctx.textAlign = "center";
-      ctx.fillText("BAY AREA AUTO CUSTOMZ · STARLIGHT PREVIEW", W * 0.5, H * 0.95);
+      ctx.fillStyle = "rgba(255, 221, 138, 0.5)";
+      ctx.font = `700 ${Math.round(18 * wmScale)}px Inter, sans-serif`;
+      ctx.fillText("BAY AREA AUTO CUSTOMZ · STARLIGHT PREVIEW", W * 0.5, H * 0.965);
       ctx.textAlign = "left";
     }
 
     let rafId = 0;
     let needsRender = true;
+    let onScreen = true;
+
+    // Canvas CSS size → backing-store scale, cached so render() never reads
+    // layout per frame. Drives the FRONT/REAR label sizing on small screens.
+    let labelScale = 1;
+    function syncLabelScale() {
+      const r = canvas.getBoundingClientRect();
+      if (r.width > 0) labelScale = clamp(W / r.width, 1, 3.2);
+      requestRender();
+    }
+    syncLabelScale();
+    window.addEventListener("resize", syncLabelScale);
+
     function requestRender() {
       needsRender = true;
     }
     function loop(t) {
-      render(t);
+      // Skip the full redraw when nothing on screen animates — a static scene
+      // (no trails, twinkle at 0 or empty roof) costs one no-op check per frame.
+      const animating = state.trails.length > 0 || (state.twinkle > 0 && state.stars.length > 0);
+      if (needsRender || animating) {
+        render(t);
+        needsRender = false;
+      }
       rafId = requestAnimationFrame(loop);
+    }
+    function startLoop() {
+      if (rafId) return;
+      rafId = requestAnimationFrame(loop);
+    }
+    function stopLoop() {
+      if (!rafId) return;
+      cancelAnimationFrame(rafId);
+      rafId = 0;
     }
     if (reduceMotion) {
       // No continuous animation; re-render on demand.
@@ -366,7 +681,20 @@
       };
       rafId = requestAnimationFrame(tick);
     } else {
-      rafId = requestAnimationFrame(loop);
+      startLoop();
+      // Pause the 60fps loop while the canvas is scrolled off-screen — no sense
+      // burning battery animating stars nobody can see (matters on phones).
+      if ("IntersectionObserver" in window) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            onScreen = entries[0].isIntersecting;
+            if (onScreen) startLoop();
+            else stopLoop();
+          },
+          { threshold: 0 }
+        );
+        io.observe(canvas);
+      }
     }
 
     /* ------------------------------------------------------ canvas input */
@@ -401,6 +729,37 @@
     window.addEventListener("pointerup", stop);
     canvas.addEventListener("pointercancel", stop);
 
+    // Keyboard star placement (design mode): arrows move a visible cursor,
+    // Enter/Space places (or erases, with the Erase tool). Keeps the designer
+    // usable without a pointer — the canvas is tabbable via tabindex in HTML.
+    const KB_MOVES = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+    canvas.addEventListener("keydown", (ev) => {
+      if (state.mode !== "design") return;
+      if (KB_MOVES[ev.key]) {
+        ev.preventDefault();
+        const step = ev.shiftKey ? 56 : 14;
+        const c = state.kbCursor || { x: PANEL.cx, y: PANEL.y + PANEL.h * 0.75 };
+        c.x = clamp(c.x + KB_MOVES[ev.key][0] * step, PANEL.x, PANEL.x + PANEL.w);
+        c.y = clamp(c.y + KB_MOVES[ev.key][1] * step, PANEL.y, PANEL.y + PANEL.h);
+        state.kbCursor = c;
+        requestRender();
+      } else if (ev.key === "Enter" || ev.key === " ") {
+        ev.preventDefault();
+        if (!state.kbCursor) state.kbCursor = { x: PANEL.cx, y: PANEL.y + PANEL.h * 0.75 };
+        state.lastPoint = null; // keyboard placement never draws paint lines
+        if (state.tool === "erase") {
+          eraseAt(state.kbCursor);
+          update();
+        } else if (addStar(state.kbCursor, { skipLine: true })) {
+          update();
+        }
+      }
+    });
+    canvas.addEventListener("blur", () => {
+      state.kbCursor = null;
+      requestRender();
+    });
+
     /* ----------------------------------------------------- control wiring */
     $$("[data-kit-count]").forEach((btn) => {
       btn.addEventListener("click", () => {
@@ -429,6 +788,7 @@
         if (state.lastKitCount && state.stars.length) {
           fillKit(state.lastKitCount);
           if (els.shooting && els.shooting.checked) addShootingStars();
+          update(); // refresh the "+ shooting stars" note after the re-lay
         }
       });
     });
@@ -438,17 +798,32 @@
         $$("[data-color]").forEach((b) => b.classList.remove("is-active"));
         btn.classList.add("is-active");
         state.color = btn.dataset.color;
-        // recolor existing stars to match the new selection
+        // recolor existing stars — and shooting-star trails — to match
         state.stars.forEach((s) => {
           s.color = resolveColor();
         });
+        state.trails.forEach((tr) => {
+          tr.color = state.color === "rgb" ? "#f6fbff" : resolveColor();
+        });
+        fieldDirty = true;
         requestRender();
       });
     });
 
     if (els.size) {
       els.size.addEventListener("input", () => {
+        // Re-scale the stars already on the canvas too — otherwise the slider
+        // looks dead in the normal kit flow (it only affected future stars).
+        const prev = state.sizeStep;
         state.sizeStep = Number(els.size.value);
+        const delta = state.sizeStep - prev;
+        if (delta && state.stars.length) {
+          state.stars.forEach((s) => {
+            s.r = Math.max(0.6, s.r + delta);
+          });
+          fieldDirty = true;
+          requestRender();
+        }
       });
     }
     if (els.twinkle) {
@@ -464,6 +839,26 @@
         update();
       });
     }
+    if (els.sunroof) {
+      els.sunroof.addEventListener("change", () => {
+        state.sunroof = els.sunroof.checked;
+        baseReady = false; // re-bake the panel with / without the sunroof
+        // drop any stars — and their constellation lines — now under the sunroof
+        state.stars = state.stars.filter((s) => insidePanel(s));
+        state.lines = state.lines.filter((l) => insidePanel({ x: l.x1, y: l.y1 }) && insidePanel({ x: l.x2, y: l.y2 }));
+        // Only re-lay a kit that's actually on the canvas (same guard as the
+        // pattern buttons) — otherwise toggling the sunroof would resurrect a
+        // cleared kit or wipe hand-placed additions.
+        if (state.mode === "kit" && state.lastKitCount && state.stars.length) {
+          fillKit(state.lastKitCount);
+          if (els.shooting && els.shooting.checked) addShootingStars();
+          update(); // refresh the "+ shooting stars" note after the re-lay
+        } else {
+          fieldDirty = true;
+          update();
+        }
+      });
+    }
 
     // mode toggle
     $$("[data-mode]").forEach((btn) => {
@@ -477,10 +872,12 @@
           state.tool = "star";
           $$("[data-tool]").forEach((b) => b.classList.toggle("is-active", b.dataset.tool === "star"));
         }
-        if (els.hint && state.stars.length === 0) {
+        // Always keep the hint copy in sync with the mode — update() handles
+        // visibility, so a later Clear can't reveal the wrong mode's text.
+        if (els.hint) {
           els.hint.textContent = design
             ? "Click to place stars · drag with Paint to draw a trail · Erase to remove."
-            : "Pick a kit size on the right to preview the density.";
+            : "Pick a kit size to preview the density.";
         }
       });
     });
@@ -489,11 +886,14 @@
     const saveBtn = $("[data-save]");
     if (saveBtn) {
       saveBtn.addEventListener("click", () => {
-        render(performance.now());
+        // staticTrails: snapshot with every shooting star posed mid-streak, so
+        // the PNG can't catch them mid-gap and invisible
+        render(performance.now(), true);
         const link = document.createElement("a");
         link.download = "bay-area-auto-customz-starlight.png";
         link.href = canvas.toDataURL("image/png");
         link.click();
+        requestRender(); // next frame returns to live animation
       });
     }
     const clearBtn = $("[data-clear]");
@@ -547,6 +947,15 @@
       },
     };
 
+    // Mirror the visual "is-active" selection to assistive tech as aria-pressed,
+    // so screen-reader users know which kit / pattern / color is chosen. One
+    // observer per control keeps it in sync no matter which handler flips it.
+    $$("[data-mode],[data-kit-count],[data-tool],[data-pattern],[data-color]").forEach((btn) => {
+      const sync = () => btn.setAttribute("aria-pressed", btn.classList.contains("is-active") ? "true" : "false");
+      sync();
+      new MutationObserver(sync).observe(btn, { attributes: true, attributeFilter: ["class"] });
+    });
+
     update();
   }
 
@@ -554,10 +963,34 @@
   // Reel cards play in place; starting one pauses the others. The playing
   // state follows the real media events so the UI never lies about playback.
   const reels = $$("[data-reel]");
+
+  // Load each reel's poster JPEG only as it nears the viewport, so all 11 don't
+  // download on first paint (the video bytes are already deferred via preload="none").
+  const posterObs =
+    "IntersectionObserver" in window
+      ? new IntersectionObserver(
+          (entries, obs) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+              const v = $(".reel__video", entry.target);
+              if (v && v.dataset.poster) {
+                v.poster = v.dataset.poster;
+                v.removeAttribute("data-poster");
+              }
+              obs.unobserve(entry.target);
+            });
+          },
+          { rootMargin: "300px" }
+        )
+      : null;
+
   reels.forEach((reel) => {
     const video = $(".reel__video", reel);
     const toggle = $("[data-reel-toggle]", reel);
     if (!video || !toggle) return;
+
+    if (posterObs) posterObs.observe(reel);
+    else if (video.dataset.poster) video.poster = video.dataset.poster;
 
     video.addEventListener("play", () => {
       reel.classList.add("is-playing");
@@ -573,31 +1006,283 @@
       toggle.setAttribute("aria-pressed", "false");
     });
 
-    toggle.addEventListener("click", () => {
-      if (video.paused) {
-        video.muted = true;
-        const p = video.play();
-        if (p && p.catch) p.catch(() => {});
-      } else {
+    // Clicking a reel opens it full screen and plays it with sound (Sergio's
+    // request). Falls back to in-place muted play if fullscreen is unavailable.
+    toggle.addEventListener("click", () => openVideoFullscreen(video));
+
+    // When the viewer leaves fullscreen, stop the clip and re-mute so the
+    // in-place poster/loop behaviour is clean again.
+    const onFsExit = () => {
+      const fsEl = document.fullscreenElement || document.webkitFullscreenElement;
+      if (!fsEl) {
         video.pause();
+        video.controls = false;
+        video.muted = true;
+        video.currentTime = 0;
       }
-    });
+    };
+    document.addEventListener("fullscreenchange", onFsExit);
+    document.addEventListener("webkitfullscreenchange", onFsExit);
+    video.addEventListener("webkitendfullscreen", onFsExit); // iOS
   });
 
+  function openVideoFullscreen(video) {
+    video.muted = false;
+    video.controls = true;
+    video.loop = false;
+    // Start playback FIRST, synchronously in the click handler, so the tap's
+    // user-activation is spent on play() — not on a fullscreen request that an
+    // embedded/iframed page (or a locked-down in-app browser) may block. If we
+    // requested fullscreen first and it was denied, the activation would be
+    // gone and the clip would never play. Fullscreen is a best-effort bonus.
+    const pr = video.play();
+    if (pr && pr.catch) {
+      pr.catch(() => {
+        video.muted = true; // unmuted play blocked → at least play it muted
+        video.play().catch(() => {});
+      });
+    }
+    const req =
+      video.requestFullscreen ||
+      video.webkitRequestFullscreen ||
+      video.webkitEnterFullscreen; // iOS Safari (on the <video> itself)
+    if (req) {
+      try {
+        const r = req.call(video);
+        if (r && r.catch) r.catch(() => {}); // denied → keep playing inline
+      } catch (_) {
+        /* no fullscreen here — the clip is already playing inline */
+      }
+    }
+  }
+
+  /* ===================== LIVE SOCIAL FEED (IG / TikTok) ================= */
+  // Auto-updating feed. When [data-feed-url] points at a JSON feed (e.g. a free
+  // Behold Instagram feed, or any service returning a compatible feed), the
+  // newest posts render here on load and stay current as Sergio posts — no code
+  // changes needed. With no URL set, the curated fallback cards in the HTML stay
+  // put, so the section is never empty or broken.
+  const feedRoot = $("[data-social-feed]");
+  if (feedRoot) initSocialFeed(feedRoot);
+
+  function initSocialFeed(root) {
+    const url = (root.dataset.feedUrl || "").trim();
+    if (!url) return; // keep the built-in fallback cards
+    const grid = $("[data-feed-grid]", root);
+    const status = $("[data-feed-status]", root);
+    const max = Number(root.dataset.feedMax) || 8;
+    if (!grid) return;
+
+    root.classList.add("is-loading");
+    fetch(url, { headers: { Accept: "application/json" } })
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then((data) => {
+        const posts = normalizePosts(data).slice(0, max);
+        if (!posts.length) throw new Error("empty feed");
+        grid.innerHTML = "";
+        posts.forEach((p) => grid.appendChild(buildFeedCard(p)));
+        if (status) status.hidden = true;
+        // Now that posts are genuinely live, the copy can promise it.
+        const title = $("[data-feed-title]");
+        const sub = $("[data-feed-sub]");
+        if (title) title.textContent = "Our latest work, updated automatically.";
+        if (sub) {
+          sub.textContent =
+            "Pulled live from our Instagram and TikTok — new builds land here the moment we post. Tap any post to open it.";
+        }
+      })
+      .catch(() => {
+        // Leave the fallback cards untouched — never show a broken section.
+        if (status) {
+          status.hidden = false;
+          status.textContent = "Showing recent highlights — follow us for the very latest.";
+        }
+      })
+      .finally(() => root.classList.remove("is-loading"));
+  }
+
+  // Tolerate the common feed shapes (Behold, EmbedSocial, raw arrays, etc.).
+  // Feed URLs come from third-party JSON — only ever link to real web pages.
+  function safeHttpUrl(u) {
+    return typeof u === "string" && /^https?:\/\//i.test(u.trim()) ? u.trim() : null;
+  }
+
+  function normalizePosts(data) {
+    const raw = Array.isArray(data)
+      ? data
+      : (data && (data.posts || data.data || data.media || data.items)) || [];
+    return raw
+      .filter((p) => p && typeof p === "object")
+      .map((p) => {
+        const permalink = safeHttpUrl(p.permalink || p.link || p.url || p.postUrl);
+        const type = String(p.mediaType || p.media_type || p.type || "").toUpperCase();
+        const isVideo = type.includes("VIDEO") || type.includes("REEL");
+        const sizes = p.sizes || {};
+        const thumb = safeHttpUrl(
+          p.thumbnailUrl ||
+            p.thumbnail_url ||
+            p.thumbnail ||
+            (sizes.small && sizes.small.mediaUrl) ||
+            (sizes.medium && sizes.medium.mediaUrl) ||
+            p.mediaUrl ||
+            p.media_url ||
+            p.displayUrl ||
+            p.image
+        );
+        const caption = (p.caption || p.title || "").toString();
+        const source = /tiktok/i.test(permalink || "") ? "TikTok" : "Instagram";
+        return permalink && thumb ? { permalink, thumb, isVideo, caption, source } : null;
+      })
+      .filter(Boolean);
+  }
+
+  function buildFeedCard(p) {
+    const a = document.createElement("a");
+    a.className = "feed__card";
+    a.href = p.permalink;
+    a.target = "_blank";
+    a.rel = "noopener";
+
+    const img = document.createElement("img");
+    img.className = "feed__media";
+    img.src = p.thumb;
+    img.loading = "lazy";
+    const short = p.caption.replace(/\s+/g, " ").trim().slice(0, 80);
+    img.alt = short || `${p.source} post from Bay Area Auto Customz`;
+    a.appendChild(img);
+
+    if (p.isVideo) {
+      const t = document.createElement("span");
+      t.className = "feed__type";
+      t.setAttribute("aria-hidden", "true");
+      t.innerHTML = "&#9654;";
+      a.appendChild(t);
+    }
+
+    const meta = document.createElement("span");
+    meta.className = "feed__meta";
+    const src = document.createElement("span");
+    src.className = "feed__src";
+    src.textContent = p.source;
+    meta.appendChild(src);
+    meta.appendChild(document.createTextNode(short || "View post"));
+    a.appendChild(meta);
+    return a;
+  }
+
+  /* ===================== LIVE GOOGLE REVIEWS ============================ */
+  // Google blocks scraping, so real reviews load from a reviews feed instead.
+  // Point [data-reviews-url] at a free Featurable Google-reviews JSON feed (or
+  // a Google Places API response, or any JSON with author/rating/text) and the
+  // real reviews + live 4.9/69 render and stay current. No URL → fallback cards.
+  const reviewsRoot = $("[data-reviews-feed]");
+  if (reviewsRoot) initReviews(reviewsRoot);
+
+  function initReviews(root) {
+    const url = (root.dataset.reviewsUrl || "").trim();
+    if (!url) return; // keep the representative fallback cards
+    const grid = $("[data-reviews-grid]", root);
+    const max = Number(root.dataset.reviewsMax) || 6;
+    if (!grid) return;
+
+    fetch(url, { headers: { Accept: "application/json" } })
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then((data) => {
+        const { reviews, score, count } = normalizeReviews(data);
+        const good = reviews.filter((rv) => rv.rating >= 4).slice(0, max);
+        if (!good.length) throw new Error("no reviews");
+        grid.innerHTML = "";
+        good.forEach((rv) => grid.appendChild(buildReviewCard(rv)));
+        if (score) $$("[data-review-score]").forEach((el) => (el.textContent = (Math.round(score * 10) / 10).toFixed(1)));
+        if (count) {
+          const c = $("[data-review-count]");
+          if (c) c.textContent = String(count);
+        }
+        const src = $("[data-reviews-source]");
+        if (src) {
+          src.hidden = false;
+          src.textContent = "Pulled live from our Google reviews.";
+        }
+      })
+      .catch(() => {}); // leave the fallback cards in place — never break the section
+  }
+
+  // Accept Featurable, Google Places (new + legacy), and plain arrays.
+  function normalizeReviews(data) {
+    const root = data || {};
+    const arr = Array.isArray(root)
+      ? root
+      : root.reviews || (root.result && root.result.reviews) || root.data || [];
+    const words = { ONE: 1, TWO: 2, THREE: 3, FOUR: 4, FIVE: 5 };
+    const reviews = (Array.isArray(arr) ? arr : [])
+      .filter((r) => r && typeof r === "object")
+      .map((r) => {
+        let rating = r.rating != null ? r.rating : r.starRating != null ? r.starRating : r.stars;
+        if (typeof rating === "string") rating = words[rating.toUpperCase()] || Number(rating) || 5;
+        // r.text is a string in legacy Places / a {text} object in the new API —
+        // never let a bare object fall through and render "[object Object]"
+        const rawText = r.text && typeof r.text === "object" ? r.text.text : r.text;
+        const text = (typeof rawText === "string" && rawText) || r.comment || r.reviewText || r.review || "";
+        const author =
+          r.author_name ||
+          (r.reviewer && r.reviewer.displayName) ||
+          (r.authorAttribution && r.authorAttribution.displayName) ||
+          r.author ||
+          r.name ||
+          "Google reviewer";
+        const when =
+          r.relative_time_description || r.relativePublishTimeDescription || r.date || r.createTime || "";
+        return {
+          rating: clamp(Math.round(Number(rating) || 5), 1, 5),
+          text: String(text).replace(/\s+/g, " ").trim(),
+          author: String(author).trim(),
+          when: String(when).trim(),
+        };
+      })
+      .filter((r) => r.text);
+    const score =
+      root.averageRating || root.rating || (root.result && root.result.rating) || null;
+    const count =
+      root.totalReviewCount ||
+      root.reviewCount ||
+      root.user_ratings_total ||
+      root.userRatingCount ||
+      (root.result && root.result.user_ratings_total) ||
+      null;
+    return { reviews, score: score ? Number(score) : null, count: count ? Number(count) : null };
+  }
+
+  function buildReviewCard(rv) {
+    const art = document.createElement("article");
+    art.className = "review";
+    const stars = document.createElement("span");
+    stars.className = "review__stars";
+    stars.setAttribute("aria-hidden", "true");
+    stars.textContent = "★".repeat(rv.rating) + "☆".repeat(5 - rv.rating);
+    const p = document.createElement("p");
+    p.textContent = rv.text.length > 240 ? `${rv.text.slice(0, 237).trimEnd()}…` : rv.text;
+    const small = document.createElement("small");
+    small.textContent = [`— ${rv.author}`, rv.when, "Google"].filter(Boolean).join(" · ");
+    art.append(stars, p, small);
+    return art;
+  }
+
   /* ============================ SERVICES ↔ STUDIO ======================= */
-  $$('.service[role="button"]').forEach((card) => {
-    const go = () => {
+  // The clickable cards carry .service--link with a real <button> in the h3;
+  // clicks anywhere on the card (and native Enter/Space on the button) bubble
+  // to this one handler.
+  $$(".service--link").forEach((card) => {
+    card.addEventListener("click", () => {
       const kind = card.dataset.service;
       if (window.__bacStudio) window.__bacStudio.preset(kind);
       const studio = $("#studio");
-      if (studio) studio.scrollIntoView({ behavior: "smooth", block: "start" });
-    };
-    card.addEventListener("click", go);
-    card.addEventListener("keydown", (ev) => {
-      if (ev.key === "Enter" || ev.key === " ") {
-        ev.preventDefault();
-        go();
-      }
+      if (studio) studio.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
     });
   });
 
@@ -622,7 +1307,7 @@
     }
     if (scroll) {
       const book = $("#book");
-      if (book) book.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (book) book.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
     }
     if (focus && bookingForm) {
       const nameField = bookingForm.querySelector('[name="name"]');
@@ -640,8 +1325,19 @@
       const service = (data.get("service") || "").toString();
       const details = (data.get("details") || "").toString().trim();
 
+      // Flag the exact missing fields for assistive tech (and clear old flags).
+      bookingForm.querySelectorAll("[aria-invalid]").forEach((el) => el.removeAttribute("aria-invalid"));
       if (!name || !contact || !vehicle) {
-        bookingOut.hidden = false;
+        [
+          ["name", name],
+          ["contact", contact],
+          ["vehicle", vehicle],
+        ].forEach(([field, val]) => {
+          if (!val) {
+            const el = bookingForm.querySelector(`[name="${field}"]`);
+            if (el) el.setAttribute("aria-invalid", "true");
+          }
+        });
         bookingOut.style.borderColor = "rgba(255,111,72,0.5)";
         bookingOut.style.background = "rgba(255,111,72,0.08)";
         bookingOut.textContent = "Please add your name, a phone or email, and your vehicle so we can send a quote.";
@@ -659,18 +1355,45 @@
       const message = lines.join("\n");
       const enc = encodeURIComponent(message);
       const smsHref = `sms:${BUSINESS.tel}?&body=${enc}`;
-      const mailHref = `mailto:?subject=${encodeURIComponent("Quote request — Bay Area Auto Customz")}&body=${enc}`;
 
-      bookingOut.hidden = false;
+      // Alert Sergio automatically: POST to Netlify Forms so he gets an email /
+      // text on every submission, even if the visitor never taps a send button.
+      // Best-effort — off Netlify (e.g. a preview host) this fails silently and
+      // the instant text/call/DM options below still work.
+      try {
+        const body = new URLSearchParams();
+        body.set("form-name", bookingForm.getAttribute("name") || "quote");
+        new FormData(bookingForm).forEach((v, k) => body.set(k, v));
+        fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: body.toString() }).catch(() => {});
+      } catch (_) {
+        /* no-op */
+      }
+
       bookingOut.style.borderColor = "rgba(63,208,137,0.4)";
       bookingOut.style.background = "rgba(63,208,137,0.08)";
       bookingOut.innerHTML =
         `Thanks, ${escapeHtml(name)} — your request is ready to send. Pick how you'd like to reach us:` +
         `<span class="booking__send">` +
         `<a class="btn btn--gold btn--sm" href="${smsHref}">Send as text</a>` +
-        `<a class="btn btn--ghost btn--sm" href="${mailHref}">Send as email</a>` +
         `<a class="btn btn--ghost btn--sm" href="tel:${BUSINESS.tel}">Call now</a>` +
+        `<a class="btn btn--ghost btn--sm" href="${BUSINESS.instagram}" target="_blank" rel="noopener">DM Instagram</a>` +
+        `<button class="btn btn--ghost btn--sm" type="button" data-copy-msg>Copy message</button>` +
         `</span>`;
+      // sms:/tel: links go nowhere on most desktops — give those visitors a
+      // clipboard fallback so the quote text is never trapped in the form.
+      const copyBtn = bookingOut.querySelector("[data-copy-msg]");
+      if (copyBtn) {
+        copyBtn.addEventListener("click", () => {
+          const done = () => {
+            copyBtn.textContent = "Copied — paste it in a text or DM";
+          };
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(message).then(done, done);
+          } else {
+            done();
+          }
+        });
+      }
     });
   }
 
@@ -790,15 +1513,27 @@
     greeted = true;
     addMessage("bot", ANSWERS.greeting);
   }
-  function openChat() {
+  const chatLaunch = $("[data-chat-launch]");
+  const chatClose = chatbot ? $(".chatbot__close", chatbot) : null;
+
+  // One place to open/close so aria-expanded and focus stay honest: focus moves
+  // into the panel on open and back to the launcher on close.
+  function setChatOpen(open) {
     if (!chatbot) return;
-    chatbot.hidden = false;
-    greetOnce();
+    chatbot.hidden = !open;
+    if (chatLaunch) chatLaunch.setAttribute("aria-expanded", open ? "true" : "false");
+    if (open) {
+      greetOnce();
+      if (chatClose) setTimeout(() => chatClose.focus(), 0);
+    } else if (chatLaunch) {
+      chatLaunch.focus();
+    }
+  }
+  function openChat() {
+    setChatOpen(true);
   }
   function toggleChat() {
-    if (!chatbot) return;
-    chatbot.hidden = !chatbot.hidden;
-    if (!chatbot.hidden) greetOnce();
+    setChatOpen(chatbot ? chatbot.hidden : true);
   }
   function addMessage(role, text) {
     if (!chatLog) return;
@@ -813,9 +1548,9 @@
     greeting:
       "Hey! I can help with starlight headliners, shooting stars, interior & exterior lighting, custom headliners, butterfly doors, and DIY kits — plus pricing and booking. What are you thinking about?",
     pricing:
-      `Most work is custom-quoted by vehicle and the look you want — a starlight headliner depends on the fiber count (try the designer above to preview 200–800 stars), and lighting or butterfly doors are quoted per build. Send your vehicle and the look and we'll get you an exact number. Call or text ${BUSINESS.phone}.`,
+      `Most work is custom-quoted by vehicle and the look you want — a starlight headliner depends on the star count (we start at a 300-star kit and go up to 4,000; try the designer above to preview any size), and lighting or butterfly doors are quoted per build. Send your vehicle and the look and we'll get you an exact number. Call or text ${BUSINESS.phone}.`,
     starlight:
-      "Starlight headliners are our specialty — individual fiber-optic stars in purple, ice white, blue, or an RGB mix, with custom density and patterns. Use the designer above to preview a 300 or 500-fiber kit, or plot your own constellation, then hit \"Use this design for my quote.\"",
+      "Starlight headliners are our specialty — individual fiber-optic stars in purple, ice white, blue, or an RGB mix, with custom density and patterns. Kits start at 300 stars and go up to 4,000. Use the designer above to preview a size on a real headliner shape, or plot your own constellation, then hit \"Use this design for my quote.\"",
     shooting:
       "Shooting stars add animated meteor streaks across the headliner for that high-end look. Toggle \"Add shooting stars\" in the designer to see it, and we'll quote it as an add-on to your starlight install.",
     interior:
@@ -834,10 +1569,16 @@
       "We're in the Bay Area — Walnut Creek and the greater East Bay. Reach out and we'll sort out scheduling.",
     hours:
       `We open at 9:30 AM. The fastest way to reach us is call or text ${BUSINESS.phone}, or DM @bayareaautocustomz.`,
-    reviews:
-      "We're rated 4.9 stars on Google across 66 reviews — see the Reviews section, and there's a link to read them all on Google.",
+    // Read the rating + count from the page at answer time so the assistant can
+    // never contradict the site (initReviews updates those spans when the live
+    // Google-reviews feed is connected).
+    get reviews() {
+      const score = ($("[data-review-score]") || {}).textContent || "4.9";
+      const count = ($("[data-review-count]") || {}).textContent || "69";
+      return `We're rated ${score.trim()} stars on Google across ${count.trim()} reviews — see the Reviews section, and there's a link to read them all on Google.`;
+    },
     visualizer:
-      "Scroll up to the designer: pick a kit size (200–800 fibers) to preview the density, switch to \"Design your own\" to place stars one by one, pick a color, add shooting stars, then save the preview or send it with your quote.",
+      "Scroll up to the designer: pick a kit size (300–4,000 stars) to preview the density on a real headliner shape, switch to \"Design your own\" to place stars one by one, pick a color, add shooting stars, then save the preview PNG and attach it when you text or DM us.",
     default:
       `Happy to help. For the most accurate answer, tell me your vehicle and the look you want, or call/text ${BUSINESS.phone}. You can also try the starlight designer above to preview your headliner.`,
   };
@@ -851,9 +1592,11 @@
       .trim();
   }
 
-  // crude singularizer so "starlights", "kits", "doors" hit the same intents
+  // crude singularizer so "starlights", "kits", "doors" hit the same intents.
+  // The [^s] guard leaves "ss" words ("address", "glass") intact so intents
+  // that match on them (e.g. location/address) still fire.
   function singularize(t) {
-    return t.replace(/\b([a-z]{3,})s\b/g, "$1");
+    return t.replace(/\b([a-z]{2,}[^s])s\b/g, "$1");
   }
 
   /* ---- vehicle extraction ---------------------------------------------- */
@@ -1007,6 +1750,9 @@
   }
 
   $$("[data-chat-toggle]").forEach((b) => b.addEventListener("click", toggleChat));
+  document.addEventListener("keydown", (ev) => {
+    if (ev.key === "Escape" && chatbot && !chatbot.hidden) setChatOpen(false);
+  });
   $$("[data-q]").forEach((b) => {
     b.addEventListener("click", () => {
       openChat();
@@ -1038,8 +1784,9 @@
       }
       const colorLabel = s.color === "rgb" ? "RGB mix" : s.color;
       const det =
-        `My starlight design: ${s.stars} stars (~${s.kit}-fiber kit), ${colorLabel} color` +
-        (s.shooting ? ", with shooting stars." : ".");
+        `My starlight design: ${fmt(s.stars)} stars (~${fmt(s.kit)}-star kit), ${colorLabel} color` +
+        (s.shooting ? ", with shooting stars." : ".") +
+        " I can text or DM the saved preview PNG.";
       prefillBooking({
         service: s.shooting ? "Starlight + shooting stars" : "Starlight headliner",
         details: det,

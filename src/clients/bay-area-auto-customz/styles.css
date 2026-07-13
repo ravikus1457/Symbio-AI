@@ -32,6 +32,10 @@
 
 html {
   scroll-behavior: smooth;
+  /* Offset anchor jumps so the sticky header doesn't cover section headings.
+     The wrapped header is up to ~140px tall at laptop widths; app.js refines
+     this to the exact measured height once it loads. */
+  scroll-padding-top: 9.5rem;
 }
 
 body {
@@ -127,6 +131,12 @@ h3 {
   left: 0;
 }
 
+/* Skip-link target: focusable via tabindex="-1" (Safari otherwise drops focus
+   back to the top), but a section doesn't need its own visible ring. */
+#studio:focus {
+  outline: none;
+}
+
 /* ---------------------------------------------------------------- buttons */
 .btn {
   display: inline-flex;
@@ -142,10 +152,14 @@ h3 {
   transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease, background 160ms ease;
 }
 
-.btn:hover,
+.btn:hover {
+  transform: translateY(-2px);
+}
+
 .btn:focus-visible {
   transform: translateY(-2px);
-  outline: none;
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 3px;
 }
 
 .btn--gold {
@@ -198,6 +212,9 @@ h3 {
   top: 0;
   z-index: 30;
   display: flex;
+  /* wrap at every width — without this, 681-749px viewports clip the Call
+     button off-screen (the wrap rule used to start only below 680px) */
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
@@ -242,6 +259,7 @@ h3 {
 }
 
 .nav a {
+  white-space: nowrap;
   transition: color 150ms ease;
 }
 
@@ -580,15 +598,18 @@ canvas#headliner {
 .canvas-hint {
   position: absolute;
   left: 50%;
-  bottom: 1rem;
-  transform: translateX(-50%);
+  top: 50%;
+  transform: translate(-50%, -50%);
+  max-width: min(78%, 22rem);
   margin: 0;
-  padding: 0.5rem 0.9rem;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.55);
+  padding: 0.6rem 1rem;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.62);
   border: 1px solid var(--line);
-  color: var(--muted);
-  font-size: 0.8rem;
+  color: rgba(245, 241, 232, 0.86);
+  font-size: 0.82rem;
+  line-height: 1.4;
+  text-align: center;
   pointer-events: none;
   backdrop-filter: blur(6px);
 }
@@ -636,6 +657,20 @@ canvas#headliner {
   font-weight: 700;
   font-size: 0.85rem;
   color: rgba(245, 241, 232, 0.82);
+}
+
+.field__hint {
+  margin-left: 0.4rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 221, 138, 0.35);
+  background: rgba(255, 221, 138, 0.08);
+  color: var(--gold-bright, #ffdd8a);
+  font-size: 0.7rem;
+  font-style: normal;
+  font-weight: 700;
+  vertical-align: middle;
+  white-space: nowrap;
 }
 
 .chips {
@@ -752,11 +787,12 @@ canvas#headliner {
 }
 
 /* ------------------------------------------------- see it in motion */
-/* Five vertical reel cards (9:16, like the phone clips they are) that play
-   in place on tap. One row on desktop, a swipeable snap strip below 1040px. */
+/* Vertical reel cards (9:16, like the phone clips they are) that play in place
+   on tap. They wrap into tidy rows on desktop and become a swipeable snap strip
+   below 1040px, so any number of clips lays out cleanly. */
 .reels {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
   gap: 1rem;
 }
 
@@ -975,6 +1011,105 @@ img.tile__media {
   color: var(--gold-bright);
 }
 
+/* ------------------------------------------- live Instagram / TikTok feed */
+.feed {
+  position: relative;
+}
+
+.feed__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 1rem;
+}
+
+.feed__card {
+  position: relative;
+  display: block;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: #050505;
+  box-shadow: var(--shadow);
+  transition: transform 160ms ease, border-color 160ms ease;
+}
+
+.feed__card:hover,
+.feed__card:focus-visible {
+  transform: translateY(-2px);
+  border-color: rgba(255, 221, 138, 0.5);
+}
+
+.feed__card:focus-visible {
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 3px;
+}
+
+.feed__media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 320ms ease;
+}
+
+.feed__card:hover .feed__media {
+  transform: scale(1.05);
+}
+
+.feed__type {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 221, 138, 0.5);
+  background: rgba(8, 8, 8, 0.6);
+  color: var(--gold-bright);
+  font-size: 0.7rem;
+  backdrop-filter: blur(4px);
+}
+
+.feed__meta {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 2rem 0.8rem 0.75rem;
+  background: linear-gradient(180deg, transparent, rgba(3, 3, 3, 0.92));
+  color: rgba(245, 241, 232, 0.94);
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.feed__src {
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold-bright);
+}
+
+.feed__status {
+  margin: 1rem 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.feed.is-loading .feed__grid {
+  opacity: 0.55;
+}
+
 /* real-photo zoom buttons + the extra shots grid ------------------------- */
 .media-zoom {
   display: block;
@@ -1048,15 +1183,29 @@ img.tile__media {
   transition: transform 160ms ease, border-color 160ms ease;
 }
 
-.service[role="button"] {
+.service--link {
   cursor: pointer;
 }
 
-.service:hover,
-.service:focus-visible {
+/* Only the interactive service cards (01/02 open the designer) get the lift,
+   so the static cards don't falsely signal they're clickable. The focus ring
+   lives on the card via :focus-within — the inner heading button is unstyled. */
+.service--link:hover,
+.service--link:focus-within {
   transform: translateY(-3px);
   border-color: rgba(255, 221, 138, 0.4);
-  outline: none;
+}
+
+.service--link:focus-within {
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 2px;
+}
+
+.service__btn {
+  all: unset;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
 }
 
 .service::after {
@@ -1303,7 +1452,7 @@ img.tile__media {
 
 .kit:hover {
   transform: translateY(-3px);
-  border-color: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 221, 138, 0.4);
 }
 
 .kit__visual {
@@ -1504,6 +1653,12 @@ img.tile__media {
   font-size: 0.78rem;
 }
 
+.reviews__source {
+  margin: 1rem 0 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
 /* ------------------------------------------------------------- booking */
 .booking {
   display: grid;
@@ -1605,8 +1760,15 @@ img.tile__media {
   border: 1px solid var(--line);
   border-radius: 0.8rem;
   background: rgba(255, 255, 255, 0.05);
+  /* 16px minimum — anything smaller makes iOS Safari zoom in on focus and
+     stay zoomed, which wrecks the quote flow for the phone-first audience */
+  font-size: 1rem;
   outline: none;
   transition: border-color 150ms ease;
+}
+
+.booking__form [aria-invalid="true"] {
+  border-color: rgba(255, 111, 72, 0.65);
 }
 
 .booking__form input:focus,
@@ -1625,6 +1787,12 @@ img.tile__media {
   border-radius: 0.8rem;
   background: rgba(63, 208, 137, 0.08);
   font-size: 0.9rem;
+}
+
+/* The live region stays in the DOM (so its first message announces) but
+   collapses visually until it has content. */
+.booking__out:empty {
+  display: none;
 }
 
 .booking__out a {
@@ -2027,12 +2195,15 @@ img.tile__media {
 @media (max-width: 1040px) {
   .hero,
   .studio,
-  .booking,
-  .reviews__top {
+  .booking {
     grid-template-columns: 1fr;
   }
 
+  /* .reviews__top is a flexbox, so it stacks with flex-direction, not
+     grid-template-columns — otherwise the score card's min-width pushes the
+     page wider than the screen (horizontal scroll). */
   .reviews__top {
+    flex-direction: column;
     align-items: flex-start;
   }
 
@@ -2138,9 +2309,20 @@ img.tile__media {
     gap: 0.6rem;
   }
 
-  canvas#headliner {
-    aspect-ratio: 1 / 1;
+  /* The 3-row wrapped phone header is ~190-215px tall (no-JS fallback;
+     app.js measures and sets the exact value). */
+  html {
+    scroll-padding-top: 13.5rem;
   }
+
+  /* Bigger tap targets for the scrollable nav strip. */
+  .nav a {
+    display: inline-block;
+    padding: 0.5rem 0.15rem;
+    line-height: 1.2;
+  }
+  /* Keep the headliner's true 1200:740 ratio on phones so it isn't squished
+     (the canvas backing store is fixed at 1200x740). */
 }
 
 @media (prefers-reduced-motion: reduce) {

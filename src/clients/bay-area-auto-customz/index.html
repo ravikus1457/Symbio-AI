@@ -5,44 +5,73 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark" />
     <meta name="theme-color" content="#070707" />
+    <!-- CSP backstop: the live feed/reviews sections render third-party JSON, so
+         lock scripts to this origin. style 'unsafe-inline' covers the inline
+         style="" positioning attrs; img/connect allow any https for feed media. -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; media-src 'self'; connect-src 'self' https:; base-uri 'self'"
+    />
 
     <title>Bay Area Auto Customz | Starlight Headliners &amp; Custom Auto Lighting</title>
     <meta
       name="description"
-      content="Bay Area Auto Customz — starlight headliners, shooting stars, interior &amp; exterior lighting, custom Alcantara headliners, and butterfly doors. 4.9 stars on Google. Design your starlight live, then book in the East Bay."
+      content="Starlight headliners, custom &amp; ambient auto lighting, and butterfly doors in the East Bay. 4.9 stars on Google — design your starlight and book online."
     />
 
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23070707'/%3E%3Ctext x='16' y='21' font-family='Arial' font-size='12' font-weight='900' fill='%23d7a84f' text-anchor='middle'%3EBAC%3C/text%3E%3C/svg%3E" type="image/svg+xml" />
 
+    <!-- Absolute URLs use the custom domain. The site is served at the domain
+         root (deploy publish dir = this folder), so these are root-relative. -->
+    <link rel="canonical" href="https://bayareaautocustomz.com/" />
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png" />
+
     <meta property="og:type" content="business.business" />
     <meta property="og:site_name" content="Bay Area Auto Customz" />
+    <meta property="og:url" content="https://bayareaautocustomz.com/" />
     <meta property="og:title" content="Bay Area Auto Customz | Starlight Headliners &amp; Custom Auto Lighting" />
     <meta property="og:description" content="Starlight headliners, custom lighting, Alcantara headliners, and butterfly doors. 4.9 stars on Google. Design your starlight live, then book." />
-    <meta property="og:image" content="images/logo-badge-gold.jpg" />
+    <meta property="og:image" content="https://bayareaautocustomz.com/images/starlight-mercedes-wide.jpg" />
+    <meta property="og:image:width" content="1600" />
+    <meta property="og:image:height" content="1200" />
+    <meta property="og:image:alt" content="White Mercedes with its doors open and a starlight headliner lit up in the Bay Area Auto Customz shop" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://bayareaautocustomz.com/images/starlight-mercedes-wide.jpg" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Load fonts without blocking first paint; app.js flips media to "all"
+         (an inline onload handler would violate the CSP above). -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
       rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Space+Grotesk:wght@600;700&display=swap"
+      media="print"
+      data-font-link
     />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Space+Grotesk:wght@600;700&display=swap"
+      />
+    </noscript>
     <link rel="stylesheet" href="styles.css" />
 
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "AutoBodyShop",
+        "@type": "AutomotiveBusiness",
         "name": "Bay Area Auto Customz",
         "description": "Starlight headliners, interior and exterior lighting, custom headliners, and butterfly doors.",
         "telephone": "+1-925-536-5086",
         "areaServed": "San Francisco Bay Area, CA",
-        "address": { "@type": "PostalAddress", "addressRegion": "CA", "addressLocality": "Walnut Creek" },
+        "url": "https://bayareaautocustomz.com/",
+        "image": "https://bayareaautocustomz.com/images/starlight-mercedes-wide.jpg",
+        "priceRange": "$$",
+        "address": { "@type": "PostalAddress", "addressRegion": "CA", "addressLocality": "Walnut Creek", "addressCountry": "US" },
         "sameAs": [
           "https://www.instagram.com/bayareaautocustomz/",
           "https://www.tiktok.com/@bayareaautocustomz"
-        ],
-        "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "reviewCount": "66" }
+        ]
       }
     </script>
   </head>
@@ -58,10 +87,10 @@
         <a class="brand" href="#top" aria-label="Bay Area Auto Customz home">
           <img
             class="brand__logo"
-            src="images/logo-badge-gold.webp"
+            src="images/logo-badge-sm.jpg"
             alt="Bay Area Auto Customz logo"
-            width="720"
-            height="576"
+            width="206"
+            height="165"
           />
           <span class="brand__text">
             <strong>Bay Area Auto Customz</strong>
@@ -71,15 +100,16 @@
         <nav class="nav" aria-label="Primary">
           <a href="#studio">Design studio</a>
           <a href="#work">Our work</a>
+          <a href="#feed">Latest</a>
           <a href="#services">Services</a>
           <a href="#ambient">Ambient kits</a>
           <a href="#kits">DIY kits</a>
           <a href="#reviews">Reviews</a>
         </nav>
         <div class="header__actions">
-          <a class="header__rating" href="#reviews" aria-label="Rated 4.9 stars on Google from 66 reviews">
+          <a class="header__rating" href="#reviews" aria-label="Rated 4.9 stars on Google from 69 reviews">
             <span class="header__stars" aria-hidden="true">★★★★★</span>
-            <span>4.9 · 66 reviews</span>
+            <span>4.9 · 69 reviews</span>
           </a>
           <a class="btn btn--gold btn--sm" href="tel:+19255365086">Call (925) 536-5086</a>
         </div>
@@ -102,7 +132,7 @@
               <a class="btn btn--ghost" href="#book">Book an install</a>
             </div>
             <div class="hero__proof">
-              <span><strong>4.9 ★</strong> 66 Google reviews</span>
+              <span><strong>4.9 ★</strong> 69 Google reviews</span>
               <span><strong>Bay Area</strong> Walnut Creek &amp; East Bay</span>
               <span><strong>Stars, lighting<br />&amp; butterfly doors</strong></span>
             </div>
@@ -144,14 +174,15 @@
         </section>
 
         <!-- ===================== STARLIGHT STUDIO ===================== -->
-        <section class="section" id="studio">
+        <section class="section" id="studio" tabindex="-1">
           <div class="section__intro">
             <span class="eyebrow">Interactive starlight designer</span>
             <h2>See your headliner before we build it.</h2>
             <p>
-              Start with a blank black headliner. Tap a kit size to see exactly how a 300, 500, or
-              800-fiber install looks — or switch to design mode and plot stars one by one to map
-              your own constellation. Save the preview, then send it with your quote.
+              Start with a blank headliner shaped like the real thing. Tap a kit size to see exactly
+              how a 300, 750, or 2,000-star install looks — or switch to design mode and plot stars
+              one by one to map your own constellation. Save the preview PNG, then attach it when you
+              text or DM us your quote request.
             </p>
           </div>
 
@@ -173,13 +204,14 @@
                   id="headliner"
                   width="1200"
                   height="740"
-                  aria-label="Interactive starlight headliner preview. Switch to design mode to place your own stars."
+                  tabindex="0"
+                  aria-label="Starlight headliner preview. Use the kit-size buttons to preview star density. In design mode, use the arrow keys to move the cursor and Enter to place or erase a star."
                 ></canvas>
-                <p class="canvas-hint" data-hint>Pick a kit size on the right to preview the density.</p>
+                <p class="canvas-hint" data-hint>Pick a kit size to preview the density.</p>
               </div>
 
               <div class="studio__foot">
-                <span data-kit-readout>Choose a kit size to begin.</span>
+                <span data-kit-readout role="status">Choose a kit size to begin.</span>
                 <div class="studio__foot-actions">
                   <button class="text-btn" type="button" data-save>Save preview PNG</button>
                   <button class="text-btn" type="button" data-clear>Clear</button>
@@ -194,14 +226,21 @@
               </div>
 
               <div class="field">
-                <span class="field__label">Kit size — number of fiber stars</span>
+                <span class="field__label">Kit size — number of fiber stars <em class="field__hint">300-star minimum</em></span>
                 <div class="chips chips--kits" role="group" aria-label="Kit size">
-                  <button class="chip" type="button" data-kit-count="200">200</button>
                   <button class="chip" type="button" data-kit-count="300">300</button>
                   <button class="chip" type="button" data-kit-count="400">400</button>
                   <button class="chip" type="button" data-kit-count="500">500</button>
-                  <button class="chip" type="button" data-kit-count="600">600</button>
-                  <button class="chip" type="button" data-kit-count="800">800</button>
+                  <button class="chip" type="button" data-kit-count="650">650</button>
+                  <button class="chip" type="button" data-kit-count="750">750</button>
+                  <button class="chip" type="button" data-kit-count="860">860</button>
+                  <button class="chip" type="button" data-kit-count="1100">1,100</button>
+                  <button class="chip" type="button" data-kit-count="1500">1,500</button>
+                  <button class="chip" type="button" data-kit-count="2000">2,000</button>
+                  <button class="chip" type="button" data-kit-count="2500">2,500</button>
+                  <button class="chip" type="button" data-kit-count="3000">3,000</button>
+                  <button class="chip" type="button" data-kit-count="3500">3,500</button>
+                  <button class="chip" type="button" data-kit-count="4000">4,000</button>
                 </div>
               </div>
 
@@ -243,6 +282,11 @@
               </label>
 
               <label class="field toggle">
+                <input type="checkbox" data-sunroof checked />
+                <span>Sunroof</span>
+              </label>
+
+              <label class="field toggle">
                 <input type="checkbox" data-shooting />
                 <span>Add shooting stars</span>
               </label>
@@ -269,7 +313,7 @@
             <h2>Photos don&rsquo;t do it justice.</h2>
             <p>
               Real clips straight from the shop — color cycles, starlight twinkle, and ambient
-              lines wrapping the cabin. Tap a clip to play it.
+              lines wrapping the cabin. Tap a clip to watch it full screen with sound.
             </p>
           </div>
 
@@ -277,8 +321,74 @@
             <figure class="reel" data-reel>
               <video
                 class="reel__video"
+                src="images/reel-headliner-white.mp4"
+                data-poster="images/reel-headliner-white-poster.jpg"
+                muted
+                loop
+                playsinline
+                preload="none"
+                width="720"
+                height="1280"
+              ></video>
+              <button
+                class="reel__toggle"
+                type="button"
+                data-reel-toggle
+                aria-pressed="false"
+                aria-label="Play clip: white starlight headliner over red leather seats"
+              ></button>
+              <span class="reel__badge" aria-hidden="true">&#9654;</span>
+              <figcaption class="reel__caption">Starlight headliner &mdash; white stars</figcaption>
+            </figure>
+            <figure class="reel" data-reel>
+              <video
+                class="reel__video"
+                src="images/reel-shooting-star.mp4"
+                data-poster="images/reel-shooting-star-poster.jpg"
+                muted
+                loop
+                playsinline
+                preload="none"
+                width="720"
+                height="1280"
+              ></video>
+              <button
+                class="reel__toggle"
+                type="button"
+                data-reel-toggle
+                aria-pressed="false"
+                aria-label="Play clip: shooting star streaking across a starlight headliner"
+              ></button>
+              <span class="reel__badge" aria-hidden="true">&#9654;</span>
+              <figcaption class="reel__caption">Shooting star across the roof</figcaption>
+            </figure>
+            <figure class="reel" data-reel>
+              <video
+                class="reel__video"
+                src="images/reel-red-stars.mp4"
+                data-poster="images/reel-red-stars-poster.jpg"
+                muted
+                loop
+                playsinline
+                preload="none"
+                width="720"
+                height="1280"
+              ></video>
+              <button
+                class="reel__toggle"
+                type="button"
+                data-reel-toggle
+                aria-pressed="false"
+                aria-label="Play clip: dense red starlight field on the headliner"
+              ></button>
+              <span class="reel__badge" aria-hidden="true">&#9654;</span>
+              <figcaption class="reel__caption">Red star field</figcaption>
+            </figure>
+            <figure class="reel" data-reel>
+              <video
+                class="reel__video"
                 src="images/reel-purple-door.mp4"
-                poster="images/reel-purple-door-poster.jpg"
+                data-poster="images/reel-purple-door-poster.jpg"
                 muted
                 loop
                 playsinline
@@ -300,7 +410,7 @@
               <video
                 class="reel__video"
                 src="images/reel-purple-cabin.mp4"
-                poster="images/reel-purple-cabin-poster.jpg"
+                data-poster="images/reel-purple-cabin-poster.jpg"
                 muted
                 loop
                 playsinline
@@ -322,7 +432,7 @@
               <video
                 class="reel__video"
                 src="images/reel-red-cabin.mp4"
-                poster="images/reel-red-cabin-poster.jpg"
+                data-poster="images/reel-red-cabin-poster.jpg"
                 muted
                 loop
                 playsinline
@@ -344,7 +454,7 @@
               <video
                 class="reel__video"
                 src="images/reel-blue-cabin.mp4"
-                poster="images/reel-blue-cabin-poster.jpg"
+                data-poster="images/reel-blue-cabin-poster.jpg"
                 muted
                 loop
                 playsinline
@@ -366,7 +476,7 @@
               <video
                 class="reel__video"
                 src="images/reel-starlight-red.mp4"
-                poster="images/reel-starlight-red-poster.jpg"
+                data-poster="images/reel-starlight-red-poster.jpg"
                 muted
                 loop
                 playsinline
@@ -383,6 +493,72 @@
               ></button>
               <span class="reel__badge" aria-hidden="true">&#9654;</span>
               <figcaption class="reel__caption">Starlight + red ambient</figcaption>
+            </figure>
+            <figure class="reel" data-reel>
+              <video
+                class="reel__video"
+                src="images/reel-rgb-dash.mp4"
+                data-poster="images/reel-rgb-dash-poster.jpg"
+                muted
+                loop
+                playsinline
+                preload="none"
+                width="720"
+                height="1280"
+              ></video>
+              <button
+                class="reel__toggle"
+                type="button"
+                data-reel-toggle
+                aria-pressed="false"
+                aria-label="Play clip: RGB ambient lighting across the dash and doors"
+              ></button>
+              <span class="reel__badge" aria-hidden="true">&#9654;</span>
+              <figcaption class="reel__caption">RGB ambient &mdash; dash &amp; doors</figcaption>
+            </figure>
+            <figure class="reel" data-reel>
+              <video
+                class="reel__video"
+                src="images/reel-ambient-night.mp4"
+                data-poster="images/reel-ambient-night-poster.jpg"
+                muted
+                loop
+                playsinline
+                preload="none"
+                width="720"
+                height="1280"
+              ></video>
+              <button
+                class="reel__toggle"
+                type="button"
+                data-reel-toggle
+                aria-pressed="false"
+                aria-label="Play clip: red ambient light strip glowing on the dash at night"
+              ></button>
+              <span class="reel__badge" aria-hidden="true">&#9654;</span>
+              <figcaption class="reel__caption">Red ambient &mdash; night dash</figcaption>
+            </figure>
+            <figure class="reel" data-reel>
+              <video
+                class="reel__video"
+                src="images/reel-purple-build.mp4"
+                data-poster="images/reel-purple-build-poster.jpg"
+                muted
+                loop
+                playsinline
+                preload="none"
+                width="720"
+                height="1280"
+              ></video>
+              <button
+                class="reel__toggle"
+                type="button"
+                data-reel-toggle
+                aria-pressed="false"
+                aria-label="Play clip: purple and white wrapped build walkaround with red interior lighting"
+              ></button>
+              <span class="reel__badge" aria-hidden="true">&#9654;</span>
+              <figcaption class="reel__caption">Purple &amp; white build</figcaption>
             </figure>
           </div>
         </section>
@@ -406,6 +582,8 @@
                 <img
                   class="tile__media"
                   src="images/starlight-roof-purple.jpg"
+                  srcset="images/starlight-roof-purple-800.jpg 800w, images/starlight-roof-purple.jpg 1400w"
+                  sizes="(max-width: 680px) 92vw, (max-width: 1040px) 46vw, 350px"
                   alt="Purple starlight headliner glowing above the front seats of a Mercedes C-Class"
                   loading="lazy"
                   width="1400"
@@ -424,6 +602,8 @@
                 <img
                   class="tile__media"
                   src="images/starlight-white-ice.jpg"
+                  srcset="images/starlight-white-ice-800.jpg 800w, images/starlight-white-ice.jpg 1400w"
+                  sizes="(max-width: 680px) 92vw, (max-width: 1040px) 46vw, 350px"
                   alt="Ice-white starlight headliner over black leather seats in a Mercedes"
                   loading="lazy"
                   width="1400"
@@ -442,6 +622,8 @@
                 <img
                   class="tile__media"
                   src="images/ambient-door-speaker.jpg"
+                  srcset="images/ambient-door-speaker-800.jpg 800w, images/ambient-door-speaker.jpg 1400w"
+                  sizes="(max-width: 680px) 92vw, (max-width: 1040px) 46vw, 350px"
                   alt="Blue ambient lighting tracing the door panel and glowing speaker grille in a Corvette"
                   loading="lazy"
                   width="1400"
@@ -460,6 +642,8 @@
                 <img
                   class="tile__media"
                   src="images/starlight-mercedes-wide.jpg"
+                  srcset="images/starlight-mercedes-wide-800.jpg 800w, images/starlight-mercedes-wide.jpg 1600w"
+                  sizes="(max-width: 680px) 92vw, (max-width: 1040px) 46vw, 350px"
                   alt="White Mercedes with doors open, starlight headliner lit and logo puddle lights on the shop floor"
                   loading="lazy"
                   width="1600"
@@ -480,6 +664,8 @@
               <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
                 <img
                   src="images/starlight-mercedes-cabin.jpg"
+                  srcset="images/starlight-mercedes-cabin-800.jpg 800w, images/starlight-mercedes-cabin.jpg 1400w"
+                  sizes="(max-width: 680px) 92vw, (max-width: 1040px) 46vw, 350px"
                   alt="Starlight roof over the rear cabin of a Mercedes C-Class"
                   loading="lazy"
                   width="1400"
@@ -492,6 +678,8 @@
               <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
                 <img
                   src="images/starlight-console-white.jpg"
+                  srcset="images/starlight-console-white-800.jpg 800w, images/starlight-console-white.jpg 1400w"
+                  sizes="(max-width: 680px) 92vw, (max-width: 1040px) 46vw, 350px"
                   alt="Lit center console trim with a starlight headliner above in a Mercedes"
                   loading="lazy"
                   width="1400"
@@ -504,6 +692,8 @@
               <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
                 <img
                   src="images/starlight-roof-console.jpg"
+                  srcset="images/starlight-roof-console-800.jpg 800w, images/starlight-roof-console.jpg 1400w"
+                  sizes="(max-width: 680px) 92vw, (max-width: 1040px) 46vw, 350px"
                   alt="Starlight headliner and illuminated dash trim seen from the open driver door"
                   loading="lazy"
                   width="1400"
@@ -516,6 +706,8 @@
               <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
                 <img
                   src="images/starlight-roof-doors.jpg"
+                  srcset="images/starlight-roof-doors-800.jpg 800w, images/starlight-roof-doors.jpg 1400w"
+                  sizes="(max-width: 680px) 92vw, (max-width: 1040px) 46vw, 350px"
                   alt="Star fibers wrapping the roof and pillars of a Mercedes cabin"
                   loading="lazy"
                   width="1400"
@@ -528,6 +720,8 @@
               <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
                 <img
                   src="images/starlight-camaro-blue.jpg"
+                  srcset="images/starlight-camaro-blue-800.jpg 800w, images/starlight-camaro-blue.jpg 1400w"
+                  sizes="(max-width: 680px) 92vw, (max-width: 1040px) 46vw, 350px"
                   alt="Ice-blue starlight headliner over blue leather seats in a Camaro"
                   loading="lazy"
                   width="1400"
@@ -548,6 +742,79 @@
           </div>
         </section>
 
+        <!-- ====================== LIVE SOCIAL FEED ====================== -->
+        <!--
+          Auto-updating feed. When a live feed is connected (see below), the
+          newest Instagram/TikTok posts render here automatically — no code
+          changes when Sergio posts. Until then, the curated cards below show
+          so the section is always complete.
+
+          TO GO LIVE (one-time, ~5 min):
+            1. Create a free feed at https://behold.so and connect the
+               @bayareaautocustomz Instagram account.
+            2. Copy the feed's JSON URL (looks like
+               https://feeds.behold.so/XXXXXXXX).
+            3. Paste it into data-feed-url on the .feed element below.
+          The grid then shows the latest posts and refreshes on its own.
+          (Any service that returns a compatible JSON feed works too — see
+          images/README.txt.)
+        -->
+        <section class="section feed-section" id="feed">
+          <div class="section__intro">
+            <span class="eyebrow eyebrow--rgb">Straight from the feed</span>
+            <h2 data-feed-title>Fresh from Instagram &amp; TikTok.</h2>
+            <p data-feed-sub>
+              A look at recent builds from our Instagram and TikTok — follow us there for the very
+              latest reveals. Tap any post to open it.
+            </p>
+          </div>
+
+          <div class="feed" data-social-feed data-feed-url="" data-feed-max="8">
+            <div class="feed__grid" data-feed-grid>
+              <a class="feed__card" href="https://www.instagram.com/bayareaautocustomz/" target="_blank" rel="noopener">
+                <img class="feed__media" src="images/reel-headliner-white-poster.jpg" alt="White starlight headliner over red leather seats" loading="lazy" width="720" height="1280" />
+                <span class="feed__type" aria-hidden="true">&#9654;</span>
+                <span class="feed__meta"><span class="feed__src">Instagram</span> White starlight headliner</span>
+              </a>
+              <a class="feed__card" href="https://www.tiktok.com/@bayareaautocustomz" target="_blank" rel="noopener">
+                <img class="feed__media" src="images/reel-shooting-star-poster.jpg" alt="Shooting star streaking across a starlight headliner" loading="lazy" width="720" height="1280" />
+                <span class="feed__type" aria-hidden="true">&#9654;</span>
+                <span class="feed__meta"><span class="feed__src">TikTok</span> Shooting star build</span>
+              </a>
+              <a class="feed__card" href="https://www.instagram.com/bayareaautocustomz/" target="_blank" rel="noopener">
+                <img class="feed__media" src="images/reel-red-stars-poster.jpg" alt="Dense red starlight field on a headliner" loading="lazy" width="720" height="1280" />
+                <span class="feed__type" aria-hidden="true">&#9654;</span>
+                <span class="feed__meta"><span class="feed__src">Instagram</span> Red star field</span>
+              </a>
+              <a class="feed__card" href="https://www.instagram.com/bayareaautocustomz/" target="_blank" rel="noopener">
+                <img class="feed__media" src="images/reel-rgb-dash-poster.jpg" alt="RGB ambient lighting across a dash and doors" loading="lazy" width="720" height="1280" />
+                <span class="feed__type" aria-hidden="true">&#9654;</span>
+                <span class="feed__meta"><span class="feed__src">Instagram</span> RGB ambient cabin</span>
+              </a>
+              <a class="feed__card" href="https://www.tiktok.com/@bayareaautocustomz" target="_blank" rel="noopener">
+                <img class="feed__media" src="images/reel-ambient-night-poster.jpg" alt="Red ambient light strip glowing on a dash at night" loading="lazy" width="720" height="1280" />
+                <span class="feed__type" aria-hidden="true">&#9654;</span>
+                <span class="feed__meta"><span class="feed__src">TikTok</span> Night ambient glow</span>
+              </a>
+              <a class="feed__card" href="https://www.instagram.com/bayareaautocustomz/" target="_blank" rel="noopener">
+                <img class="feed__media" src="images/reel-purple-build-poster.jpg" alt="Purple and white wrapped build with red interior lighting" loading="lazy" width="720" height="1280" />
+                <span class="feed__type" aria-hidden="true">&#9654;</span>
+                <span class="feed__meta"><span class="feed__src">Instagram</span> Purple &amp; white build</span>
+              </a>
+            </div>
+            <p class="feed__status" data-feed-status hidden></p>
+          </div>
+
+          <div class="social-row">
+            <a class="social-pill" href="https://www.instagram.com/bayareaautocustomz/" target="_blank" rel="noopener">
+              <span aria-hidden="true">◎</span> Follow @bayareaautocustomz on Instagram
+            </a>
+            <a class="social-pill" href="https://www.tiktok.com/@bayareaautocustomz" target="_blank" rel="noopener">
+              <span aria-hidden="true">♪</span> Follow @bayareaautocustomz on TikTok
+            </a>
+          </div>
+        </section>
+
         <!-- ========================= SERVICES ========================= -->
         <section class="section" id="services">
           <div class="section__intro">
@@ -555,15 +822,18 @@
             <h2>Lighting and custom work, done right.</h2>
           </div>
           <div class="services">
-            <article class="service service--feature" data-service="starlight" tabindex="0" role="button" aria-label="Starlight headliners — open the designer">
+            <!-- The two designer-linked cards use a real <button> in the heading so
+                 screen readers keep the h3 + card text (role="button" on the article
+                 would flatten it all into one label). Card clicks bubble from anywhere. -->
+            <article class="service service--feature service--link" data-service="starlight">
               <span class="service__no">01</span>
-              <h3>Starlight headliners</h3>
+              <h3><button class="service__btn" type="button">Starlight headliners</button></h3>
               <p>Individual fiber-optic stars with custom density, color, and patterns. Tap to design yours.</p>
               <strong>Custom quote</strong>
             </article>
-            <article class="service" data-service="shooting" tabindex="0" role="button" aria-label="Shooting stars — open the designer">
+            <article class="service service--link" data-service="shooting">
               <span class="service__no">02</span>
-              <h3>Shooting stars</h3>
+              <h3><button class="service__btn" type="button">Shooting stars</button></h3>
               <p>Animated meteor streaks across the headliner for that high-end effect.</p>
               <strong>Add-on</strong>
             </article>
@@ -686,6 +956,8 @@
                 <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
                   <img
                     src="images/ambient-bmw-green.jpg"
+                  srcset="images/ambient-bmw-green-800.jpg 800w, images/ambient-bmw-green.jpg 1600w"
+                  sizes="(max-width: 680px) 92vw, (max-width: 1040px) 46vw, 350px"
                     alt="Green ambient light lines tracing the dash, doors, and steering wheel of a BMW with a blue footwell glow"
                     loading="lazy"
                     width="1600"
@@ -698,6 +970,8 @@
                 <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
                   <img
                     src="images/ambient-bmw-red.jpg"
+                  srcset="images/ambient-bmw-red-800.jpg 800w, images/ambient-bmw-red.jpg 1400w"
+                  sizes="(max-width: 680px) 92vw, (max-width: 1040px) 46vw, 350px"
                     alt="Rainbow gradient ambient light strip across the dash of a BMW with red leather interior"
                     loading="lazy"
                     width="1400"
@@ -710,6 +984,8 @@
                 <button class="media-zoom" type="button" data-lightbox aria-label="View larger photo">
                   <img
                     src="images/ambient-bmw-door.jpg"
+                  srcset="images/ambient-bmw-door-800.jpg 800w, images/ambient-bmw-door.jpg 1600w"
+                  sizes="(max-width: 680px) 92vw, (max-width: 1040px) 46vw, 350px"
                     alt="Teal and green ambient lighting along the doors and dash of a white BMW with the door open"
                     loading="lazy"
                     width="1600"
@@ -733,7 +1009,8 @@
             </p>
           </div>
 
-          <!-- TODO(Sergio): confirm real kit pricing before launch — values below are placeholders. -->
+          <!-- Kit prices read "Ask for pricing" until Sergio confirms real numbers.
+               Swap each .kit__price to the real "from $XX" once known. -->
           <div class="kits">
             <article class="kit">
               <div class="kit__visual kit__visual--fiber" aria-hidden="true">
@@ -743,7 +1020,7 @@
                 <h3>Fiber-optic starlight kit</h3>
                 <p>LED engine, fiber bundle, remote, and a starter install guide.</p>
                 <div class="kit__foot">
-                  <span class="kit__price">from $149</span>
+                  <span class="kit__price">Ask for pricing</span>
                   <button class="btn btn--gold btn--sm" type="button" data-kit="Fiber-optic starlight kit">Add to quote</button>
                 </div>
               </div>
@@ -754,7 +1031,7 @@
                 <h3>RGB ambient lighting kit</h3>
                 <p>App- and remote-controlled strips for doors, dash, and footwells.</p>
                 <div class="kit__foot">
-                  <span class="kit__price">from $129</span>
+                  <span class="kit__price">Ask for pricing</span>
                   <button class="btn btn--gold btn--sm" type="button" data-kit="RGB ambient lighting kit">Add to quote</button>
                 </div>
               </div>
@@ -765,7 +1042,7 @@
                 <h3>Shooting-star add-on</h3>
                 <p>Upgrade any starlight kit with animated meteor trails.</p>
                 <div class="kit__foot">
-                  <span class="kit__price">from $89</span>
+                  <span class="kit__price">Ask for pricing</span>
                   <button class="btn btn--gold btn--sm" type="button" data-kit="Shooting-star add-on">Add to quote</button>
                 </div>
               </div>
@@ -774,42 +1051,50 @@
         </section>
 
         <!-- ========================== REVIEWS ========================== -->
-        <section class="section" id="reviews">
+        <!--
+          Live Google reviews. Google can't be scraped directly (and their ToS
+          forbids it), so real reviews load here from a reviews feed. TO GO LIVE
+          (one-time, ~5 min): create a free Google-reviews widget at
+          https://featurable.com (connect the Bay Area Auto Customz Google
+          Business Profile), copy its JSON feed URL, and paste it into
+          data-reviews-url on the <section> below. The Places API works too —
+          any JSON with review author / rating / text is accepted (see
+          images/README.txt). Real reviews + the live 4.9/69 then render and
+          refresh on their own; until connected, the representative cards show.
+        -->
+        <section class="section" id="reviews" data-reviews-feed data-reviews-url="" data-reviews-max="6">
           <div class="reviews__top">
             <div class="section__intro section__intro--flush">
               <span class="eyebrow">What customers say</span>
-              <h2>Rated 4.9 on Google.</h2>
+              <h2>Rated <span data-review-score>4.9</span> on Google.</h2>
             </div>
             <div class="score">
-              <strong>4.9</strong>
+              <strong data-review-score>4.9</strong>
               <span class="score__stars" aria-hidden="true">★★★★★</span>
-              <em>66 Google reviews</em>
-              <a class="text-btn" href="https://www.google.com/search?q=Bay+Area+Auto+Customz+reviews" target="_blank" rel="noopener">Read all on Google</a>
+              <em><span data-review-count>69</span> Google reviews</em>
+              <a class="text-btn" href="https://share.google/gWhxl8wOtXEkPjRPD" target="_blank" rel="noopener">Read all on Google</a>
             </div>
           </div>
 
-          <!--
-            REVIEW SLOTS — replace the placeholder quotes below with real,
-            customer-approved Google review snippets (and first name + vehicle).
-            The 4.9 / 66 aggregate above is the real Google number.
-          -->
-          <div class="reviews">
+          <!-- Real reviews from the Google listing (verbatim, lightly capitalized). -->
+          <div class="reviews" data-reviews-grid>
             <article class="review">
               <span class="review__stars" aria-hidden="true">★★★★★</span>
-              <p>Clean install and the cabin looked completely different at night. Exactly what I wanted.</p>
-              <small>Approved review slot — add customer name &amp; vehicle</small>
+              <p>Great service with Bay Area Auto Customz! Make sure you guys come check them out and get your car done. I came all the way from Oakland.</p>
+              <small>— Corey Dlt · Google review</small>
             </article>
             <article class="review">
               <span class="review__stars" aria-hidden="true">★★★★★</span>
-              <p>Easy to book, quick to respond, and the starlight effect came out perfect.</p>
-              <small>Approved review slot — add customer name &amp; vehicle</small>
+              <p>Overall very clean job — I love how the ambient lighting looks on my Lexus. Professional service and great results!</p>
+              <small>— Nikki Asemi · Google review</small>
             </article>
             <article class="review">
               <span class="review__stars" aria-hidden="true">★★★★★</span>
-              <p>Professional work and clean wiring. The ambient lighting made the interior feel new.</p>
-              <small>Approved review slot — add customer name &amp; vehicle</small>
+              <p>Did an amazing job. Brought in my second car for the stars.</p>
+              <small>— Omar · Google review</small>
             </article>
           </div>
+          <p class="reviews__source" data-reviews-source hidden></p>
         </section>
 
         <!-- ========================== BOOKING ========================== -->
@@ -835,14 +1120,31 @@
               </ol>
             </div>
 
-            <form class="booking__form" data-booking novalidate>
+            <!-- Netlify Forms: once deployed on Netlify, each submission is
+                 captured and emailed to Sergio automatically (Forms → add a
+                 notification: his email, or his carrier email-to-SMS address for
+                 a text — see images/README.txt). Works alongside the instant
+                 text/call/DM buttons the visitor also gets. -->
+            <form
+              class="booking__form"
+              data-booking
+              name="quote"
+              method="POST"
+              data-netlify="true"
+              netlify-honeypot="bot-field"
+              novalidate
+            >
+              <input type="hidden" name="form-name" value="quote" />
+              <p class="booking__hp" hidden aria-hidden="true">
+                <label>Don&rsquo;t fill this out: <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
+              </p>
               <label>
                 Name
                 <input name="name" type="text" placeholder="Your name" autocomplete="name" required />
               </label>
               <label>
                 Phone or email
-                <input name="contact" type="text" placeholder="So we can send your quote" autocomplete="tel" required />
+                <input name="contact" type="text" placeholder="So we can send your quote" autocomplete="on" required />
               </label>
               <label>
                 Vehicle
@@ -866,7 +1168,7 @@
                 <textarea name="details" rows="3" placeholder="Roof color, star density, shooting stars, timing..."></textarea>
               </label>
               <button class="btn btn--gold btn--block" type="submit">Send my quote request</button>
-              <div class="booking__out" data-booking-out hidden></div>
+              <div class="booking__out" data-booking-out role="status" aria-live="polite"></div>
               <p class="booking__fine">No spam. Your details are only used to prepare your quote.</p>
             </form>
           </div>
@@ -878,10 +1180,11 @@
         <div class="footer__brand">
           <img
             class="brand__logo"
-            src="images/logo-badge-gold.webp"
+            src="images/logo-badge-sm.jpg"
             alt="Bay Area Auto Customz logo"
-            width="720"
-            height="576"
+            width="206"
+            height="165"
+            loading="lazy"
           />
           <div>
             <strong>Bay Area Auto Customz</strong>
@@ -909,15 +1212,23 @@
       </footer>
 
       <!-- ========================== CHATBOT ========================== -->
-      <button class="chat-launch" type="button" data-chat-toggle aria-label="Open chat assistant">
+      <button
+        class="chat-launch"
+        type="button"
+        data-chat-toggle
+        data-chat-launch
+        aria-expanded="false"
+        aria-controls="chatbot-panel"
+        aria-label="Open chat assistant"
+      >
         <span class="chat-launch__dot" aria-hidden="true"></span>
         Ask us anything
       </button>
 
-      <aside class="chatbot" data-chatbot aria-label="Bay Area Auto Customz assistant" hidden>
+      <aside class="chatbot" id="chatbot-panel" data-chatbot role="dialog" aria-labelledby="chatbot-title" hidden>
         <div class="chatbot__head">
           <div>
-            <strong>Auto Customz Assistant</strong>
+            <strong id="chatbot-title">Auto Customz Assistant</strong>
             <span>Starlights · lighting · kits · booking</span>
           </div>
           <button class="chatbot__close" type="button" data-chat-toggle aria-label="Close chat">×</button>

@@ -51,6 +51,7 @@ src/
   reviews.njk           # Reviews — proof, not fluff (no fabricated testimonials)
   scan.njk              # Free scan / Contact — the conversion form + contact cards
   chatbot-demo.html     # Self-contained, shareable full-page chatbot demo (passthrough)
+  humanizer.html        # Self-contained, offline AI-text humanizer / writing helper (passthrough)
   assets/
     css/styles.css      # the single design system (CSS custom properties, sectioned)
     js/main.js          # theme toggle, mobile menu, reveals, living hero, scan form
@@ -193,6 +194,66 @@ Quick setup via attributes:
 > The minified build is produced with `npm run minify:widget`. The full-page demo at
 > `chatbot-demo.html` inlines a copy of the widget so it stays shareable as a single file —
 > keep that copy in sync with `src/assets/js/symbio-widget.js` if you change the widget.
+
+---
+
+## The Humanizer (offline writing helper)
+
+`src/humanizer.html` is a **self-contained, single-file** writing tool that rewrites stiff,
+AI-sounding prose so it reads more naturally. It runs **entirely in the browser** — the built-in
+cleanup makes **no network requests at all**, so a draft never leaves the machine. Like
+`chatbot-demo.html`, it's shipped verbatim (passthrough copy) to `dist/humanizer.html`.
+
+### For a non-technical user
+
+Two ways to open it, no install required:
+
+1. **Double-click** `humanizer.html` (from `dist/`, or `src/` — it's the same file). It opens in the
+   browser and works offline, forever.
+2. Or host it like the rest of the site (`npm run build`, then serve `dist/`). It lives at
+   `/humanizer.html`.
+
+Paste a draft, pick a **Strength** (Light / Standard / Aggressive) and a **Voice** (Formal for
+essays, Casual), and click **Clean up the text**. Every change is highlighted so the edits stay
+reviewable; **Copy**/**Save** export the result. The input auto-saves locally so a refresh never
+loses work.
+
+### What it does
+
+A deterministic, seeded rules engine (all data + logic inline in the file) that:
+
+- swaps overused AI vocabulary (`delve`, `leverage`, `tapestry`, `pivotal`, `robust`, …) for plain
+  synonyms — with guards that skip other senses (e.g. _foster care_, _financial leverage_) and
+  proper nouns;
+- trims or drops stock phrases (`it's important to note that`, `plays a crucial role in`,
+  `in today's fast-paced world`) and formulaic openers (`Moreover`, `Furthermore`, `In conclusion`);
+- fixes structural tells: em-dash pile-ups, stacked hedging (`may potentially`), `not only … but
+  also`, participle tails (`…, highlighting its importance`), assistant leftovers (`Certainly!`),
+  curly quotes and stray invisible characters;
+- optionally contracts (`do not` → `don't`) in **Casual** voice only;
+- **protects** quotes, `code`, URLs and emails verbatim, and shows an **AI-pattern score** and a
+  Flesch **readability** score before/after.
+
+English only for the instant cleanup. It changes **wording**, never facts, names, or numbers.
+
+### Optional: local-AI "deep rewrite" (still free, still offline)
+
+For a deeper rewrite the tool can call a model running locally via
+[Ollama](https://ollama.com) — it auto-detects a running instance, lists installed models, and
+streams the result (with a **Stop** button). Nothing is sent to any online service; the model runs
+on the user's own computer. If none is installed, the panel explains the one-time setup
+(`ollama pull gemma3:4b`) and the `OLLAMA_ORIGINS=*` fix for `file://` CORS. The instant rules
+engine is fully functional with **zero** setup, so the LLM is strictly additive.
+
+### What it is **not**
+
+It is **not** an "AI-detector bypass." AI detectors (Turnitin, GPTZero, …) are unreliable and often
+flag genuine human writing, but reordering words does not reliably fool them, and the tool makes no
+such promise. It's for polishing your **own** drafts to read more naturally — not for disguising
+authorship. The in-app note says the same.
+
+> Single-file, dependency-free, and hand-formatted like `chatbot-demo.html` — validated by HTMLHint
+> (`npm run lint:html`), not reformatted by Prettier.
 
 ---
 

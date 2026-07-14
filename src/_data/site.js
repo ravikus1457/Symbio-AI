@@ -25,6 +25,7 @@ export default {
     { key: "pricing", label: "Pricing", url: "pricing.html" },
     { key: "portfolio", label: "Portfolio", url: "portfolio.html" },
     { key: "reviews", label: "Reviews", url: "reviews.html" },
+    { key: "humanizer", label: "Humanizer", url: "humanizer.html" },
   ],
 
   // The single conversion call-to-action, reused in nav, hero, and footer.

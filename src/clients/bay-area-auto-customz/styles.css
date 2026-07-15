@@ -2334,3 +2334,230 @@ img.tile__media {
     scroll-behavior: auto !important;
   }
 }
+
+/* =========================== field note + live estimate price ============ */
+.field__note {
+  margin: 0.55rem 0 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.panel__price {
+  margin: 0.15rem 0 0.35rem;
+  color: var(--gold-bright);
+  font-weight: 800;
+  font-size: 1.02rem;
+}
+
+/* ================================ pricing ================================ */
+.pricing {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.price-card {
+  padding: 1.4rem 1.5rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01)), var(--panel);
+}
+
+.price-card--wide {
+  grid-column: 1 / -1;
+}
+
+.price-card__head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin-bottom: 0.9rem;
+}
+
+.price-card__head h3 {
+  font-size: 1.2rem;
+}
+
+.price-card__tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold-bright);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+}
+
+.price-cols {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.2rem 2.4rem;
+}
+
+.price-col h4 {
+  margin: 0 0 0.4rem;
+  color: var(--gold);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.price-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.price-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.42rem 0;
+  border-top: 1px solid var(--line-soft);
+  font-size: 0.92rem;
+}
+
+.price-list > li:first-child {
+  border-top: 0;
+}
+
+.price-list li span:first-child {
+  color: var(--muted);
+}
+
+.price-list li span:last-child {
+  color: var(--ink);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.price-list--two {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 2.4rem;
+}
+
+.price-card__note {
+  margin: 0.95rem 0 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+
+.pricing__cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  justify-content: center;
+  margin-top: 1.7rem;
+}
+
+/* ============================ policy / warranty ========================== */
+.policy {
+  display: grid;
+  gap: 0.7rem;
+  max-width: 62rem;
+  margin: 0 auto;
+}
+
+.policy__item {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  overflow: hidden;
+}
+
+.policy__item > summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.3rem;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--ink);
+}
+
+.policy__item > summary::-webkit-details-marker {
+  display: none;
+}
+
+.policy__item > summary::after {
+  content: "+";
+  color: var(--gold-bright);
+  font-weight: 800;
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.policy__item[open] > summary::after {
+  content: "\2212"; /* minus sign */
+}
+
+.policy__item > summary:focus-visible {
+  outline: 2px solid var(--gold-bright);
+  outline-offset: -3px;
+}
+
+.policy__body {
+  padding: 0 1.3rem 1.2rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.policy__body ul {
+  margin: 0.3rem 0;
+  padding-left: 1.1rem;
+}
+
+.policy__body li {
+  margin: 0.35rem 0;
+}
+
+.policy__body strong {
+  color: var(--ink);
+}
+
+.policy__sub {
+  margin: 1rem 0 0.2rem;
+  color: var(--gold);
+  font-weight: 800;
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.policy__fine {
+  margin: 0.85rem 0 0;
+  font-size: 0.8rem;
+  opacity: 0.9;
+}
+
+/* the accordion title is an <h3> for heading semantics; keep it visually a summary */
+.policy__item > summary h3 {
+  margin: 0;
+  font: inherit;
+  color: inherit;
+}
+
+/* keyboard focus ring on the configurator chips (incl. the Standard/Tesla toggle)
+   and colour swatches, matching every other interactive control on the site */
+.chip:focus-visible,
+.swatch:focus-visible {
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 2px;
+}
+
+@media (max-width: 720px) {
+  .pricing,
+  .price-cols,
+  .price-list--two {
+    grid-template-columns: 1fr;
+  }
+}

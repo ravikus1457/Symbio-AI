@@ -25,7 +25,20 @@
   };
 
   // Sergio's real kit sizes — 300-star minimum, up to 4,000.
-  const KIT_SIZES = [300, 400, 500, 650, 750, 860, 1100, 1500, 2000, 2500, 3000, 3500, 4000];
+  const KIT_SIZES = [300, 400, 500, 650, 850, 1100, 1500, 2200, 2500, 3300, 3500, 4400];
+
+  // Sergio's "starting at" install pricing (materials + hidden wiring install).
+  // Standard vehicles and Teslas/EVs are priced separately; the EV table also
+  // carries the 750/860 tiers his standard list skips, so the nearest-tier
+  // lookup below always lands on a real quoted price.
+  const PRICE_STD = { 300: 450, 400: 500, 500: 650, 650: 750, 850: 950, 1100: 1300, 1500: 1650, 2200: 2600, 2500: 3000, 3300: 3500, 3500: 3800, 4400: 4800 };
+  const PRICE_EV = { 300: 600, 400: 700, 500: 800, 650: 950, 750: 1100, 860: 1300, 1100: 1500, 1500: 2000, 2200: 2800, 2500: 3500, 3300: 4200, 3500: 4500, 4400: 5600 };
+  function priceFor(n, ev) {
+    const table = ev ? PRICE_EV : PRICE_STD;
+    const keys = Object.keys(table).map(Number);
+    const k = keys.reduce((best, key) => (Math.abs(key - n) < Math.abs(best - n) ? key : best), keys[0]);
+    return table[k];
+  }
   const fmt = (n) => n.toLocaleString("en-US");
   const COLORS = {
     purple: "#c08bff",
@@ -143,6 +156,7 @@
       pkg: $("[data-package]"),
       summaryCount: $("[data-summary-count]"),
       summaryNote: $("[data-summary-note]"),
+      price: $("[data-price]"),
       size: $("[data-size]"),
       twinkle: $("[data-twinkle]"),
       shooting: $("[data-shooting]"),
@@ -165,6 +179,7 @@
       sizeScale: 1, // shrinks stars as density rises so they read as pinpoints
       alphaScale: 1, // eases brightness at high density so it doesn't blow out
       sunroof: els.sunroof ? els.sunroof.checked : true, // toggle the sunroof cut-out
+      vehicle: "std", // "std" | "ev" — which price table the estimate uses
       kbCursor: null, // keyboard-placement cursor (design mode)
       painting: false,
       lastPoint: null,
@@ -353,6 +368,15 @@
           const ck = closestKit(n);
           const extra = state.trails.length ? " + shooting stars" : "";
           els.summaryNote.textContent = `Closest kit: ${fmt(ck)} stars${extra}. Final quote depends on vehicle & roof.`;
+        }
+      }
+      if (els.price) {
+        if (n === 0) {
+          els.price.hidden = true;
+        } else {
+          const ev = state.vehicle === "ev";
+          els.price.textContent = `Starting at $${fmt(priceFor(closestKit(n), ev))} installed · ${ev ? "Tesla / EV" : "standard vehicle"}`;
+          els.price.hidden = false;
         }
       }
       if (els.kitReadout) {
@@ -767,6 +791,20 @@
         btn.classList.add("is-active");
         fillKit(Number(btn.dataset.kitCount));
         if (els.shooting && els.shooting.checked) addShootingStars();
+        update();
+      });
+    });
+
+    // Standard vs Tesla/EV pricing toggle — reprices the estimate without
+    // touching the star field.
+    $$("[data-vehicle]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        $$("[data-vehicle]").forEach((b) => {
+          const on = b === btn;
+          b.classList.toggle("is-active", on);
+          b.setAttribute("aria-pressed", on ? "true" : "false");
+        });
+        state.vehicle = btn.dataset.vehicle === "ev" ? "ev" : "std";
         update();
       });
     });

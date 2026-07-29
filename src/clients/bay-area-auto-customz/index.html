@@ -5,12 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark" />
     <meta name="theme-color" content="#070707" />
-    <!-- CSP backstop: the live feed/reviews sections render third-party JSON, so
-         lock scripts to this origin. style 'unsafe-inline' covers the inline
-         style="" positioning attrs; img/connect allow any https for feed media. -->
+    <!-- CSP backstop for hosts that cannot set response headers. Vercel also
+         sends the stricter frame-ancestors policy from vercel.json. -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; media-src 'self'; connect-src 'self' https:; base-uri 'self'"
+      content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action https://formspree.io; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://formspree.io https://feeds.behold.so https://behold.so https://featurable.com; frame-src 'none'; worker-src 'self' blob:; upgrade-insecure-requests"
     />
 
     <title>Bay Area Auto Customz | Starlight Headliners &amp; Custom Auto Lighting</title>
@@ -1136,19 +1135,19 @@
             >
               <input type="hidden" name="_subject" value="New quote request - Bay Area Auto Customz" />
               <p class="booking__hp" hidden aria-hidden="true">
-                <label>Don&rsquo;t fill this out: <input name="_gotcha" tabindex="-1" autocomplete="off" /></label>
+                <label>Don&rsquo;t fill this out: <input name="_gotcha" tabindex="-1" autocomplete="off" maxlength="200" /></label>
               </p>
               <label>
                 Name
-                <input name="name" type="text" placeholder="Your name" autocomplete="name" required />
+                <input name="name" type="text" placeholder="Your name" autocomplete="name" maxlength="100" required />
               </label>
               <label>
                 Phone or email
-                <input name="contact" type="text" placeholder="So we can send your quote" autocomplete="on" required />
+                <input name="contact" type="text" placeholder="So we can send your quote" autocomplete="email" maxlength="160" required />
               </label>
               <label>
                 Vehicle
-                <input name="vehicle" type="text" placeholder="e.g. 2019 BMW 540i" required />
+                <input name="vehicle" type="text" placeholder="e.g. 2019 BMW 540i" maxlength="120" required />
               </label>
               <label>
                 Service
@@ -1165,7 +1164,7 @@
               </label>
               <label>
                 Details
-                <textarea name="details" rows="3" placeholder="Roof color, star density, shooting stars, timing..."></textarea>
+                <textarea name="details" rows="3" maxlength="1000" placeholder="Roof color, star density, shooting stars, timing..."></textarea>
               </label>
               <button class="btn btn--gold btn--block" type="submit">Send my quote request</button>
               <div class="booking__out" data-booking-out role="status" aria-live="polite"></div>

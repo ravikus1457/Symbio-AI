@@ -1289,6 +1289,7 @@
   /* ============================ BOOKING ================================= */
   const bookingForm = $("[data-booking]");
   const bookingOut = $("[data-booking-out]");
+  const FORM_ENDPOINT = "https://formspree.io/f/xlgqejeq";
   const serviceSelect = bookingForm ? bookingForm.querySelector('[name="service"]') : null;
   const detailsField = bookingForm ? bookingForm.querySelector('[name="details"]') : null;
 
@@ -1324,13 +1325,17 @@
       const vehicle = (data.get("vehicle") || "").toString().trim();
       const service = (data.get("service") || "").toString();
       const details = (data.get("details") || "").toString().trim();
+      const emailContact = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact);
+      const phoneDigits = contact.replace(/\D/g, "");
+      const validContact =
+        emailContact || (phoneDigits.length >= 7 && phoneDigits.length <= 15);
 
       // Flag the exact missing fields for assistive tech (and clear old flags).
       bookingForm.querySelectorAll("[aria-invalid]").forEach((el) => el.removeAttribute("aria-invalid"));
-      if (!name || !contact || !vehicle) {
+      if (!name || !validContact || !vehicle) {
         [
           ["name", name],
-          ["contact", contact],
+          ["contact", validContact],
           ["vehicle", vehicle],
         ].forEach(([field, val]) => {
           if (!val) {
@@ -1340,7 +1345,7 @@
         });
         bookingOut.style.borderColor = "rgba(255,111,72,0.5)";
         bookingOut.style.background = "rgba(255,111,72,0.08)";
-        bookingOut.textContent = "Please add your name, a phone or email, and your vehicle so we can send a quote.";
+        bookingOut.textContent = "Please add your name, a valid phone or email, and your vehicle so we can send a quote.";
         return;
       }
 
@@ -1363,7 +1368,7 @@
       // (replacing YOUR_FORM_ID), this is skipped and the instant text/call/DM
       // options below still work; any network error also fails silently.
       const endpoint = bookingForm.getAttribute("action") || "";
-      if (/^https?:\/\//i.test(endpoint) && !endpoint.includes("YOUR_FORM_ID")) {
+      if (endpoint === FORM_ENDPOINT) {
         try {
           fetch(endpoint, {
             method: "POST",

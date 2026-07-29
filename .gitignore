@@ -16,3 +16,6 @@ npm-debug.log*
 
 # Eleventy
 .eleventy.cache/
+.vercel
+.env*
+!.env.example
